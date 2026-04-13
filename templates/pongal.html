@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pongal Theme</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tiro+Tamil:ital@0;1&family=Yatra+One&family=Hind:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --saffron:      #FF9933;
+            --saffron-deep: #c96800;
+            --turmeric:     #e8a000;
+            --turmeric-pale:#fff3c0;
+            --terracotta:   #c1440e;
+            --brick:        #8b2500;
+            --mud:          #6b3a1f;
+            --cream:        #fff8e7;
+            --gold:         #d4a017;
+            --gold-light:   #f5d76e;
+            --green-paddy:  #5a8a1a;
+            --green-deep:   #2d5a0a;
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Hind',sans-serif; overflow:hidden; height:100vh; width:100vw; color:var(--mud); }
+
+        /* ── DAWN SKY ── */
+        .sky { position:fixed; inset:0; z-index:0; background:linear-gradient(180deg,#e65100 0%,#ff8f00 15%,#ffb300 30%,#ffd54f 50%,#ffe082 65%,#fff9c4 80%,#f1f8e9 100%); }
+
+        /* ── SUN ── */
+        .sun { position:fixed; bottom:160px; left:50%; transform:translateX(-50%); z-index:1; width:90px; height:90px; border-radius:50%; background:radial-gradient(circle,#fff9c4 20%,#ffca28 55%,#ff8f00 100%); box-shadow:0 0 40px 20px rgba(255,193,7,0.5),0 0 100px 50px rgba(255,152,0,0.3),0 0 200px 80px rgba(255,87,34,0.15); animation:sun-glow 5s ease-in-out infinite alternate; }
+        @keyframes sun-glow { 0%{box-shadow:0 0 40px 20px rgba(255,193,7,0.5),0 0 100px 50px rgba(255,152,0,0.3)} 100%{box-shadow:0 0 60px 30px rgba(255,193,7,0.7),0 0 140px 70px rgba(255,152,0,0.5)} }
+
+        /* ── CANVASES ── */
+        #bgCanvas { position:fixed; inset:0; z-index:2; pointer-events:none; }
+        #fgCanvas { position:fixed; inset:0; z-index:9; pointer-events:none; }
+
+        /* ── KOLAM BANNER ── */
+        .kolam-top { position:fixed; top:0; left:0; right:0; z-index:30; height:64px; background:linear-gradient(180deg,var(--terracotta) 0%,var(--brick) 100%); display:flex; align-items:center; justify-content:center; gap:0; overflow:hidden; box-shadow:0 4px 20px rgba(139,37,0,0.5); }
+        .kolam-top::before { content:''; position:absolute; bottom:0; left:0; right:0; height:6px; background:repeating-linear-gradient(90deg,var(--gold) 0px,var(--gold) 12px,var(--saffron) 12px,var(--saffron) 24px,var(--turmeric) 24px,var(--turmeric) 36px); }
+        .banner-text { font-family:'Yatra One',cursive; font-size:26px; color:var(--gold-light); letter-spacing:3px; text-shadow:0 2px 8px rgba(0,0,0,0.4),0 0 20px rgba(255,193,7,0.5); }
+        .banner-emoji { font-size:24px; margin:0 10px; animation:banner-sway 2s ease-in-out infinite alternate; }
+        @keyframes banner-sway { 0%{transform:rotate(-8deg) scale(1)} 100%{transform:rotate(8deg) scale(1.1)} }
+
+        /* ── SUGARCANE ── */
+        .sugarcane-left,.sugarcane-right { position:fixed; top:64px; z-index:20; font-size:72px; line-height:1; writing-mode:vertical-rl; animation:cane-sway 3s ease-in-out infinite alternate; transform-origin:bottom center; filter:drop-shadow(2px 4px 8px rgba(0,0,0,0.2)); }
+        .sugarcane-left  { left:10px; }
+        .sugarcane-right { right:10px; transform:scaleX(-1); animation-direction:alternate-reverse; }
+        @keyframes cane-sway { 0%{transform:rotate(-4deg)} 100%{transform:rotate(4deg)} }
+
+        /* ── GARLAND ── */
+        .garland-bar { position:fixed; top:64px; left:0; right:0; z-index:19; height:28px; pointer-events:none; display:flex; justify-content:space-around; align-items:flex-end; padding:0 80px; }
+        .marigold { font-size:18px; animation:marigold-bob 1.8s ease-in-out infinite alternate; }
+        @keyframes marigold-bob { 0%{transform:translateY(0) rotate(-10deg)} 100%{transform:translateY(-5px) rotate(10deg)} }
+        .garland-svg { position:fixed; top:64px; left:0; right:0; z-index:18; height:30px; pointer-events:none; }
+
+        /* ── LANDSCAPE ── */
+        .landscape { position:fixed; bottom:0; left:0; right:0; z-index:5; height:220px; pointer-events:none; }
+        .landscape svg { width:100%; height:100%; }
+
+        /* ── POT ── */
+        .pot-wrap { position:fixed; bottom:158px; left:50%; transform:translateX(-50%); z-index:12; pointer-events:none; display:flex; flex-direction:column; align-items:center; }
+        .steam { display:flex; gap:6px; margin-bottom:-4px; }
+        .steam-line { width:6px; height:30px; border-radius:50%; background:rgba(255,255,255,0.7); filter:blur(3px); animation:steam-rise 2s ease-in-out infinite; }
+        .steam-line:nth-child(2){animation-delay:0.4s;height:22px} .steam-line:nth-child(3){animation-delay:0.8s;height:28px}
+        @keyframes steam-rise { 0%{transform:translateY(0) scaleX(1);opacity:0.8} 50%{transform:translateY(-18px) scaleX(1.5);opacity:0.5} 100%{transform:translateY(-36px) scaleX(0.5);opacity:0} }
+        .pot-emoji { font-size:64px; filter:drop-shadow(0 6px 16px rgba(193,68,14,0.5)); animation:pot-bubble 1.5s ease-in-out infinite alternate; }
+        @keyframes pot-bubble { 0%{transform:scale(1)} 100%{transform:scale(1.04)} }
+        .fire-row { display:flex; gap:2px; margin-top:-8px; }
+        .fire { font-size:28px; animation:fire-flicker 0.5s ease-in-out infinite alternate; }
+        .fire:nth-child(2){animation-delay:0.2s;font-size:36px} .fire:nth-child(3){animation-delay:0.1s}
+        @keyframes fire-flicker { 0%{transform:scaleY(1) rotate(-3deg)} 100%{transform:scaleY(1.15) rotate(3deg)} }
+        .milk-overflow { position:absolute; top:42px; left:50%; transform:translateX(-50%); font-size:20px; animation:milk-drip 2s ease-in-out infinite; z-index:2; }
+        @keyframes milk-drip { 0%,100%{opacity:0;transform:translateX(-50%) translateY(0)} 40%,60%{opacity:1;transform:translateX(-50%) translateY(6px)} }
+
+        /* ── KOLAM FLOOR ── */
+        .kolam-floor { position:fixed; bottom:148px; left:50%; transform:translateX(-50%); z-index:6; pointer-events:none; opacity:0.5; }
+
+        /* ── CONTENT GRID ── */
+        .content { position:relative; z-index:15; display:grid; grid-template-columns:1fr 350px; grid-template-rows:auto 1fr; gap:20px; padding:105px 55px 235px 110px; height:100vh; }
+
+        /* ── HEADER ── */
+        .header { grid-column:1; grid-row:1; }
+        .header .tamil-sub { font-family:'Tiro Tamil',serif; font-size:17px; color:var(--terracotta); letter-spacing:1px; margin-bottom:6px; opacity:0; animation:reveal 0.7s 0.2s ease forwards; }
+        .header h1 { font-family:'Yatra One',cursive; font-size:54px; line-height:1.05; background:linear-gradient(135deg,var(--terracotta) 0%,var(--saffron-deep) 30%,var(--turmeric) 55%,var(--green-paddy) 85%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; filter:drop-shadow(2px 3px 0px rgba(193,68,14,0.2)); opacity:0; animation:reveal 0.7s 0.4s ease forwards; }
+        .header .tamil-title { font-family:'Tiro Tamil',serif; font-size:26px; color:var(--saffron-deep); margin-top:4px; opacity:0; animation:reveal 0.7s 0.55s ease forwards; }
+        .room-badge { display:inline-flex; align-items:center; gap:10px; margin-top:14px; background:linear-gradient(135deg,var(--terracotta),var(--saffron-deep)); padding:7px 22px; border-radius:8px; font-size:13px; font-weight:700; color:var(--cream); letter-spacing:2px; box-shadow:0 4px 16px rgba(193,68,14,0.4); border-bottom:3px solid var(--gold); opacity:0; animation:reveal 0.7s 0.7s ease forwards; }
+        .header .tagline { margin-top:14px; font-family:'Tiro Tamil',serif; font-style:italic; font-size:17px; color:var(--green-deep); opacity:0; animation:reveal 0.7s 0.85s ease forwards; }
+        .header .custom-msg { margin-top:8px; font-size:15px; font-weight:600; color:var(--brick); opacity:0; animation:reveal 0.7s 1.0s ease forwards; }
+        .icon-row { margin-top:18px; display:flex; gap:14px; align-items:center; opacity:0; animation:reveal 0.7s 1.2s ease forwards; }
+        .icon-item { font-size:36px; animation:icon-float 2.8s ease-in-out infinite; filter:drop-shadow(0 4px 8px rgba(0,0,0,0.15)); }
+        .icon-item:nth-child(2){animation-delay:0.5s} .icon-item:nth-child(3){animation-delay:1.0s;font-size:28px} .icon-item:nth-child(4){animation-delay:1.5s}
+        @keyframes icon-float { 0%,100%{transform:translateY(0) rotate(-4deg)} 50%{transform:translateY(-10px) rotate(4deg)} }
+        @keyframes reveal { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+
+        /* ── ACTIVITIES ── */
+        .activities { grid-column:2; grid-row:1/3; }
+        .activities-panel { background:rgba(255,248,231,0.92); border-radius:16px; border:2px solid rgba(193,68,14,0.25); border-top:5px solid var(--terracotta); padding:18px 16px; box-shadow:0 8px 32px rgba(193,68,14,0.12),0 2px 8px rgba(0,0,0,0.08); backdrop-filter:blur(12px); }
+        .activities h3 { font-family:'Yatra One',cursive; font-size:22px; background:linear-gradient(90deg,var(--terracotta),var(--green-paddy)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; text-align:center; margin-bottom:4px; }
+        .act-sub { text-align:center; font-size:11px; letter-spacing:3px; color:var(--saffron-deep); text-transform:uppercase; margin-bottom:14px; font-weight:600; }
+        .activity-card { background:linear-gradient(135deg,rgba(255,153,51,0.08) 0%,rgba(255,248,231,0.95) 100%); border:1.5px solid rgba(193,68,14,0.18); border-left:4px solid var(--saffron); padding:12px 14px; border-radius:10px; margin-bottom:10px; position:relative; overflow:hidden; transition:transform 0.25s,box-shadow 0.25s; }
+        .activity-card:nth-child(odd) {border-left-color:var(--green-paddy)} .activity-card:nth-child(even){border-left-color:var(--terracotta)}
+        .activity-card::before { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%; background:linear-gradient(120deg,transparent,rgba(255,193,7,0.2),transparent); pointer-events:none; }
+        .activity-card:hover::before{animation:shine 0.7s forwards} @keyframes shine{to{left:140%}}
+        .activity-card:hover{transform:translateX(-5px);box-shadow:4px 0 18px rgba(193,68,14,0.2)}
+        .ac-title{font-weight:700;font-size:14px;color:var(--brick)} .ac-time{font-size:11px;color:var(--mud);margin-top:3px;letter-spacing:0.5px}
+        .btn{float:right;background:linear-gradient(135deg,var(--saffron),var(--saffron-deep));border:none;padding:4px 12px;border-radius:6px;font-size:10px;font-weight:700;color:white;text-transform:uppercase;letter-spacing:1.5px;cursor:pointer;font-family:'Hind',sans-serif;transition:transform 0.2s,box-shadow 0.2s}
+        .btn:hover{transform:scale(1.08);box-shadow:0 4px 12px rgba(193,68,14,0.4)}
+
+        /* ── SERVICES — svc-card matching common.js ── */
+        .services { grid-column:1; grid-row:2; align-self:end; }
+        .services-label { font-family:'Yatra One',cursive; font-size:17px; color:var(--saffron-deep); margin-bottom:10px; }
+        .services-row { display:flex; gap:12px; overflow-x:auto; padding-bottom:4px; scrollbar-width:none; }
+        .services-row::-webkit-scrollbar { display:none; }
+
+        .svc-card { position:relative; flex-shrink:0; width:188px; height:118px; border-radius:12px; overflow:hidden; border:2.5px solid rgba(193,68,14,0.3); background:#3a1a0a; transition:transform 0.3s,border-color 0.3s,box-shadow 0.3s; cursor:pointer; }
+        .svc-card::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; z-index:2; background:linear-gradient(90deg,var(--saffron),var(--turmeric),var(--green-paddy)); opacity:0; transition:opacity 0.3s; }
+        .svc-card:hover::before { opacity:1; }
+        .svc-card:hover { transform:translateY(-7px) scale(1.03); border-color:var(--turmeric); box-shadow:0 12px 28px rgba(193,68,14,0.35); }
+        .svc-img { position:absolute; inset:0; background:center/cover no-repeat; transition:transform 0.5s ease; }
+        .svc-card:hover .svc-img { transform:scale(1.06); }
+        .svc-card::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg,transparent 20%,rgba(107,58,31,0.68) 100%); z-index:1; }
+        .svc-info { position:absolute; bottom:0; left:0; right:0; z-index:3; padding:8px 11px; }
+        .svc-title { font-size:12px; font-weight:700; color:var(--cream); text-shadow:0 1px 5px rgba(0,0,0,0.7); }
+        .svc-sub { font-size:10px; color:rgba(255,248,231,0.65); margin-top:2px; max-height:0; overflow:hidden; transition:max-height 0.3s,opacity 0.3s; opacity:0; }
+        .svc-card:hover .svc-sub { max-height:24px; opacity:1; }
+        .svc-arrow { position:absolute; top:8px; right:8px; z-index:3; width:22px; height:22px; border-radius:50%; background:rgba(193,68,14,0); border:1px solid rgba(255,255,255,0); display:flex; align-items:center; justify-content:center; font-size:13px; color:rgba(255,255,255,0); transition:all 0.3s; }
+        .svc-card:hover .svc-arrow { background:rgba(193,68,14,0.75); border-color:rgba(255,255,255,0.4); color:white; }
+
+        /* ── LIVE TV ── */
+        .live-tv { position:fixed; bottom:28px; left:50%; transform:translateX(-50%); z-index:25; }
+        .live-tv button { background:linear-gradient(135deg,var(--terracotta),var(--saffron-deep),var(--saffron)); border:2.5px solid var(--gold); padding:13px 46px; font-family:'Yatra One',cursive; font-size:19px; color:var(--cream); cursor:pointer; border-radius:10px; box-shadow:0 6px 24px rgba(193,68,14,0.45),0 2px 8px rgba(0,0,0,0.12); transition:transform 0.25s,box-shadow 0.25s; animation:btn-pulse 3s ease-in-out infinite; }
+        @keyframes btn-pulse { 0%,100%{box-shadow:0 6px 20px rgba(193,68,14,0.4)} 50%{box-shadow:0 6px 36px rgba(255,153,51,0.6),0 0 0 6px rgba(255,153,51,0.12)} }
+        .live-tv button:hover { transform:scale(1.06) translateY(-2px); }
+
+        /* ── PETALS ── */
+        .petal { position:fixed; top:-20px; z-index:10; pointer-events:none; font-size:14px; animation:petal-fall linear infinite; }
+        @keyframes petal-fall { 0%{transform:translateY(0) rotate(0deg) translateX(0);opacity:0} 8%{opacity:1} 92%{opacity:0.7} 100%{transform:translateY(110vh) rotate(480deg) translateX(50px);opacity:0} }
+
+        /* ── FOOD OVERLAY ── */
+        .food-overlay { position:fixed; inset:0; z-index:100; display:none; flex-direction:column; background:rgba(20,8,2,0.97); backdrop-filter:blur(24px); }
+        .food-overlay.active { display:flex; }
+        .food-topbar { display:flex; align-items:center; justify-content:space-between; padding:22px 48px 18px; border-bottom:1px solid rgba(193,68,14,0.25); flex-shrink:0; }
+        .food-topbar-left { display:flex; align-items:center; gap:18px; }
+        .food-back-btn { display:flex; align-items:center; gap:8px; cursor:pointer; font-size:11px; letter-spacing:.3em; text-transform:uppercase; color:rgba(255,248,231,.35); background:none; border:none; font-family:'Hind',sans-serif; transition:color .25s; padding:0; }
+        .food-back-btn:hover { color:var(--turmeric); }
+        .food-back-btn svg { width:16px; height:16px; }
+        .food-page-title { font-family:'Yatra One',cursive; font-size:30px; color:var(--cream); }
+        .food-page-title em { color:var(--turmeric); font-style:normal; }
+
+        #foodCategoryScreen { flex:1; overflow:hidden; display:flex; flex-direction:column; }
+        .cat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; padding:32px 72px; }
+        .cat-card { position:relative; width:100%; height:220px; border-radius:12px; overflow:hidden; cursor:pointer; background:#3a1a0a; border:1.5px solid rgba(193,68,14,0.2); transition:all .3s ease; }
+        .cat-card:hover { transform:translateY(-4px); border-color:var(--turmeric); box-shadow:0 10px 28px rgba(193,68,14,0.25); }
+        .cat-card::before { content:''; position:absolute; inset:0; background:linear-gradient(to top,rgba(20,8,2,0.9) 0%,rgba(20,8,2,0.2) 100%); }
+        .cat-card::after { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--saffron),var(--turmeric),var(--green-paddy)); transform:scaleX(0); transform-origin:left; transition:transform .35s; }
+        .cat-card:hover::after { transform:scaleX(1); }
+        .cat-card-img { position:absolute; inset:0; background:center/cover no-repeat; transition:transform .5s ease; }
+        .cat-card:hover .cat-card-img { transform:scale(1.05); }
+        .cat-card-body { position:absolute; bottom:0; left:0; right:0; padding:16px 18px; z-index:2; }
+        .cat-card-name { font-family:'Yatra One',cursive; font-size:18px; color:var(--cream); }
+        .cat-card:hover .cat-card-name { color:var(--gold-light); }
+        .cat-card-sub { font-size:12px; color:rgba(255,248,231,.55); margin-top:3px; }
+
+        #foodItemsScreen { flex:1; display:none; flex-direction:row; overflow:hidden; }
+        #foodItemsScreen.visible { display:flex; }
+        .items-main { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+        .items-cat-label { padding:16px 48px 8px; font-family:'Yatra One',cursive; font-size:22px; color:var(--saffron); letter-spacing:.05em; flex-shrink:0; }
+        .items-scroll { flex:1; overflow-y:auto; display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:14px; padding:10px 28px 20px; align-content:start; }
+        .item-card { background:rgba(40,15,5,0.9); border:1px solid rgba(193,68,14,0.22); border-radius:10px; overflow:hidden; transition:border-color .3s,box-shadow .3s; }
+        .item-card:hover { border-color:var(--turmeric); box-shadow:0 6px 20px rgba(193,68,14,0.2); }
+        .item-img { width:100%; height:120px; background:#3a1a0a center/cover no-repeat; }
+        .item-body { padding:10px 12px 12px; }
+        .item-name { font-size:13px; font-weight:600; color:var(--cream); margin-bottom:2px; }
+        .item-price { font-family:'Yatra One',cursive; font-size:16px; color:var(--turmeric); margin-bottom:10px; }
+        .item-price small { font-size:11px; color:rgba(232,160,0,.45); }
+        .qty-row { display:flex; align-items:center; background:rgba(255,255,255,.06); border-radius:8px; overflow:hidden; border:1px solid rgba(255,255,255,.1); }
+        .qty-btn { width:34px; height:34px; border:none; background:transparent; color:var(--cream); font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .2s; line-height:1; }
+        .qty-btn:hover { background:rgba(193,68,14,0.3); }
+        .qty-btn.plus { background:var(--terracotta); }
+        .qty-btn.plus:hover { background:var(--saffron-deep); }
+        .qty-val { flex:1; text-align:center; font-size:14px; font-weight:600; color:var(--cream); }
+
+        .cart-panel { width:230px; flex-shrink:0; background:rgba(20,8,2,0.96); border-left:1px solid rgba(193,68,14,0.2); display:flex; flex-direction:column; padding:16px 18px 18px; }
+        .cart-panel-title { font-family:'Yatra One',cursive; font-size:22px; color:var(--cream); margin-bottom:5px; }
+        .cart-panel-title em { color:var(--turmeric); font-style:normal; }
+        .cart-divider { height:1px; background:rgba(193,68,14,0.22); margin-bottom:14px; }
+        .cart-items-list { flex:1; overflow-y:auto; scrollbar-width:thin; scrollbar-color:rgba(193,68,14,.2) transparent; margin-bottom:14px; }
+        .cart-item-row { display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,.05); }
+        .cart-item-row:last-child { border-bottom:none; }
+        .ci-name { font-size:12px; color:var(--cream); max-width:130px; }
+        .ci-qty  { font-size:11px; color:rgba(255,248,231,.4); margin-top:1px; }
+        .ci-price { font-family:'Yatra One',cursive; font-size:15px; color:var(--turmeric); }
+        .cart-empty { color:rgba(255,248,231,.3); font-size:13px; text-align:center; margin-top:20px; font-style:italic; }
+        .cart-total-row { display:flex; justify-content:space-between; align-items:center; padding:12px 0 16px; border-top:1px solid rgba(193,68,14,0.22); }
+        .cart-total-label { font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,248,231,.4); }
+        .cart-total-amt { font-family:'Yatra One',cursive; font-size:24px; color:var(--turmeric); }
+        .cart-total-amt small { font-size:13px; color:rgba(232,160,0,.5); }
+        .cart-clear-btn { width:100%; padding:10px; border-radius:8px; margin-bottom:8px; background:rgba(193,68,14,.1); border:1px solid rgba(193,68,14,.35); color:var(--saffron); font-family:'Hind',sans-serif; font-size:11px; letter-spacing:.2em; text-transform:uppercase; cursor:pointer; transition:background .25s; }
+        .cart-clear-btn:hover { background:rgba(193,68,14,.25); }
+        .cart-place-btn { width:100%; padding:13px; border-radius:8px; background:linear-gradient(135deg,var(--terracotta),var(--saffron-deep)); border:none; color:var(--cream); font-family:'Hind',sans-serif; font-size:12px; font-weight:700; letter-spacing:.25em; text-transform:uppercase; cursor:pointer; transition:opacity .3s,box-shadow .3s; }
+        .cart-place-btn:hover { box-shadow:0 0 20px rgba(193,68,14,.5); }
+        .cart-place-btn:disabled { opacity:.35; cursor:default; box-shadow:none; }
+    
+        /* ══ ACTIVITIES PANEL — matching default.html structure ══ */
+        .panel-title {
+            font-size: 9px; letter-spacing: .5em; text-transform: uppercase;
+            color: var(--gold); margin-bottom: 12px; font-weight: 400;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .panel-title::after {
+            content: ''; flex: 1; height: .5px;
+            background: linear-gradient(90deg, rgba(212,168,67,.4), transparent);
+        }
+        .act-card {
+            background: rgba(40,15,5,0.78);
+            border: .5px solid rgba(193,68,14,0.22);
+            backdrop-filter: blur(12px);
+            padding: 12px 14px; border-radius: 10px; margin-bottom: 9px;
+            font-size: 13px; font-weight: 300; color: rgba(248,243,236,.82);
+            transition: border-color .3s;
+        }
+        .act-card:hover { border-color: rgba(193,68,14,0.55); }
+        .act-card strong { display: block; margin-bottom: 2px; font-weight: 500; color: var(--cream, #f8f3ec); font-size: 13px; }
+        .act-card small  { color: var(--gold); font-size: 11px; letter-spacing: .05em; }
+        .reserve-pill {
+            float: right;
+            background: rgba(193,68,14,0.18);
+            border: .5px solid #e8661a;
+            color: #e8661a;
+            font-size: 10px; padding: 3px 10px; border-radius: 20px; letter-spacing: .07em;
+        }
+        .ann-badge {
+            font-size: 9px; letter-spacing: .3em; text-transform: uppercase;
+            color: #e8661a; display: block; margin-bottom: 3px;
+        }
+        </style>
+<style>
+/* ═══ Vibe Munnar – Overlay CSS (shared + spa + bar + dine + ent) ═══ */
+        /* ══════════════════════════════════════════
+           SHARED OVERLAY BASE STYLES
+           (food, spa, bar all inherit from this pattern)
+        ══════════════════════════════════════════ */
+        .overlay-base {
+            position: fixed; inset: 0; z-index: 100;
+            display: none; flex-direction: column;
+            background: rgba(8,2,5,0.97);
+            backdrop-filter: blur(24px);
+        }
+        .overlay-base.active { display: flex; }
+
+        .overlay-topbar {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 28px 52px 20px;
+            border-bottom: .5px solid rgba(192,24,90,.15);
+            flex-shrink: 0;
+        }
+        .overlay-topbar-left { display: flex; align-items: center; gap: 20px; }
+        .overlay-back-btn {
+            display: flex; align-items: center; gap: 8px; cursor: pointer;
+            font-size: 11px; letter-spacing: .3em; text-transform: uppercase;
+            color: rgba(248,243,236,.4); background: none; border: none;
+            font-family: 'Jost', sans-serif; transition: color .25s; padding: 0;
+        }
+        .overlay-back-btn:hover { color: var(--gold); }
+        .overlay-back-btn svg { width: 16px; height: 16px; }
+        .overlay-page-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 36px; font-weight: 300; color: var(--cream); letter-spacing: .02em;
+        }
+        .overlay-page-title em { color: var(--gold-light); font-style: italic; }
+
+        /* close X button */
+        .overlay-close-btn {
+            width: 38px; height: 38px; border-radius: 50%; border: .5px solid rgba(255,255,255,.12);
+            background: rgba(255,255,255,.06); color: rgba(248,243,236,.45);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; cursor: pointer; transition: all .2s;
+        }
+        .overlay-close-btn:hover { background: rgba(192,24,90,.25); border-color: rgba(192,24,90,.5); color: var(--cream); }
+
+        /* shared cat-screen glow bg */
+        .cat-screen-bg {
+            flex: 1; overflow: hidden; display: flex; flex-direction: column;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(192,24,90,0.12), transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(212,168,67,0.10), transparent 40%);
+        }
+
+        /* ══════════════════════════════════════════
+           SHARED TOAST
+        ══════════════════════════════════════════ */
+        .svc-toast {
+            position: fixed; bottom: 40px; left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: rgba(26,188,156,.15); border: .5px solid #1abc9c;
+            color: #1abc9c; padding: 13px 32px; border-radius: 30px;
+            font-size: 12px; letter-spacing: .25em; text-transform: uppercase;
+            transition: transform .4s ease, opacity .4s; opacity: 0;
+            z-index: 400; pointer-events: none;
+        }
+        .svc-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+        /* ══════════════════════════════════════════
+           FOOD OVERLAY
+        ══════════════════════════════════════════ */
+        #foodCategoryScreen { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+        .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding: 40px 80px; }
+        .cat-card { position: relative; width: 100%; height: 240px; border-radius: 18px; overflow: hidden; cursor: pointer; background: #1a0510 center/cover no-repeat; transition: all .3s ease; }
+        .cat-card:hover { transform: translateY(-4px) scale(1.01); box-shadow: 0 10px 28px rgba(0,0,0,.5), 0 0 0 1px rgba(192,24,90,.4); }
+        .cat-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(8,2,5,0.88) 0%, rgba(8,2,5,0.25) 50%, rgba(8,2,5,0.05) 100%); transition: opacity .3s; }
+        .cat-card:hover::before { opacity: .85; }
+        .cat-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--pink), var(--gold), transparent); transform: scaleX(0); transform-origin: left; transition: transform .4s ease; }
+        .cat-card:hover::after { transform: scaleX(1); }
+       .cat-card-img {position: absolute;inset: 0;width: 100%;height: 100%;background-size: cover;background-position: center;background-repeat: no-repeat;transition: transform .55s cubic-bezier(0.23,1,0.32,1);}
+        .cat-card:hover .cat-card-img { transform: scale(1.04); }
+        .cat-card-body { position: absolute; bottom: 0; left: 0; right: 0; padding: 18px 20px; z-index: 2; }
+        .cat-card-name { font-size: 19px; font-weight: 600; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,.6); transition: color .25s; }
+        .cat-card:hover .cat-card-name { color: var(--gold-light); }
+        .cat-card-sub { font-size: 12px; font-weight: 400; color: rgba(255,255,255,.55); margin-top: 3px; letter-spacing: .04em; }
+
+        #foodItemsScreen { flex: 1; display: none; flex-direction: row; overflow: hidden; }
+        #foodItemsScreen.visible { display: flex; }
+        .items-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .items-cat-label { padding: 18px 52px 8px; font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; color: var(--gold-light); letter-spacing: .05em; text-transform: uppercase; flex-shrink: 0; }
+        .items-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; padding: 12px 32px 24px; align-content: start; }
+        .item-card { width: 100%; min-width: 0; background: rgba(20,4,12,0.88); border: .5px solid rgba(192,24,90,.2); border-radius: 16px; overflow: hidden; transition: border-color .3s, box-shadow .3s; }
+        .item-card:hover { border-color: rgba(192,24,90,.5); box-shadow: 0 8px 28px rgba(0,0,0,.5), 0 0 16px rgba(192,24,90,.12); }
+        .item-img {
+            width: 100%;
+            height: 130px;
+            background-color: #1a0510;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .item-body { padding: 12px 14px 14px; }
+        .item-name { font-size: 14px; font-weight: 500; color: var(--cream); margin-bottom: 2px; }
+        .item-price { font-family: 'Cormorant Garamond', serif; font-size: 18px; color: var(--gold-light); margin-bottom: 12px; }
+        .item-price small { font-size: 12px; color: rgba(212,168,67,.5); }
+        .qty-row { display: flex; align-items: center; background: rgba(255,255,255,.06); border-radius: 30px; overflow: hidden; border: .5px solid rgba(255,255,255,.1); }
+        .qty-btn { width: 36px; height: 36px; border: none; background: transparent; color: var(--cream); font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .2s; font-family: 'Jost', sans-serif; line-height: 1; }
+        .qty-btn:hover { background: rgba(192,24,90,.3); }
+        .qty-btn.minus { border-radius: 30px 0 0 30px; }
+        .qty-btn.plus  { border-radius: 0 30px 30px 0; background: var(--pink); }
+        .qty-btn.plus:hover { background: var(--pink-light); }
+        .qty-val { flex: 1; text-align: center; font-size: 15px; font-weight: 500; color: var(--cream); user-select: none; }
+
+        /* shared cart panel */
+        .cart-panel { width: 240px; flex-shrink: 0; background: rgba(16,3,10,0.92); border-left: .5px solid rgba(192,24,90,.18); display: flex; flex-direction: column; padding: 18px 20px 20px; }
+        .cart-panel-title { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 300; color: var(--cream); margin-bottom: 6px; letter-spacing: .03em; }
+        .cart-panel-title em { color: var(--gold-light); font-style: italic; }
+        .cart-divider { height: .5px; background: rgba(192,24,90,.2); margin-bottom: 16px; }
+        .cart-items-list { flex: 1; overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(192,24,90,.2) transparent; margin-bottom: 16px; }
+        .cart-item-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: .5px solid rgba(255,255,255,.05); }
+        .cart-item-row:last-child { border-bottom: none; }
+        .ci-name { font-size: 13px; color: var(--cream); max-width: 140px; }
+        .ci-qty  { font-size: 12px; color: rgba(248,243,236,.4); margin-top: 1px; }
+        .ci-price { font-family: 'Cormorant Garamond', serif; font-size: 16px; color: var(--gold-light); }
+        .cart-empty { color: rgba(248,243,236,.3); font-size: 13px; text-align: center; margin-top: 24px; font-style: italic; }
+        .cart-total-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0 18px; border-top: .5px solid rgba(212,168,67,.2); }
+        .cart-total-label { font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: rgba(248,243,236,.5); }
+        .cart-total-amt { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 300; color: var(--gold-light); }
+        .cart-total-amt small { font-size: 14px; color: rgba(212,168,67,.5); }
+        .cart-clear-btn { width: 100%; padding: 11px; border-radius: 10px; margin-bottom: 10px; background: rgba(192,24,90,.15); border: .5px solid rgba(192,24,90,.35); color: var(--pink-light); font-family: 'Jost', sans-serif; font-size: 12px; letter-spacing: .25em; text-transform: uppercase; cursor: pointer; transition: background .25s; }
+        .cart-clear-btn:hover { background: rgba(192,24,90,.3); }
+        .cart-place-btn { width: 100%; padding: 14px; border-radius: 10px; background: var(--pink); border: none; color: #fff; font-family: 'Jost', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: .3em; text-transform: uppercase; cursor: pointer; transition: background .3s, box-shadow .3s; }
+        .cart-place-btn:hover { background: var(--pink-light); box-shadow: 0 0 24px rgba(192,24,90,.4); }
+        .cart-place-btn:disabled { background: rgba(192,24,90,.2); color: rgba(255,255,255,.3); cursor: default; box-shadow: none; }
+
+        /* ══════════════════════════════════════════
+           SPA & WELLNESS OVERLAY
+        ══════════════════════════════════════════ */
+        #spaCategoryScreen { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+        .spa-cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding: 40px 80px; }
+        .spa-cat-card {
+            position: relative; width: 100%; height: 240px; border-radius: 18px; overflow: hidden;
+            cursor: pointer; background: #0a1510 center/cover no-repeat; transition: all .3s ease;
+        }
+        .spa-cat-card:hover { transform: translateY(-4px) scale(1.01); box-shadow: 0 10px 28px rgba(0,0,0,.5), 0 0 0 1px rgba(192,24,90,.4); }
+        .spa-cat-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(4,14,10,0.9) 0%, rgba(4,14,10,0.25) 55%, rgba(4,14,10,0.05) 100%); transition: opacity .3s; }
+        .spa-cat-card:hover::before { opacity: .85; }
+        .spa-cat-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--pink), var(--gold), transparent); transform: scaleX(0); transform-origin: left; transition: transform .4s ease; }
+        .spa-cat-card:hover::after { transform: scaleX(1); }
+        .spa-cat-img { position: absolute; inset: 0; width: 100%; height: 100%; background: center/cover no-repeat; transition: transform .5s cubic-bezier(0.23,1,0.32,1); }
+        .spa-cat-card:hover .spa-cat-img { transform: scale(1.04); }
+        .spa-cat-body { position: absolute; bottom: 0; left: 0; right: 0; padding: 18px 20px; z-index: 2; }
+        .spa-cat-name { font-size: 18px; font-weight: 600; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,.6); transition: color .25s; }
+        .spa-cat-card:hover .spa-cat-name { color: var(--gold-light); }
+        .spa-cat-sub { font-size: 12px; color: rgba(255,255,255,.5); margin-top: 3px; letter-spacing: .04em; }
+
+        #spaTreatmentsScreen { flex: 1; display: none; flex-direction: column; overflow: hidden; }
+        #spaTreatmentsScreen.visible { display: flex; }
+        .spa-treatments-label { padding: 18px 52px 8px; font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; color: var(--gold-light); letter-spacing: .05em; flex-shrink: 0; }
+        .spa-treatments-scroll {
+            flex: 1; overflow-y: auto; overflow-x: hidden;
+            display: grid; grid-template-columns: repeat(3, minmax(0,1fr));
+            gap: 20px; padding: 12px 52px 24px; align-content: start;
+        }
+
+        /* Card: full-bleed image; slot overlay appears on click */
+        .spa-treatment-card {
+            background: rgba(10,20,14,0.9); border: .5px solid rgba(192,24,90,.2);
+            border-radius: 16px; overflow: hidden; cursor: pointer;
+            position: relative; height: 280px;
+            transition: border-color .3s, box-shadow .3s, transform .25s;
+        }
+        .spa-treatment-card:hover { border-color: rgba(192,24,90,.5); box-shadow: 0 8px 28px rgba(0,0,0,.5); transform: translateY(-3px); }
+        .spa-treatment-card.expanded { border-color: rgba(192,24,90,.7); box-shadow: 0 12px 36px rgba(0,0,0,.6), 0 0 0 1px rgba(192,24,90,.4); transform: translateY(0); }
+
+        /* Full-bleed image fills entire card */
+        .spa-treatment-bg {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            background: #0a1510 center/cover no-repeat;
+        }
+        /* Title label sits at the bottom of the image (always visible) */
+        .spa-card-overlay-label {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            padding: 48px 14px 14px;
+            background: linear-gradient(to top, rgba(4,14,10,0.96) 0%, rgba(4,14,10,0.0) 100%);
+            transition: opacity .3s;
+        }
+        .spa-treatment-card.expanded .spa-card-overlay-label { opacity: 0; pointer-events: none; }
+        .spa-treatment-name { font-size: 15px; font-weight: 600; color: var(--cream); margin-bottom: 2px; }
+        .spa-treatment-desc { font-size: 11px; color: rgba(248,243,236,.5); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px; }
+        .spa-card-tap-hint {
+            font-size: 10px; letter-spacing: .25em; text-transform: uppercase;
+            color: var(--pink-light); opacity: .75;
+        }
+
+        /* Slot panel — overlays the card on click, does NOT push content down */
+        .spa-slot-panel {
+            position: absolute; inset: 0; z-index: 5;
+            opacity: 0; pointer-events: none;
+            transition: opacity .35s ease;
+            background: rgba(8,18,12,0.93);
+            backdrop-filter: blur(8px);
+            display: flex; flex-direction: column; justify-content: flex-end;
+            padding: 14px 14px 16px;
+        }
+        .spa-treatment-card.expanded .spa-slot-panel { opacity: 1; pointer-events: all; }
+        .spa-slots { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 12px; }
+        .spa-slot-badge {
+            background: rgba(255,255,255,.07); border: .5px solid rgba(255,255,255,.18);
+            color: rgba(248,243,236,.65); font-size: 11px; font-family: 'Jost', sans-serif;
+            padding: 5px 12px; border-radius: 20px; cursor: pointer; transition: all .2s;
+        }
+        .spa-slot-badge:hover { background: rgba(192,24,90,.2); border-color: rgba(192,24,90,.5); color: var(--cream); }
+        .spa-slot-badge.selected { background: var(--pink-dim); border-color: var(--pink-light); color: var(--pink-light); font-weight: 500; }
+        .spa-book-slot-btn {
+            width: 100%; padding: 11px; background: var(--pink); border: none; color: #fff;
+            border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 500;
+            letter-spacing: .25em; text-transform: uppercase; cursor: pointer; transition: background .25s, box-shadow .25s;
+        }
+        .spa-book-slot-btn:hover { background: var(--pink-light); box-shadow: 0 0 20px rgba(192,24,90,.4); }
+
+        /* Spa confirm modal */
+        .spa-confirm-overlay {
+            position: fixed; inset: 0; z-index: 200; display: none;
+            align-items: center; justify-content: center;
+            background: rgba(0,0,0,.72); backdrop-filter: blur(10px);
+        }
+        .spa-confirm-overlay.active { display: flex; }
+        .spa-confirm-modal {
+            background: linear-gradient(160deg, rgba(8,18,12,0.99), rgba(20,4,12,0.99));
+            border: .5px solid rgba(192,24,90,.35); border-radius: 22px;
+            padding: 40px 44px 36px; max-width: 460px; width: 90%; text-align: center;
+            position: relative;
+        }
+        .spa-confirm-icon { font-size: 38px; margin-bottom: 16px; }
+        .spa-confirm-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; color: var(--cream); margin-bottom: 4px; }
+        .spa-confirm-cat { font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); margin-bottom: 22px; }
+        .spa-confirm-details { background: rgba(255,255,255,.05); border: .5px solid rgba(255,255,255,.1); border-radius: 12px; padding: 18px 20px; margin-bottom: 24px; text-align: left; }
+        .spa-confirm-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: .5px solid rgba(255,255,255,.06); }
+        .spa-confirm-row:last-child { border-bottom: none; }
+        .spa-confirm-row-label { font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: rgba(248,243,236,.4); }
+        .spa-confirm-row-val { font-size: 14px; font-weight: 500; color: var(--cream); }
+        .spa-confirm-sub { font-size: 12px; color: rgba(248,243,236,.35); margin-bottom: 24px; font-style: italic; }
+        .spa-confirm-actions { display: flex; gap: 12px; }
+        .spa-cancel-btn { flex: 1; padding: 13px; background: rgba(255,255,255,.07); border: .5px solid rgba(255,255,255,.15); color: rgba(248,243,236,.6); border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; cursor: pointer; transition: all .2s; }
+        .spa-cancel-btn:hover { background: rgba(255,255,255,.12); color: var(--cream); }
+        .spa-confirm-btn { flex: 2; padding: 13px; background: var(--pink); border: none; color: #fff; border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: .25em; text-transform: uppercase; cursor: pointer; transition: background .25s, box-shadow .25s; }
+        .spa-confirm-btn:hover { background: var(--pink-light); box-shadow: 0 0 24px rgba(192,24,90,.4); }
+        .spa-confirm-btn:disabled { background: rgba(192,24,90,.2); color: rgba(255,255,255,.3); cursor: default; box-shadow: none; }
+
+        /* ══════════════════════════════════════════
+           BAR OVERLAY
+        ══════════════════════════════════════════ */
+        #barCategoryScreen { flex: 1; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .bar-cat-grid { display: flex; flex-direction: row; gap: 28px; padding: 32px 60px; width: 100%; max-width: 1000px; justify-content: center; }
+        .bar-cat-card {
+            position: relative; border-radius: 20px; overflow: hidden; cursor: pointer;
+            flex: 1; max-width: 420px; height: 260px;
+            background: #1a0800 center/cover no-repeat; transition: all .38s cubic-bezier(0.23,1,0.32,1);
+        }
+        .bar-cat-card:hover { transform: scale(1.025); box-shadow: 0 20px 60px rgba(0,0,0,.7), 0 0 0 1.5px var(--pink), 0 0 28px rgba(192,24,90,.35); }
+        .bar-cat-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,4,2,0.88) 0%, rgba(10,4,2,0.30) 55%, rgba(10,4,2,0.06) 100%); z-index: 1; }
+        .bar-cat-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, transparent, var(--pink), var(--gold), transparent); transform: scaleX(0); transform-origin: left; transition: transform .45s ease; z-index: 3; }
+        .bar-cat-card:hover::after { transform: scaleX(1); }
+        .bar-cat-img { position: absolute; inset: 0; width: 100%; height: 100%; background: center/cover no-repeat; transition: transform .55s cubic-bezier(0.23,1,0.32,1); z-index: 0; }
+        .bar-cat-card:hover .bar-cat-img { transform: scale(1.06); }
+        .bar-cat-body { position: absolute; bottom: 0; left: 0; right: 0; padding: 22px 28px; z-index: 2; }
+        .bar-cat-name { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 400; color: #fff; text-shadow: 0 2px 12px rgba(0,0,0,.8); transition: color .25s; margin-bottom: 5px; }
+        .bar-cat-card:hover .bar-cat-name { color: var(--gold-light); }
+        .bar-cat-sub { font-size: 13px; color: rgba(255,255,255,.6); letter-spacing: .04em; }
+
+        #barItemsScreen { flex: 1; display: none; flex-direction: row; overflow: hidden; }
+        #barItemsScreen.visible { display: flex; }
+        .bar-items-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .bar-items-cat-label { padding: 18px 52px 8px; font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; color: var(--gold-light); letter-spacing: .05em; text-transform: uppercase; flex-shrink: 0; }
+        .bar-items-scroll {
+            flex: 1; overflow-y: auto; overflow-x: hidden;
+            display: grid; grid-template-columns: repeat(4, minmax(0,1fr));
+            gap: 16px; padding: 12px 32px 24px; align-content: start;
+        }
+        .bar-item-card {
+            background: rgba(26,8,4,0.92); border: .5px solid rgba(192,24,90,.2);
+            border-radius: 16px; overflow: hidden; transition: border-color .3s, box-shadow .3s;
+        }
+        .bar-item-card:hover { border-color: rgba(192,24,90,.5); box-shadow: 0 8px 28px rgba(0,0,0,.5), 0 0 16px rgba(192,24,90,.12); }
+        .bar-item-img {
+            width: 100%;
+            height: 140px;
+            background-color: #1a0800;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .bar-item-body { padding: 12px 14px 14px; }
+        .bar-item-name { font-size: 14px; font-weight: 500; color: var(--cream); margin-bottom: 2px; }
+        .bar-item-price { font-family: 'Cormorant Garamond', serif; font-size: 18px; color: var(--gold-light); margin-bottom: 12px; }
+        .bar-item-price small { font-size: 12px; color: rgba(212,168,67,.5); }
+        .bar-qty-row { display: flex; align-items: center; background: rgba(255,255,255,.06); border-radius: 30px; overflow: hidden; border: .5px solid rgba(255,255,255,.1); }
+        .bar-qty-btn { width: 36px; height: 36px; border: none; background: transparent; color: var(--cream); font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .2s; font-family: 'Jost', sans-serif; line-height: 1; }
+        .bar-qty-btn:hover { background: rgba(192,24,90,.3); }
+        .bar-qty-btn.minus { border-radius: 30px 0 0 30px; }
+        .bar-qty-btn.plus  { border-radius: 0 30px 30px 0; background: var(--pink); }
+        .bar-qty-btn.plus:hover { background: var(--pink-light); }
+        .bar-qty-val { flex: 1; text-align: center; font-size: 15px; font-weight: 500; color: var(--cream); user-select: none; }
+
+        /* Bar cart panel reuses shared cart styles but with bar-specific IDs */
+        .bar-cart-item-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: .5px solid rgba(255,255,255,.05); }
+        .bar-cart-item-row:last-child { border-bottom: none; }
+        .bar-ci-name { font-size: 13px; color: var(--cream); max-width: 140px; }
+        .bar-ci-qty  { font-size: 12px; color: rgba(248,243,236,.4); margin-top: 1px; }
+        .bar-ci-price { font-family: 'Cormorant Garamond', serif; font-size: 16px; color: var(--gold-light); }
+        .bar-cart-empty { color: rgba(248,243,236,.3); font-size: 13px; text-align: center; margin-top: 24px; font-style: italic; }
+
+        /* ══════════════════════════════════════════
+           DINE-IN OVERLAY
+        ══════════════════════════════════════════ */
+        #dineCategoryScreen { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+        .dine-cat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; padding: 32px 60px; }
+        .dine-cat-card {
+            position: relative; width: 100%; height: 220px; border-radius: 18px; overflow: hidden;
+            cursor: pointer; background: #0a100a center/cover no-repeat; transition: all .3s ease;
+        }
+        .dine-cat-card:hover { transform: translateY(-4px) scale(1.01); box-shadow: 0 10px 28px rgba(0,0,0,.5), 0 0 0 1px rgba(212,168,67,.5); }
+        .dine-cat-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(8,6,2,0.92) 0%, rgba(8,6,2,0.30) 55%, rgba(8,6,2,0.05) 100%); transition: opacity .3s; }
+        .dine-cat-card:hover::before { opacity: .82; }
+        .dine-cat-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--gold), var(--pink), transparent); transform: scaleX(0); transform-origin: left; transition: transform .4s ease; }
+        .dine-cat-card:hover::after { transform: scaleX(1); }
+        .dine-cat-img { position: absolute; inset: 0; width: 100%; height: 100%; background: center/cover no-repeat; transition: transform .55s cubic-bezier(0.23,1,0.32,1); }
+        .dine-cat-card:hover .dine-cat-img { transform: scale(1.04); }
+        .dine-cat-body { position: absolute; bottom: 0; left: 0; right: 0; padding: 16px 18px; z-index: 2; }
+        .dine-cat-icon { font-size: 22px; margin-bottom: 4px; }
+        .dine-cat-name { font-size: 17px; font-weight: 600; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,.6); transition: color .25s; }
+        .dine-cat-card:hover .dine-cat-name { color: var(--gold-light); }
+        .dine-cat-sub { font-size: 11px; color: rgba(255,255,255,.5); margin-top: 2px; letter-spacing: .04em; }
+
+        #dinePackagesScreen { flex: 1; display: none; flex-direction: column; overflow: hidden; }
+        #dinePackagesScreen.visible { display: flex; }
+        .dine-pkg-label { padding: 18px 52px 8px; font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; color: var(--gold-light); letter-spacing: .05em; text-transform: uppercase; flex-shrink: 0; }
+        .dine-pkg-scroll {
+            flex: 1; overflow-y: auto; overflow-x: hidden;
+            display: grid; grid-template-columns: repeat(3, minmax(0,1fr));
+            gap: 20px; padding: 12px 52px 24px; align-content: start;
+        }
+
+        /* Card: full-bleed image; slot overlay appears on click */
+        .dine-pkg-card {
+            background: rgba(18,12,4,0.92); border: .5px solid rgba(212,168,67,.2);
+            border-radius: 16px; overflow: hidden; cursor: pointer;
+            position: relative; height: 280px;
+            transition: border-color .3s, box-shadow .3s, transform .25s;
+        }
+        .dine-pkg-card:hover { border-color: rgba(212,168,67,.5); box-shadow: 0 8px 28px rgba(0,0,0,.5); transform: translateY(-3px); }
+        .dine-pkg-card.expanded { border-color: rgba(212,168,67,.8); box-shadow: 0 12px 36px rgba(0,0,0,.6), 0 0 0 1px rgba(212,168,67,.35); transform: translateY(0); }
+
+        /* Full-bleed image fills entire card */
+        .dine-pkg-bg {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            background: #12100a center/cover no-repeat;
+        }
+        /* Title label sits at the bottom of the image (always visible) */
+        .dine-card-overlay-label {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            padding: 48px 16px 14px;
+            background: linear-gradient(to top, rgba(8,6,2,0.96) 0%, rgba(8,6,2,0.0) 100%);
+            transition: opacity .3s;
+        }
+        .dine-pkg-card.expanded .dine-card-overlay-label { opacity: 0; pointer-events: none; }
+        .dine-pkg-name { font-size: 15px; font-weight: 600; color: var(--cream); margin-bottom: 2px; }
+        .dine-pkg-desc { font-size: 11px; color: rgba(248,243,236,.45); margin-bottom: 4px; letter-spacing: .03em; font-style: italic; }
+        .dine-card-tap-hint {
+            font-size: 10px; letter-spacing: .25em; text-transform: uppercase;
+            color: var(--gold-light); opacity: .7;
+        }
+
+        /* Slot panel — overlays the card on click, does NOT push content down */
+        .dine-slot-panel {
+            position: absolute; inset: 0; z-index: 5;
+            opacity: 0; pointer-events: none;
+            transition: opacity .35s ease;
+            background: rgba(10,8,2,0.93);
+            backdrop-filter: blur(8px);
+            display: flex; flex-direction: column; justify-content: flex-end;
+            padding: 14px 16px 16px;
+        }
+        .dine-pkg-card.expanded .dine-slot-panel { opacity: 1; pointer-events: all; }
+        .dine-slots { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 12px; }
+        .dine-slot-badge {
+            background: rgba(255,255,255,.07); border: .5px solid rgba(255,255,255,.18);
+            color: rgba(248,243,236,.65); font-size: 11px; font-family: 'Jost', sans-serif;
+            padding: 5px 12px; border-radius: 20px; cursor: pointer; transition: all .2s;
+        }
+        .dine-slot-badge:hover { background: rgba(212,168,67,.2); border-color: rgba(212,168,67,.5); color: var(--cream); }
+        .dine-slot-badge.selected { background: var(--gold-dim); border-color: var(--gold); color: var(--gold-light); font-weight: 500; }
+        .dine-book-btn {
+            width: 100%; padding: 11px; background: linear-gradient(135deg, #b8860b, var(--gold)); border: none; color: #0e0608;
+            border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 600;
+            letter-spacing: .2em; text-transform: uppercase; cursor: pointer; transition: opacity .25s, box-shadow .25s;
+        }
+        .dine-book-btn:hover { opacity: .88; box-shadow: 0 0 20px rgba(212,168,67,.4); }
+
+        /* Dine confirm modal */
+        .dine-confirm-overlay {
+            position: fixed; inset: 0; z-index: 200; display: none;
+            align-items: center; justify-content: center;
+            background: rgba(0,0,0,.72); backdrop-filter: blur(10px);
+        }
+        .dine-confirm-overlay.active { display: flex; }
+        .dine-confirm-modal {
+            background: linear-gradient(160deg, rgba(18,14,4,0.99), rgba(8,4,2,0.99));
+            border: .5px solid rgba(212,168,67,.4); border-radius: 22px;
+            padding: 40px 44px 36px; max-width: 480px; width: 90%; text-align: center; position: relative;
+        }
+        .dine-confirm-icon { font-size: 40px; margin-bottom: 14px; }
+        .dine-confirm-title { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 300; color: var(--cream); margin-bottom: 4px; }
+        .dine-confirm-occ { font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; }
+        .dine-confirm-details { background: rgba(255,255,255,.05); border: .5px solid rgba(255,255,255,.1); border-radius: 12px; padding: 16px 20px; margin-bottom: 22px; text-align: left; }
+        .dine-confirm-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: .5px solid rgba(255,255,255,.06); }
+        .dine-confirm-row:last-child { border-bottom: none; }
+        .dine-confirm-row-label { font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: rgba(248,243,236,.4); }
+        .dine-confirm-row-val { font-size: 14px; font-weight: 500; color: var(--cream); }
+        .dine-confirm-sub { font-size: 12px; color: rgba(248,243,236,.35); margin-bottom: 22px; font-style: italic; }
+        .dine-confirm-actions { display: flex; gap: 12px; }
+        .dine-cancel-btn { flex: 1; padding: 13px; background: rgba(255,255,255,.07); border: .5px solid rgba(255,255,255,.15); color: rgba(248,243,236,.6); border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; cursor: pointer; transition: all .2s; }
+        .dine-cancel-btn:hover { background: rgba(255,255,255,.12); color: var(--cream); }
+        .dine-confirm-btn { flex: 2; padding: 13px; background: linear-gradient(135deg, #b8860b, var(--gold)); border: none; color: #0e0608; border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; cursor: pointer; transition: opacity .25s, box-shadow .25s; }
+        .dine-confirm-btn:hover { opacity: .88; box-shadow: 0 0 24px rgba(212,168,67,.4); }
+        .dine-confirm-btn:disabled { opacity: .3; cursor: default; box-shadow: none; }
+        /* ══════════════════════════════════════════
+           ENTERTAINMENT OVERLAY
+        ══════════════════════════════════════════ */
+        #entCategoryScreen { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+        .ent-cat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; padding: 32px 60px; }
+        .ent-cat-card {
+            position: relative; width: 100%; height: 230px; border-radius: 18px; overflow: hidden;
+            cursor: pointer; background: #0a0a1a center/cover no-repeat; transition: all .3s ease;
+        }
+        .ent-cat-card:hover { transform: translateY(-4px) scale(1.01); box-shadow: 0 10px 28px rgba(0,0,0,.5), 0 0 0 1px rgba(192,24,90,.4); }
+        .ent-cat-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(4,4,14,0.9) 0%, rgba(4,4,14,0.25) 55%, rgba(4,4,14,0.05) 100%); transition: opacity .3s; }
+        .ent-cat-card:hover::before { opacity: .85; }
+        .ent-cat-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--pink), var(--gold), transparent); transform: scaleX(0); transform-origin: left; transition: transform .4s ease; }
+        .ent-cat-card:hover::after { transform: scaleX(1); }
+        .ent-cat-img { position: absolute; inset: 0; width: 100%; height: 100%; background: center/cover no-repeat; transition: transform .5s cubic-bezier(0.23,1,0.32,1); }
+        .ent-cat-card:hover .ent-cat-img { transform: scale(1.04); }
+        .ent-cat-body { position: absolute; bottom: 0; left: 0; right: 0; padding: 16px 18px; z-index: 2; }
+        .ent-cat-name { font-size: 17px; font-weight: 600; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,.6); transition: color .25s; }
+        .ent-cat-card:hover .ent-cat-name { color: var(--gold-light); }
+        .ent-cat-sub { font-size: 11px; color: rgba(255,255,255,.5); margin-top: 3px; letter-spacing: .04em; }
+
+        #entActivitiesScreen { flex: 1; display: none; flex-direction: column; overflow: hidden; }
+        #entActivitiesScreen.visible { display: flex; }
+        .ent-activities-label { padding: 18px 52px 8px; font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; color: var(--gold-light); letter-spacing: .05em; flex-shrink: 0; }
+        .ent-activities-scroll {
+            flex: 1; overflow-y: auto; overflow-x: hidden;
+            display: grid; grid-template-columns: repeat(3, minmax(0,1fr));
+            gap: 20px; padding: 12px 52px 24px; align-content: start;
+        }
+
+        .ent-activity-card {
+            background: rgba(6,6,18,0.9); border: .5px solid rgba(192,24,90,.2);
+            border-radius: 16px; overflow: hidden; cursor: pointer;
+            position: relative; height: 280px;
+            transition: border-color .3s, box-shadow .3s, transform .25s;
+        }
+        .ent-activity-card:hover { border-color: rgba(192,24,90,.5); box-shadow: 0 8px 28px rgba(0,0,0,.5); transform: translateY(-3px); }
+        .ent-activity-card.expanded { border-color: rgba(192,24,90,.7); box-shadow: 0 12px 36px rgba(0,0,0,.6), 0 0 0 1px rgba(192,24,90,.4); transform: translateY(0); }
+
+        .ent-activity-bg {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            background: #06060e center/cover no-repeat;
+        }
+        .ent-card-overlay-label {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            padding: 48px 14px 14px;
+            background: linear-gradient(to top, rgba(4,4,14,0.96) 0%, rgba(4,4,14,0.0) 100%);
+            transition: opacity .3s;
+        }
+        .ent-activity-card.expanded .ent-card-overlay-label { opacity: 0; pointer-events: none; }
+        .ent-activity-name { font-size: 15px; font-weight: 600; color: var(--cream); margin-bottom: 4px; }
+        .ent-activity-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 3px; }
+        .ent-activity-cat { font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: rgba(248,243,236,.45); }
+        .ent-activity-price { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: var(--gold-light); }
+        .ent-activity-venue { font-size: 10px; color: rgba(248,243,236,.4); margin-bottom: 4px; }
+        .ent-card-tap-hint { font-size: 10px; letter-spacing: .25em; text-transform: uppercase; color: var(--pink-light); opacity: .75; }
+
+        .ent-slot-panel {
+            position: absolute; inset: 0; z-index: 5;
+            opacity: 0; pointer-events: none;
+            transition: opacity .35s ease;
+            background: rgba(6,6,20,0.93);
+            backdrop-filter: blur(8px);
+            display: flex; flex-direction: column; justify-content: flex-end;
+            padding: 14px 14px 16px;
+        }
+        .ent-activity-card.expanded .ent-slot-panel { opacity: 1; pointer-events: all; }
+        .ent-slots { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 12px; }
+        .ent-slot-badge {
+            background: rgba(255,255,255,.07); border: .5px solid rgba(255,255,255,.18);
+            color: rgba(248,243,236,.65); font-size: 11px; font-family: 'Jost', sans-serif;
+            padding: 5px 12px; border-radius: 20px; cursor: pointer; transition: all .2s;
+        }
+        .ent-slot-badge:hover { background: rgba(192,24,90,.2); border-color: rgba(192,24,90,.5); color: var(--cream); }
+        .ent-slot-badge.selected { background: var(--pink-dim); border-color: var(--pink-light); color: var(--pink-light); font-weight: 500; }
+        .ent-book-slot-btn {
+            width: 100%; padding: 11px; background: var(--pink); border: none; color: #fff;
+            border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 500;
+            letter-spacing: .25em; text-transform: uppercase; cursor: pointer; transition: background .25s, box-shadow .25s;
+        }
+        .ent-book-slot-btn:hover { background: var(--pink-light); box-shadow: 0 0 20px rgba(192,24,90,.4); }
+
+        /* Entertainment confirm modal */
+        .ent-confirm-overlay {
+            position: fixed; inset: 0; z-index: 200; display: none;
+            align-items: center; justify-content: center;
+            background: rgba(0,0,0,.72); backdrop-filter: blur(10px);
+        }
+        .ent-confirm-overlay.active { display: flex; }
+        .ent-confirm-modal {
+            background: linear-gradient(160deg, rgba(6,6,20,0.99), rgba(20,4,12,0.99));
+            border: .5px solid rgba(192,24,90,.35); border-radius: 22px;
+            padding: 40px 44px 36px; max-width: 460px; width: 90%; text-align: center; position: relative;
+        }
+        .ent-confirm-icon { font-size: 38px; margin-bottom: 16px; }
+        .ent-confirm-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; color: var(--cream); margin-bottom: 4px; }
+        .ent-confirm-cat { font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); margin-bottom: 22px; }
+        .ent-confirm-details { background: rgba(255,255,255,.05); border: .5px solid rgba(255,255,255,.1); border-radius: 12px; padding: 18px 20px; margin-bottom: 24px; text-align: left; }
+        .ent-confirm-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: .5px solid rgba(255,255,255,.06); }
+        .ent-confirm-row:last-child { border-bottom: none; }
+        .ent-confirm-row-label { font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: rgba(248,243,236,.4); }
+        .ent-confirm-row-val { font-size: 14px; font-weight: 500; color: var(--cream); }
+        .ent-confirm-actions { display: flex; gap: 12px; }
+        .ent-cancel-btn { flex: 1; padding: 13px; background: rgba(255,255,255,.07); border: .5px solid rgba(255,255,255,.15); color: rgba(248,243,236,.6); border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; cursor: pointer; transition: all .2s; }
+        .ent-cancel-btn:hover { background: rgba(255,255,255,.12); color: var(--cream); }
+        .ent-confirm-btn { flex: 2; padding: 13px; background: var(--pink); border: none; color: #fff; border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: .25em; text-transform: uppercase; cursor: pointer; transition: background .25s, box-shadow .25s; }
+        .ent-confirm-btn:hover { background: var(--pink-light); box-shadow: 0 0 24px rgba(192,24,90,.4); }
+        .ent-confirm-btn:disabled { background: rgba(192,24,90,.2); color: rgba(255,255,255,.3); cursor: default; box-shadow: none; }
+
+        /* ══════════════════════════════════════════
+           ROOM SERVICE OVERLAY
+        ══════════════════════════════════════════ */
+        #rsGrid {
+            flex: 1; overflow-y: auto; overflow-x: hidden;
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 24px;
+            padding: 32px 60px;
+            align-content: start;
+        }
+        .rs-loading {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: rgba(248,243,236,.35);
+            font-style: italic;
+            padding: 60px 0;
+            font-size: 15px;
+        }
+        .rs-card {
+            background: rgba(20,4,12,0.88);
+            border: .5px solid rgba(192,24,90,.2);
+            border-radius: 18px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: border-color .3s, box-shadow .3s, transform .25s;
+            display: flex; flex-direction: column;
+        }
+        .rs-card:hover {
+            border-color: rgba(192,24,90,.5);
+            box-shadow: 0 8px 28px rgba(0,0,0,.5), 0 0 18px rgba(192,24,90,.12);
+            transform: translateY(-4px);
+        }
+        .rs-card-img {
+            width: 100%; height: 160px;
+            background: #1a0510 center/cover no-repeat;
+            flex-shrink: 0;
+        }
+        .rs-card-body {
+            padding: 16px 18px 18px;
+            display: flex; flex-direction: column; gap: 5px; flex: 1;
+        }
+        .rs-card-icon { font-size: 22px; }
+        .rs-card-title {
+            font-size: 16px; font-weight: 600;
+            color: var(--cream); line-height: 1.25;
+            transition: color .25s;
+        }
+        .rs-card:hover .rs-card-title { color: var(--gold-light); }
+        .rs-card-desc {
+            font-size: 12px; color: rgba(248,243,236,.45);
+            font-weight: 300; line-height: 1.5;
+        }
+        .rs-request-btn {
+            margin-top: auto; padding-top: 8px;
+            width: 100%; padding: 10px;
+            background: var(--pink-dim); border: .5px solid rgba(192,24,90,.45);
+            color: #f080a8; border-radius: 10px;
+            font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 500;
+            letter-spacing: .25em; text-transform: uppercase;
+            cursor: pointer; transition: background .25s, box-shadow .25s;
+        }
+        .rs-card:hover .rs-request-btn {
+            background: rgba(192,24,90,.3);
+            box-shadow: 0 0 14px rgba(192,24,90,.25);
+        }
+        .rs-confirm-overlay {
+            position: fixed; inset: 0; z-index: 200; display: none;
+            align-items: center; justify-content: center;
+            background: rgba(0,0,0,.75); backdrop-filter: blur(12px);
+        }
+        .rs-confirm-overlay.active { display: flex; }
+        .rs-confirm-modal {
+            background: linear-gradient(160deg, rgba(20,4,12,0.99), rgba(8,2,5,0.99));
+            border: .5px solid rgba(192,24,90,.35); border-radius: 22px;
+            padding: 40px 44px 36px; max-width: 480px; width: 92%;
+            text-align: center; position: relative;
+        }
+        .rs-confirm-icon { font-size: 44px; margin-bottom: 12px; }
+        .rs-confirm-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 30px; font-weight: 300; color: var(--cream); margin-bottom: 4px;
+        }
+        .rs-confirm-desc {
+            font-size: 13px; color: rgba(248,243,236,.45);
+            font-style: italic; margin-bottom: 20px; line-height: 1.6;
+        }
+        .rs-confirm-details {
+            background: rgba(255,255,255,.05); border: .5px solid rgba(255,255,255,.1);
+            border-radius: 12px; padding: 14px 20px; margin-bottom: 18px; text-align: left;
+        }
+        .rs-confirm-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 6px 0; border-bottom: .5px solid rgba(255,255,255,.06);
+        }
+        .rs-confirm-row:last-child { border-bottom: none; }
+        .rs-confirm-row-label {
+            font-size: 11px; letter-spacing: .15em; text-transform: uppercase;
+            color: rgba(248,243,236,.4);
+        }
+        .rs-confirm-row-val { font-size: 14px; font-weight: 500; color: var(--cream); }
+        .rs-note-label {
+            font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+            color: rgba(212,168,67,.6); text-align: left; margin-bottom: 6px;
+            display: block;
+        }
+        .rs-note-input {
+            width: 100%; background: rgba(255,255,255,.05);
+            border: .5px solid rgba(255,255,255,.15); border-radius: 10px;
+            color: var(--cream); font-family: 'Jost', sans-serif; font-size: 13px;
+            padding: 10px 14px; resize: none; outline: none; margin-bottom: 20px;
+            transition: border-color .2s;
+        }
+        .rs-note-input:focus { border-color: rgba(192,24,90,.5); }
+        .rs-confirm-actions { display: flex; gap: 12px; }
+        .rs-cancel-btn {
+            flex: 1; padding: 13px;
+            background: rgba(255,255,255,.07); border: .5px solid rgba(255,255,255,.15);
+            color: rgba(248,243,236,.6); border-radius: 10px;
+            font-family: 'Jost', sans-serif; font-size: 12px;
+            letter-spacing: .2em; text-transform: uppercase; cursor: pointer; transition: all .2s;
+        }
+        .rs-cancel-btn:hover { background: rgba(255,255,255,.12); color: var(--cream); }
+        .rs-send-btn {
+            flex: 2; padding: 13px;
+            background: linear-gradient(135deg, var(--pink), var(--pink-light));
+            border: none; color: #fff; border-radius: 10px;
+            font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 600;
+            letter-spacing: .2em; text-transform: uppercase; cursor: pointer;
+            transition: opacity .25s, box-shadow .25s;
+        }
+        .rs-send-btn:hover { opacity: .88; box-shadow: 0 0 24px rgba(192,24,90,.45); }
+        .rs-send-btn:disabled { opacity: .3; cursor: default; box-shadow: none; }
+
+        /* ══════════════════════════════════════════
+           MY ORDERS OVERLAY
+        ══════════════════════════════════════════ */
+        #myOrdersOverlay {
+            position: fixed; inset: 0; z-index: 100;
+            display: none; flex-direction: column;
+            background: rgba(8,2,5,0.97);
+            backdrop-filter: blur(24px);
+        }
+        #myOrdersOverlay.active { display: flex; }
+        .mo-panel {
+            width: min(600px, 96vw); margin: 0 auto;
+            padding: 32px 40px 40px; overflow-y: auto; height: 100%;
+        }
+        .mo-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 28px; padding-bottom: 18px;
+            border-bottom: .5px solid rgba(192,24,90,.15);
+        }
+        .mo-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 36px; font-weight: 300; color: var(--cream); letter-spacing: .02em;
+        }
+        .mo-title em { color: var(--gold-light); font-style: italic; }
+</style>
+</head>
+<body>
+
+<div class="sky"></div>
+<div class="sun"></div>
+<canvas id="bgCanvas"></canvas>
+<canvas id="fgCanvas"></canvas>
+
+<div class="sugarcane-left">🌾🌿🌾</div>
+<div class="sugarcane-right">🌾🌿🌾</div>
+
+<div class="kolam-top">
+    <span class="banner-emoji">🌾</span>
+    <span class="banner-emoji">🌺</span>
+    <span class="banner-text">Happy Pongal! — பொங்கல் வாழ்த்துக்கள்</span>
+    <span class="banner-emoji">🌺</span>
+    <span class="banner-emoji">🌾</span>
+</div>
+
+<svg class="garland-svg" viewBox="0 0 1440 30" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 8 Q60 24 120 8 Q180 24 240 8 Q300 24 360 8 Q420 24 480 8 Q540 24 600 8 Q660 24 720 8 Q780 24 840 8 Q900 24 960 8 Q1020 24 1080 8 Q1140 24 1200 8 Q1260 24 1320 8 Q1380 24 1440 8" fill="none" stroke="#e65100" stroke-width="2.5" opacity="0.8"/>
+</svg>
+<div class="garland-bar" id="garland"></div>
+
+<!-- LANDSCAPE -->
+<div class="landscape">
+<svg viewBox="0 0 1440 220" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="fieldGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#7cb342"/><stop offset="100%" stop-color="#33691e"/></linearGradient>
+    <linearGradient id="earthGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#a1887f"/><stop offset="100%" stop-color="#6d4c41"/></linearGradient>
+  </defs>
+  <ellipse cx="250" cy="240" rx="350" ry="100" fill="#8bc34a" opacity="0.45"/>
+  <ellipse cx="1200" cy="240" rx="380" ry="110" fill="#8bc34a" opacity="0.45"/>
+  <path d="M0 130 Q180 90 360 115 Q540 140 720 105 Q900 70 1080 110 Q1260 145 1440 100 L1440 220 L0 220 Z" fill="url(#fieldGrad)"/>
+  <path d="M0 160 Q180 135 360 148 Q540 160 720 140 Q900 120 1080 140 Q1260 158 1440 135 L1440 220 L0 220 Z" fill="url(#earthGrad)" opacity="0.7"/>
+  <g stroke="#558b2f" stroke-width="1.5" opacity="0.4">
+    <path d="M0 148 Q360 128 720 148 Q1080 165 1440 135"/>
+    <path d="M0 160 Q360 140 720 158 Q1080 175 1440 148"/>
+  </g>
+  <rect x="80" y="100" width="70" height="50" fill="#a1887f" rx="2"/>
+  <polygon points="65,100 115,72 165,100" fill="#8d6e63"/>
+  <rect x="108" y="118" width="14" height="32" fill="#6d4c41"/>
+  <rect x="86" y="108" width="12" height="10" fill="#ffcc80" rx="1"/>
+  <rect x="138" y="108" width="12" height="10" fill="#ffcc80" rx="1"/>
+  <path d="M65,100 Q115,78 165,100" fill="none" stroke="#795548" stroke-width="3"/>
+  <rect x="1290" y="95" width="80" height="55" fill="#a1887f" rx="2"/>
+  <polygon points="1275,95 1330,65 1385,95" fill="#8d6e63"/>
+  <rect x="1320" y="115" width="16" height="35" fill="#6d4c41"/>
+  <rect x="1296" y="103" width="13" height="11" fill="#ffcc80" rx="1"/>
+  <rect x="1351" y="103" width="13" height="11" fill="#ffcc80" rx="1"/>
+  <rect x="220" y="90" width="7" height="70" fill="#795548"/>
+  <ellipse cx="223" cy="90" rx="25" ry="16" fill="#388e3c" transform="rotate(-12,223,90)"/>
+  <ellipse cx="223" cy="90" rx="22" ry="14" fill="#43a047" transform="rotate(14,223,90)"/>
+  <ellipse cx="223" cy="90" rx="20" ry="12" fill="#66bb6a" transform="rotate(0,223,90)"/>
+  <rect x="1200" y="85" width="7" height="75" fill="#795548"/>
+  <ellipse cx="1203" cy="85" rx="26" ry="17" fill="#388e3c" transform="rotate(12,1203,85)"/>
+  <ellipse cx="1203" cy="85" rx="23" ry="14" fill="#43a047" transform="rotate(-14,1203,85)"/>
+  <ellipse cx="1203" cy="85" rx="20" ry="12" fill="#66bb6a" transform="rotate(0,1203,85)"/>
+  <rect x="420" y="95" width="8" height="65" fill="#558b2f"/>
+  <ellipse cx="424" cy="95" rx="18" ry="28" fill="#8bc34a" transform="rotate(-20,424,95)"/>
+  <ellipse cx="424" cy="95" rx="16" ry="26" fill="#aed581" transform="rotate(20,424,95)"/>
+  <rect x="690" y="65" width="60" height="85" fill="#bf8a60"/>
+  <rect x="698" y="55" width="44" height="15" fill="#a0714a"/>
+  <rect x="706" y="44" width="28" height="14" fill="#bf8a60"/>
+  <rect x="712" y="35" width="16" height="12" fill="#a0714a"/>
+  <polygon points="710,35 720,22 730,35" fill="#d4a574"/>
+  <rect x="690" y="78" width="60" height="3" fill="#a0714a"/>
+  <rect x="690" y="92" width="60" height="3" fill="#a0714a"/>
+  <rect x="695" y="108" width="50" height="3" fill="#a0714a"/>
+  <rect x="710" y="118" width="20" height="32" rx="10" fill="#6d4c41"/>
+  <circle cx="720" cy="115" r="4" fill="#ffca28"/>
+</svg>
+</div>
+
+<svg class="kolam-floor" width="200" height="80" viewBox="0 0 200 80">
+    <g fill="none" stroke="white" stroke-width="1.5" opacity="0.7">
+        <circle cx="100" cy="40" r="35"/><circle cx="100" cy="40" r="25"/><circle cx="100" cy="40" r="15"/>
+        <line x1="65" y1="40" x2="135" y2="40"/><line x1="100" y1="5" x2="100" y2="75"/>
+        <line x1="75" y1="15" x2="125" y2="65"/><line x1="125" y1="15" x2="75" y2="65"/>
+        <ellipse cx="100" cy="18" rx="6" ry="10" transform="rotate(0,100,40)"/>
+        <ellipse cx="100" cy="18" rx="6" ry="10" transform="rotate(45,100,40)"/>
+        <ellipse cx="100" cy="18" rx="6" ry="10" transform="rotate(90,100,40)"/>
+        <ellipse cx="100" cy="18" rx="6" ry="10" transform="rotate(135,100,40)"/>
+        <ellipse cx="100" cy="18" rx="6" ry="10" transform="rotate(180,100,40)"/>
+        <ellipse cx="100" cy="18" rx="6" ry="10" transform="rotate(225,100,40)"/>
+        <ellipse cx="100" cy="18" rx="6" ry="10" transform="rotate(270,100,40)"/>
+        <ellipse cx="100" cy="18" rx="6" ry="10" transform="rotate(315,100,40)"/>
+    </g>
+    <g fill="var(--saffron)" opacity="0.5">
+        <circle cx="100" cy="5" r="3"/><circle cx="100" cy="75" r="3"/>
+        <circle cx="65" cy="40" r="3"/><circle cx="135" cy="40" r="3"/>
+    </g>
+</svg>
+
+<div class="pot-wrap">
+    <div class="steam"><div class="steam-line"></div><div class="steam-line"></div><div class="steam-line"></div></div>
+    <div style="position:relative;">
+        <span class="pot-emoji">🪔</span>
+        <div class="milk-overflow">🍚</div>
+    </div>
+    <div class="fire-row">
+        <div class="fire">🔥</div><div class="fire">🔥</div><div class="fire">🔥</div>
+    </div>
+</div>
+
+<div id="petals"></div>
+
+<!-- FOOD OVERLAY -->
+<div class="food-overlay" id="foodOverlay">
+    <div class="food-topbar">
+        <div class="food-topbar-left">
+            <button class="food-back-btn" onclick="foodGoBack()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 12H5M5 12l7 7M5 12l7-7"/></svg>
+                <span id="foodBackLabel">Home</span>
+            </button>
+            <div class="food-page-title" id="foodPageTitle">Food <em>Menu</em></div>
+        </div>
+    </div>
+    <div id="foodCategoryScreen"><div class="cat-grid" id="catGrid"></div></div>
+    <div id="foodItemsScreen">
+        <div class="items-main">
+            <div class="items-cat-label" id="itemsCatLabel">Menu</div>
+            <div class="items-scroll" id="itemsScroll"></div>
+        </div>
+        <div class="cart-panel">
+            <div class="cart-panel-title">Your <em>Cart</em></div>
+            <div class="cart-divider"></div>
+            <div class="cart-items-list" id="cartList"><div class="cart-empty">No items yet</div></div>
+            <div class="cart-total-row">
+                <span class="cart-total-label">Total</span>
+                <span class="cart-total-amt"><small>₹</small><span id="cartTotal">0</span></span>
+            </div>
+            <button class="cart-clear-btn" onclick="clearCart()">Clear Cart</button>
+            <button class="cart-place-btn" id="placeOrderBtn" onclick="placeOrder()" disabled>Place Order</button>
+        </div>
+    </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+    <div class="header">
+        <div class="tamil-sub">🌾 இனிய பொங்கல் நல்வாழ்த்துக்கள் 🌾</div>
+        <h1 id="guestName">Happy Pongal,<br>Dear Guest!</h1>
+        <div class="tamil-title">பொங்கலோ பொங்கல்! 🌾</div>
+        <div class="room-badge">🪔  <span id="roomNo">—</span> 🪔</div>
+        <p class="tagline">Celebrate the harvest, prosperity &amp; the sacred bond with nature</p>
+        <p class="custom-msg" id="customMessage">May this Pongal bring joy, abundance &amp; sweet moments! 🍚</p>
+        <div class="icon-row">
+            <div class="icon-item">🐄</div>
+            <div class="icon-item">🌾</div>
+            <div class="icon-item">🪔</div>
+            <div class="icon-item">🌺</div>
+        </div>
+    </div>
+
+    <!-- ACTIVITIES — populated by common.js -->
+    <div class="activities">
+        <div class="panel-title">🌾 Pongal Celebrations</div>
+        <div id="activities-list">
+            <div class="act-card">Loading…</div>
+        </div>
+    </div>
+
+    <!-- SERVICES — populated by common.js -->
+    <div class="services">
+        <div class="services-label">✦ Hotel Services ✦</div>
+        <div class="services-row" id="services-container"></div>
+    </div>
+</div>
+
+<div class="live-tv">
+    <button onclick="window.location.href='/live-tv'">📺 Watch Live TV</button>
+
+    <button onclick="openMyOrders()" style="margin-top:10px;">My Bookings</button>
+</div>
+
+<!-- ── PAGE-SPECIFIC SCRIPTS ── -->
+<script>
+/* ── GARLAND ── */
+const garlandEl=document.getElementById('garland');
+['🌼','🌺','🌸','🏵','🌼','🌸','🌺','🏵','🌼','🌺','🌸','🏵','🌼','🌸','🌺','🏵','🌼','🌺'].forEach((g,i)=>{
+    const f=document.createElement('div'); f.className='marigold';
+    f.style.cssText=`animation-duration:${1.4+Math.random()*0.8}s;animation-delay:${i*0.12}s;`;
+    f.textContent=g; garlandEl.appendChild(f);
+});
+
+/* ── PETALS ── */
+const petalsEl=document.getElementById('petals');
+const petalList=['🌸','🌺','🌼','🏵','🌻'];
+for(let i=0;i<22;i++){
+    const p=document.createElement('div'); p.className='petal';
+    p.style.cssText=`left:${Math.random()*100}%;animation-duration:${7+Math.random()*10}s;animation-delay:${Math.random()*12}s;font-size:${10+Math.random()*10}px;`;
+    p.textContent=petalList[Math.floor(Math.random()*petalList.length)]; petalsEl.appendChild(p);
+}
+
+/* ── BG CANVAS: Birds + Smoke ── */
+const bgc=document.getElementById('bgCanvas'),bgx=bgc.getContext('2d');
+function resizeBG(){bgc.width=innerWidth;bgc.height=innerHeight;} resizeBG(); addEventListener('resize',resizeBG);
+class Bird{constructor(){this.reset(true);}reset(init=false){this.x=init?Math.random()*bgc.width:-60;this.y=70+Math.random()*(bgc.height*0.3);this.speed=1.2+Math.random()*1.5;this.size=4+Math.random()*4;this.wingT=Math.random()*Math.PI*2;this.wingSpeed=0.12+Math.random()*0.08;this.alpha=0.6+Math.random()*0.4;this.flock=Math.floor(Math.random()*3);}update(){this.x+=this.speed;this.wingT+=this.wingSpeed;if(this.x>bgc.width+80)this.reset();}draw(ctx){ctx.save();ctx.globalAlpha=this.alpha;ctx.strokeStyle='#4e342e';ctx.lineWidth=this.size*0.35;ctx.lineCap='round';const wing=Math.sin(this.wingT)*this.size*1.2;for(let k=0;k<=this.flock;k++){const ox=k*20,oy=k*8;ctx.beginPath();ctx.moveTo(this.x-this.size+ox,this.y+wing*0.5+oy);ctx.quadraticCurveTo(this.x+ox,this.y-wing+oy,this.x+this.size+ox,this.y+wing*0.5+oy);ctx.stroke();}ctx.restore();}}
+class Smoke{constructor(x,baseY){this.bx=x;this.by=baseY;this.reset();}reset(){this.x=this.bx+(Math.random()-0.5)*10;this.y=this.by;this.alpha=0.3+Math.random()*0.2;this.size=4+Math.random()*6;this.vy=-(0.4+Math.random()*0.4);this.vx=(Math.random()-0.5)*0.4;}update(){this.y+=this.vy;this.x+=this.vx;this.size+=0.12;this.alpha-=0.004;if(this.alpha<=0)this.reset();}draw(ctx){ctx.save();ctx.globalAlpha=this.alpha;ctx.fillStyle='rgba(200,180,160,0.6)';ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,Math.PI*2);ctx.fill();ctx.restore();}}
+const birds=Array.from({length:8},()=>new Bird());
+const smokes=[...Array.from({length:5},()=>new Smoke(120,115)),...Array.from({length:5},()=>new Smoke(1325,108))];
+function animBG(){bgx.clearRect(0,0,bgc.width,bgc.height);smokes.forEach(s=>{s.update();s.draw(bgx);});birds.forEach(b=>{b.update();b.draw(bgx);});requestAnimationFrame(animBG);}
+animBG();
+
+/* ── FG CANVAS: Cows + Steam ── */
+const fgc=document.getElementById('fgCanvas'),fctx=fgc.getContext('2d');
+function resizeFG(){fgc.width=innerWidth;fgc.height=innerHeight;} resizeFG(); addEventListener('resize',resizeFG);
+class Cow{constructor(startLeft){this.dir=startLeft?1:-1;this.x=startLeft?-120:fgc.width+120;this.baseY=fgc.height-168+Math.random()*18;this.speed=0.6+Math.random()*0.5;this.legT=Math.random()*Math.PI*2;this.legSpeed=0.06+Math.random()*0.04;this.scale=0.7+Math.random()*0.5;this.tailT=Math.random()*Math.PI*2;const skins=[{body:'#f5f5f5',spots:'#8d6e63'},{body:'#efebe9',spots:'#5d4037'},{body:'#fafafa',spots:'#212121'},{body:'#ffe0b2',spots:'#a1887f'}];this.skin=skins[Math.floor(Math.random()*skins.length)];this.decorated=Math.random()>0.4;}update(){this.x+=this.speed*this.dir;this.legT+=this.legSpeed;this.tailT+=0.04;if(this.dir===1&&this.x>fgc.width+150){this.x=-120;this.baseY=fgc.height-168+Math.random()*18;}if(this.dir===-1&&this.x<-150){this.x=fgc.width+120;this.baseY=fgc.height-168+Math.random()*18;}}draw(ctx){ctx.save();ctx.translate(this.x,this.baseY);if(this.dir===-1)ctx.scale(-1,1);ctx.scale(this.scale,this.scale);const bx=0,by=0,leg1=Math.sin(this.legT)*8,leg2=Math.sin(this.legT+Math.PI)*8;ctx.save();ctx.fillStyle='rgba(0,0,0,0.1)';ctx.beginPath();ctx.ellipse(bx+10,by+52,38,7,0,0,Math.PI*2);ctx.fill();ctx.restore();ctx.strokeStyle='#9e9e9e';ctx.lineWidth=6;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(bx-8,by+30);ctx.lineTo(bx-10,by+50+leg1);ctx.stroke();ctx.beginPath();ctx.moveTo(bx+8,by+30);ctx.lineTo(bx+6,by+50+leg2);ctx.stroke();ctx.fillStyle=this.skin.body;ctx.beginPath();ctx.ellipse(bx+10,by+20,42,22,0.1,0,Math.PI*2);ctx.fill();ctx.strokeStyle='rgba(0,0,0,0.1)';ctx.lineWidth=1;ctx.stroke();ctx.fillStyle=this.skin.spots;ctx.beginPath();ctx.ellipse(bx+20,by+14,12,8,0.3,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.ellipse(bx-5,by+24,8,6,-0.5,0,Math.PI*2);ctx.fill();ctx.fillStyle='#f8bbd0';ctx.beginPath();ctx.ellipse(bx+5,by+40,10,7,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#f48fb1';[[bx,by+46],[bx+8,by+46],[bx+16,by+45]].forEach(([tx,ty])=>{ctx.beginPath();ctx.arc(tx,ty,2.5,0,Math.PI*2);ctx.fill();});ctx.fillStyle=this.skin.body;ctx.beginPath();ctx.moveTo(bx-24,by+8);ctx.bezierCurveTo(bx-36,by+2,bx-44,by-10,bx-40,by-18);ctx.bezierCurveTo(bx-36,by-26,bx-22,by-20,bx-20,by+6);ctx.closePath();ctx.fill();ctx.fillStyle=this.skin.body;ctx.beginPath();ctx.ellipse(bx-44,by-20,18,15,-0.3,0,Math.PI*2);ctx.fill();ctx.fillStyle='#ffccbc';ctx.beginPath();ctx.ellipse(bx-58,by-18,9,7,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#bf8a76';ctx.beginPath();ctx.arc(bx-61,by-17,2,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(bx-55,by-17,2,0,Math.PI*2);ctx.fill();ctx.fillStyle='#1a1a1a';ctx.beginPath();ctx.arc(bx-48,by-25,3.5,0,Math.PI*2);ctx.fill();ctx.fillStyle='white';ctx.beginPath();ctx.arc(bx-47,by-26,1.2,0,Math.PI*2);ctx.fill();ctx.fillStyle=this.skin.body;ctx.beginPath();ctx.ellipse(bx-36,by-30,6,10,-0.6,0,Math.PI*2);ctx.fill();ctx.fillStyle='#ffccbc';ctx.beginPath();ctx.ellipse(bx-36,by-30,4,7,-0.6,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#d4a017';ctx.lineWidth=3;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(bx-42,by-34);ctx.quadraticCurveTo(bx-38,by-48,bx-30,by-44);ctx.stroke();ctx.beginPath();ctx.moveTo(bx-50,by-33);ctx.quadraticCurveTo(bx-50,by-48,bx-42,by-46);ctx.stroke();ctx.strokeStyle='#bdbdbd';ctx.lineWidth=6;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(bx-15,by+30);ctx.lineTo(bx-17,by+50+leg2);ctx.stroke();ctx.beginPath();ctx.moveTo(bx-2,by+30);ctx.lineTo(bx-4,by+50+leg1);ctx.stroke();ctx.fillStyle='#4e342e';[[bx-10,by+50+leg1],[bx+6,by+50+leg2],[bx-17,by+50+leg2],[bx-4,by+50+leg1]].forEach(([hx,hy])=>{ctx.beginPath();ctx.ellipse(hx,hy+2,5,3.5,0,0,Math.PI*2);ctx.fill();});ctx.strokeStyle='#9e9e9e';ctx.lineWidth=3;ctx.lineCap='round';const tailSwing=Math.sin(this.tailT)*20;ctx.beginPath();ctx.moveTo(bx+50,by+15);ctx.quadraticCurveTo(bx+62,by+20+tailSwing,bx+58,by+38+tailSwing);ctx.stroke();ctx.fillStyle='#9e9e9e';ctx.beginPath();ctx.arc(bx+58,by+40+tailSwing,6,0,Math.PI*2);ctx.fill();if(this.decorated){ctx.strokeStyle='#ff8f00';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(bx-30,by-2);ctx.quadraticCurveTo(bx-20,by+5,bx-10,by+2);ctx.stroke();['#ff6f00','#ffd600','#e91e63','#f44336'].forEach((col,fi)=>{ctx.fillStyle=col;ctx.beginPath();ctx.arc(bx-28+fi*6,by-2+Math.sin(fi)*3,3,0,Math.PI*2);ctx.fill();});ctx.fillStyle='#e65100';ctx.beginPath();ctx.arc(bx-30,by-44,4,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(bx-42,by-46,4,0,Math.PI*2);ctx.fill();}ctx.restore();}}
+class SteamPuff{constructor(){this.reset();}reset(){this.x=fgc.width/2+(Math.random()-0.5)*30;this.y=fgc.height-195;this.r=3+Math.random()*5;this.vx=(Math.random()-0.5)*0.8;this.vy=-(0.5+Math.random()*0.8);this.alpha=0.5+Math.random()*0.3;this.grow=0.15;}update(){this.x+=this.vx;this.y+=this.vy;this.r+=this.grow;this.alpha-=0.012;if(this.alpha<=0)this.reset();}draw(ctx){ctx.save();ctx.globalAlpha=this.alpha;const g=ctx.createRadialGradient(this.x,this.y,0,this.x,this.y,this.r);g.addColorStop(0,'rgba(255,255,255,0.8)');g.addColorStop(1,'rgba(255,245,200,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(this.x,this.y,this.r,0,Math.PI*2);ctx.fill();ctx.restore();}}
+const cows=[new Cow(true),new Cow(true),new Cow(false),new Cow(false),new Cow(true)];
+cows[0].x=fgc.width*0.15; cows[1].x=fgc.width*0.5; cows[2].x=fgc.width*0.7; cows[3].x=fgc.width*0.3; cows[4].x=fgc.width*0.85;
+const steamPuffs=Array.from({length:18},()=>new SteamPuff());
+function animFG(){fctx.clearRect(0,0,fgc.width,fgc.height);steamPuffs.forEach(s=>{s.update();s.draw(fctx);});cows.forEach(c=>{c.update();c.draw(fctx);});requestAnimationFrame(animFG);}
+animFG();
+
+/* ── FOOD MENU ── */
+const FOOD_CATEGORIES=[
+    {id:'breakfast',name:'Breakfast',sub:'Start your day fresh'},
+    {id:'lunch',name:'Lunch',sub:'Hearty midday meals'},
+    {id:'dinner',name:'Dinner',sub:'Delicious night dining'},
+    {id:'snacks',name:'Snacks',sub:'Quick bites'},
+    {id:'desserts',name:'Desserts',sub:'Sweet treats'},
+    {id:'drinks',name:'Drinks',sub:'Refresh yourself'},
+]
+let cart={},currentScreen='categories',currentCatItems=[]
+function openFoodMenu(){document.getElementById('foodOverlay').classList.add('active');document.body.style.overflow='hidden';showCategoryScreen();loadCategoryPreviews();}
+function closeFoodMenu(){document.getElementById('foodOverlay').classList.remove('active');document.body.style.overflow='';}
+function foodGoBack(){currentScreen==='items'?showCategoryScreen():closeFoodMenu();}
+function showCategoryScreen(){currentScreen='categories';document.getElementById('foodCategoryScreen').style.display='flex';document.getElementById('foodItemsScreen').classList.remove('visible');document.getElementById('foodPageTitle').innerHTML='Food <em>Menu</em>';document.getElementById('foodBackLabel').textContent='Home';}
+async function showItemsScreen(catId,catName){currentScreen='items';document.getElementById('foodCategoryScreen').style.display='none';document.getElementById('foodItemsScreen').classList.add('visible');document.getElementById('foodPageTitle').innerHTML=catName+' <em>Menu</em>';document.getElementById('foodBackLabel').textContent='Categories';document.getElementById('itemsCatLabel').textContent=catName.toUpperCase()+' MENU';document.getElementById('itemsScroll').innerHTML='<div style="color:rgba(255,248,231,.3);padding:40px;font-style:italic;">Loading…</div>';await loadItemsForCategory(catId);}
+async function loadCategoryPreviews(){document.getElementById('catGrid').innerHTML=FOOD_CATEGORIES.map(c=>`<div class="cat-card" id="cat-${c.id}" onclick="showItemsScreen('${c.id}','${c.name}')"><div class="cat-card-img" id="catimg-${c.id}"></div><div class="cat-card-body"><div class="cat-card-name">${c.name}</div><div class="cat-card-sub">${c.sub}</div></div></div>`).join('');await Promise.allSettled(FOOD_CATEGORIES.map(async c=>{try{const items=await fetch(`/api/food-items?category=${c.id}`).then(r=>r.json());const imgEl=document.getElementById('catimg-'+c.id);if(imgEl&&items.length&&items[0].image_url)imgEl.style.backgroundImage=`url('${items[0].image_url}')`;if(!items.length){const card=document.getElementById('cat-'+c.id);if(card){card.style.opacity='0.4';card.style.cursor='default';card.onclick=null;}}}catch(e){}}))}
+async function loadItemsForCategory(catId){try{const items=await fetch(`/api/food-items?category=${catId}`).then(r=>r.json());currentCatItems=items.map(i=>({id:i.id,name:i.title,price:i.price,image_url:i.image_url}));renderItems();}catch(e){document.getElementById('itemsScroll').innerHTML='<div style="color:rgba(255,248,231,.3);padding:40px;font-style:italic;">Failed to load.</div>';}}
+function renderItems(){const el=document.getElementById('itemsScroll');if(!currentCatItems.length){el.innerHTML='<div style="color:rgba(255,248,231,.3);padding:40px;font-style:italic;">No items yet.</div>';return;}el.innerHTML=currentCatItems.map(item=>{const qty=cart[item.id]?cart[item.id].qty:0;return`<div class="item-card"><div class="item-img" style="background-image:url('${item.image_url}');"></div><div class="item-body"><div class="item-name">${item.name}</div><div class="item-price"><small>₹</small>${item.price}</div><div class="qty-row"><button class="qty-btn minus" onclick="changeQty(${item.id},-1)">−</button><span class="qty-val" id="qty-${item.id}">${qty}</span><button class="qty-btn plus" onclick="changeQty(${item.id},+1)">+</button></div></div></div>`;}).join('');}
+function changeQty(id,delta){const item=currentCatItems.find(i=>i.id===id);if(!item)return;if(!cart[id])cart[id]={...item,qty:0};cart[id].qty=Math.max(0,cart[id].qty+delta);if(cart[id].qty===0)delete cart[id];const qtyEl=document.getElementById('qty-'+id);if(qtyEl)qtyEl.textContent=cart[id]?cart[id].qty:0;updateCartPanel();}
+function updateCartPanel(){const items=Object.values(cart);document.getElementById('cartTotal').textContent=items.reduce((s,i)=>s+i.price*i.qty,0);document.getElementById('cartList').innerHTML=!items.length?'<div class="cart-empty">No items yet</div>':items.map(i=>`<div class="cart-item-row"><div><div class="ci-name">${i.name}</div><div class="ci-qty">×${i.qty}</div></div><div class="ci-price">₹${i.price*i.qty}</div></div>`).join('');document.getElementById('placeOrderBtn').disabled=items.length===0;}
+function clearCart(){cart={};document.querySelectorAll('.qty-val').forEach(el=>el.textContent='0');updateCartPanel();}
+async function placeOrder(){const items=Object.values(cart);if(!items.length)return;const btn=document.getElementById('placeOrderBtn');btn.disabled=true;btn.textContent='Placing…';try{await fetch('/api/order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({room_no:window.ROOM_NO,items:items.map(i=>({id:i.id,name:i.name,qty:i.qty,price:i.price})),total:items.reduce((s,i)=>s+i.price*i.qty,0)})});}catch(e){}btn.textContent='✓ Order Placed!';btn.style.background='#5a8a1a';setTimeout(()=>{clearCart();btn.textContent='Place Order';btn.style.background='';closeFoodMenu();},2000);}
+</script>
+
+<!-- SHARED: clock + room data + activities + services -->
+
+
+<!-- ░░ INJECTED: Spa & Wellness Overlay ░░ -->
+<!-- Food order success toast (stays on page) -->
+<div class="svc-toast" id="foodToast">✓ Order placed successfully!</div>
+
+
+<div class="overlay-base" id="spaOverlay">
+    <div class="overlay-topbar">
+        <div class="overlay-topbar-left">
+            <button class="overlay-back-btn" onclick="spaGoBack()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M19 12H5M5 12l7 7M5 12l7-7"/>
+                </svg>
+                <span id="spaBackLabel">Home</span>
+            </button>
+            <div class="overlay-page-title" id="spaPageTitle">Spa &amp; <em>Wellness</em></div>
+        </div>
+        <button class="overlay-close-btn" onclick="spaGoBack()" title="Close">✕</button>
+    </div>
+
+    <!-- Category screen -->
+    <div class="cat-screen-bg" id="spaCategoryScreen">
+        <div class="spa-cat-grid" id="spaCatGrid"></div>
+    </div>
+
+    <!-- Treatments screen -->
+    <div id="spaTreatmentsScreen">
+        <div class="spa-treatments-label" id="spaTreatmentsLabel">Treatments</div>
+        <div class="spa-treatments-scroll" id="spaTreatmentsScroll"></div>
+    </div>
+</div>
+
+<!-- Spa booking confirmation modal (z-index 200, above spaOverlay) -->
+<div class="spa-confirm-overlay" id="spaConfirmOverlay">
+    <div class="spa-confirm-modal">
+        <button class="overlay-close-btn"
+                style="position:absolute;top:16px;right:16px;"
+                onclick="closeSpaConfirm()" title="Close">✕</button>
+        <div class="spa-confirm-icon">🧖</div>
+        <div class="spa-confirm-title" id="spaConfirmName">Treatment</div>
+        <div class="spa-confirm-cat" id="spaConfirmCat">Category</div>
+        <div class="spa-confirm-details">
+            <div class="spa-confirm-row">
+                <span class="spa-confirm-row-label">Time Slot</span>
+                <span class="spa-confirm-row-val" id="spaConfirmSlot">—</span>
+            </div>
+            <div class="spa-confirm-row">
+                <span class="spa-confirm-row-label">Room</span>
+                <span class="spa-confirm-row-val" id="spaConfirmRoom">—</span>
+            </div>
+        </div>
+        <div class="spa-confirm-sub" id="spaConfirmSub">Your treatment slot will be reserved</div>
+        <div class="spa-confirm-actions">
+            <button class="spa-cancel-btn" onclick="closeSpaConfirm()">Cancel</button>
+            <button class="spa-confirm-btn" id="spaBookBtn" onclick="confirmSpaBooking()">Confirm Booking</button>
+        </div>
+    </div>
+</div>
+<!-- Spa booking success toast (stays on treatments page) -->
+<div class="svc-toast" id="spaToast">✓ Treatment booked! See you soon.</div>
+
+<!-- ░░ INJECTED: Bar Menu Overlay ░░ -->
+<div class="overlay-base" id="barOverlay">
+    <div class="overlay-topbar">
+        <div class="overlay-topbar-left">
+            <button class="overlay-back-btn" onclick="barGoBack()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M19 12H5M5 12l7 7M5 12l7-7"/>
+                </svg>
+                <span id="barBackLabel">Home</span>
+            </button>
+            <div class="overlay-page-title" id="barPageTitle">Bar <em>Menu</em></div>
+        </div>
+        <button class="overlay-close-btn" onclick="barGoBack()" title="Close">✕</button>
+    </div>
+
+    <!-- Category screen -->
+    <div class="cat-screen-bg" id="barCategoryScreen">
+        <div class="bar-cat-grid" id="barCatGrid"></div>
+    </div>
+
+    <!-- Items + cart screen -->
+    <div id="barItemsScreen">
+        <div class="bar-items-main">
+            <div class="bar-items-cat-label" id="barItemsCatLabel">Drinks</div>
+            <div class="bar-items-scroll" id="barItemsScroll"></div>
+        </div>
+        <div class="cart-panel">
+            <div class="cart-panel-title">Your <em>Order</em></div>
+            <div class="cart-divider"></div>
+            <div class="cart-items-list" id="barCartList">
+                <div class="bar-cart-empty">No drinks yet</div>
+            </div>
+            <div class="cart-total-row">
+                <span class="cart-total-label">Total</span>
+                <span class="cart-total-amt"><small>₹</small><span id="barCartTotal">0</span></span>
+            </div>
+            <button class="cart-clear-btn" onclick="clearBarCart()">Clear Order</button>
+            <button class="cart-place-btn" id="barOrderBtn" onclick="placeBarOrder()" disabled>Place Order</button>
+        </div>
+    </div>
+</div>
+<!-- Bar order success toast (stays on page) -->
+<div class="svc-toast" id="barToast">✓ Drinks order placed! Cheers 🥂</div>
+
+<!-- ░░ INJECTED: Dine-In Overlay ░░ -->
+<div class="overlay-base" id="dineOverlay">
+    <div class="overlay-topbar">
+        <div class="overlay-topbar-left">
+            <button class="overlay-back-btn" onclick="dineGoBack()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M19 12H5M5 12l7 7M5 12l7-7"/>
+                </svg>
+                <span id="dineBackLabel">Home</span>
+            </button>
+            <div class="overlay-page-title" id="dinePageTitle">Dine-In <em>Reservations</em></div>
+        </div>
+        <button class="overlay-close-btn" onclick="dineGoBack()" title="Close">✕</button>
+    </div>
+
+    <!-- Occasion category screen -->
+    <div class="cat-screen-bg" id="dineCategoryScreen">
+        <div class="dine-cat-grid" id="dineCatGrid"></div>
+    </div>
+
+    <!-- Packages screen -->
+    <div id="dinePackagesScreen">
+        <div class="dine-pkg-label" id="dinePkgLabel">Packages</div>
+        <div class="dine-pkg-scroll" id="dinePkgScroll"></div>
+    </div>
+</div>
+
+<!-- Dine-In booking confirmation modal -->
+<div class="dine-confirm-overlay" id="dineConfirmOverlay">
+    <div class="dine-confirm-modal">
+        <button class="overlay-close-btn"
+                style="position:absolute;top:16px;right:16px;"
+                onclick="closeDineConfirm()" title="Close">✕</button>
+        <div class="dine-confirm-icon">🕯️</div>
+        <div class="dine-confirm-title" id="dineConfirmName">Package</div>
+        <div class="dine-confirm-occ" id="dineConfirmOcc">Occasion</div>
+        <div class="dine-confirm-details">
+            <div class="dine-confirm-row">
+                <span class="dine-confirm-row-label">Time Slot</span>
+                <span class="dine-confirm-row-val" id="dineConfirmSlot">—</span>
+            </div>
+            <div class="dine-confirm-row">
+                <span class="dine-confirm-row-label">Price</span>
+                <span class="dine-confirm-row-val" id="dineConfirmPrice">—</span>
+            </div>
+            <div class="dine-confirm-row">
+                <span class="dine-confirm-row-label">Room</span>
+                <span class="dine-confirm-row-val" id="dineConfirmRoom">—</span>
+            </div>
+        </div>
+        <div class="dine-confirm-sub">Your table will be reserved — our team will confirm shortly</div>
+        <div class="dine-confirm-actions">
+            <button class="dine-cancel-btn" onclick="closeDineConfirm()">Cancel</button>
+            <button class="dine-confirm-btn" id="dineBookBtn" onclick="confirmDineBooking()">Confirm Reservation</button>
+        </div>
+    </div>
+</div>
+<div class="svc-toast" id="dineToast">✓ Table reserved! See you at dinner 🕯️</div>
+
+<!-- ░░ INJECTED: Entertainment Overlay ░░ -->
+<div class="overlay-base" id="entOverlay">
+    <div class="overlay-topbar">
+        <div class="overlay-topbar-left">
+            <button class="overlay-back-btn" onclick="entGoBack()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M19 12H5M5 12l7 7M5 12l7-7"/>
+                </svg>
+                <span id="entBackLabel">Home</span>
+            </button>
+            <div class="overlay-page-title" id="entPageTitle">Entertainment</div>
+        </div>
+        <button class="overlay-close-btn" onclick="entGoBack()" title="Close">✕</button>
+    </div>
+
+    <!-- Category screen -->
+    <div class="cat-screen-bg" id="entCategoryScreen">
+        <div class="ent-cat-grid" id="entCatGrid"></div>
+    </div>
+
+    <!-- Activities screen -->
+    <div id="entActivitiesScreen">
+        <div class="ent-activities-label" id="entActivitiesLabel">Activities</div>
+        <div class="ent-activities-scroll" id="entActivitiesScroll"></div>
+    </div>
+</div>
+
+<!-- Entertainment booking confirmation modal (z-index 200, above entOverlay) -->
+<div class="ent-confirm-overlay" id="entConfirmOverlay">
+    <div class="ent-confirm-modal">
+        <button class="overlay-close-btn"
+                style="position:absolute;top:16px;right:16px;"
+                onclick="closeEntConfirm()" title="Close">✕</button>
+        <div class="ent-confirm-icon">🎮</div>
+        <div class="ent-confirm-title" id="entConfirmName">Activity</div>
+        <div class="ent-confirm-cat" id="entConfirmCat">Category</div>
+        <div class="ent-confirm-details">
+            <div class="ent-confirm-row">
+                <span class="ent-confirm-row-label">Time Slot</span>
+                <span class="ent-confirm-row-val" id="entConfirmSlot">—</span>
+            </div>
+            <div class="ent-confirm-row">
+                <span class="ent-confirm-row-label">Venue</span>
+                <span class="ent-confirm-row-val" id="entConfirmVenue">—</span>
+            </div>
+            <div class="ent-confirm-row">
+                <span class="ent-confirm-row-label">Price</span>
+                <span class="ent-confirm-row-val" id="entConfirmPrice">—</span>
+            </div>
+            <div class="ent-confirm-row">
+                <span class="ent-confirm-row-label">Room</span>
+                <span class="ent-confirm-row-val" id="entConfirmRoom">—</span>
+            </div>
+        </div>
+        <div class="ent-confirm-actions">
+            <button class="ent-cancel-btn" onclick="closeEntConfirm()">Cancel</button>
+            <button class="ent-confirm-btn" id="entBookBtn" onclick="confirmEntBooking()">Confirm Booking</button>
+        </div>
+    </div>
+</div>
+<!-- Entertainment booking success toast -->
+<div class="svc-toast" id="entToast">✓ Activity booked! Get ready for some fun 🎮</div>
+
+
+<!-- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+     ACTIVITY RESERVATION CONFIRM MODAL
+     Logic handled by common.js (openActConfirm, confirmActBooking…)
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ -->
+<div class="spa-confirm-overlay" id="actConfirmOverlay">
+    <div class="spa-confirm-modal">
+        <button class="overlay-close-btn"
+                style="position:absolute;top:16px;right:16px;"
+                onclick="closeActConfirm()" title="Close">✕</button>
+        <div class="spa-confirm-icon">🎪</div>
+        <div class="spa-confirm-title" id="actConfirmName">Activity</div>
+        <div class="spa-confirm-cat">Today's Experience</div>
+        <div class="spa-confirm-details">
+            <div class="spa-confirm-row">
+                <span class="spa-confirm-row-label">Time Slot</span>
+                <span class="spa-confirm-row-val" id="actConfirmSlot">—</span>
+            </div>
+            <div class="spa-confirm-row">
+                <span class="spa-confirm-row-label">Room</span>
+                <span class="spa-confirm-row-val" id="actConfirmRoom">—</span>
+            </div>
+        </div>
+        <div class="spa-confirm-sub">Our team will confirm your reservation shortly</div>
+        <div class="spa-confirm-actions">
+            <button class="spa-cancel-btn" onclick="closeActConfirm()">Cancel</button>
+            <button class="spa-confirm-btn" id="actBookBtn" onclick="confirmActBooking()">Confirm Reservation</button>
+        </div>
+    </div>
+</div>
+<!-- Activity booking success toast -->
+<div class="svc-toast" id="actToast">✓ Reserved! See you at the activity 🎉</div>
+
+<!-- ░░ SHARED: clock + room data + activities + services (auto-updates) ░░ -->
+<script src="/static/common.js"></script>
+
+
+<!-- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+     ROOM SERVICE OVERLAY
+     All logic handled by common.js (openRoomServiceMenu, openRsConfirm, confirmRsRequest…)
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ -->
+<div class="overlay-base" id="roomServiceOverlay">
+    <div class="overlay-topbar">
+        <div class="overlay-topbar-left">
+            <button class="overlay-back-btn" onclick="rsGoBack()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M19 12H5M5 12l7 7M5 12l7-7"/>
+                </svg>
+                <span>Home</span>
+            </button>
+            <div class="overlay-page-title">Room <em>Service</em></div>
+        </div>
+        <button class="overlay-close-btn" onclick="rsGoBack()" title="Close">✕</button>
+    </div>
+
+    <!-- Service cards grid -->
+    <div class="cat-screen-bg" style="overflow-y:auto;">
+        <div id="rsGrid"></div>
+    </div>
+</div>
+
+<!-- Room Service confirm modal -->
+<div class="rs-confirm-overlay" id="rsConfirmOverlay">
+    <div class="rs-confirm-modal">
+        <button class="overlay-close-btn"
+                style="position:absolute;top:16px;right:16px;"
+                onclick="closeRsConfirm()" title="Close">✕</button>
+        <div class="rs-confirm-icon" id="rsConfirmIcon">🛎️</div>
+        <div class="rs-confirm-title" id="rsConfirmTitle">Service</div>
+        <div class="rs-confirm-desc" id="rsConfirmDesc">Our team will be with you shortly.</div>
+        <div class="rs-confirm-details">
+            <div class="rs-confirm-row">
+                <span class="rs-confirm-row-label">Service</span>
+                <span class="rs-confirm-row-val" id="rsConfirmTitleDetail">—</span>
+            </div>
+            <div class="rs-confirm-row">
+                <span class="rs-confirm-row-label">Room</span>
+                <span class="rs-confirm-row-val" id="rsConfirmRoom">—</span>
+            </div>
+        </div>
+        <label class="rs-note-label">Additional Note <span style="opacity:.45;">(optional)</span></label>
+        <textarea class="rs-note-input" id="rsGuestNote" rows="2"
+                  placeholder="e.g. Please bring extra pillows…"></textarea>
+        <div class="rs-confirm-actions">
+            <button class="rs-cancel-btn" onclick="closeRsConfirm()">Cancel</button>
+            <button class="rs-send-btn" id="rsSendBtn" onclick="confirmRsRequest()">Send Request</button>
+        </div>
+    </div>
+</div>
+<!-- Room service success toast -->
+<div class="svc-toast" id="rsToast">✓ Request sent! Our team will be with you shortly 🛎️</div>
+
+
+<!-- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+     MY ORDERS OVERLAY
+     Logic handled by common.js (openMyOrders, closeMyOrders, loadMyOrders)
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ -->
+<div id="myOrdersOverlay">
+    <div class="mo-panel">
+        <div class="mo-header">
+            <div class="mo-title">My <em>Bookings</em></div>
+            <button class="overlay-close-btn" onclick="closeMyOrders()" title="Close">&#10005;</button>
+        </div>
+        <div id="myOrdersContent">
+            <p style="color:rgba(248,243,236,.3);text-align:center;padding:40px 0;font-style:italic;">Loading&#8230;</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

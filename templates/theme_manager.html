@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Theme Manager – Vibe Munnar</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --magenta:#C4175A;
+            --magenta-deep:#9E1149;
+            --bg:#F7F2F4;
+            --white:#fff;
+            --border:#EDE0E6;
+            --text:#1A0D14;
+            --text-dim:#B08090;
+        }
+
+        body{
+            font-family:'DM Sans',sans-serif;
+            background:var(--bg);
+            margin:0;
+            display:flex;
+        }
+
+        /* SIDEBAR */
+        .sidebar{
+            width:240px;
+            background:#fff;
+            height:100vh;
+            position:fixed;
+            border-right:1px solid var(--border);
+        }
+
+        .sidebar a{
+            display:block;
+            padding:12px 20px;
+            text-decoration:none;
+            color:#555;
+        }
+
+        .sidebar a.active{
+            color:var(--magenta);
+            font-weight:600;
+        }
+
+        /* MAIN */
+        .main{
+            margin-left:240px;
+            width:100%;
+        }
+
+        .topbar{
+            background:#fff;
+            padding:15px 30px;
+            border-bottom:1px solid var(--border);
+            display:flex;
+            justify-content:space-between;
+        }
+
+        .content{
+            padding:30px;
+        }
+
+        /* GRID */
+        .themes-grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+            gap:20px;
+        }
+
+        .theme-card{
+            background:#fff;
+            border-radius:14px;
+            border:1px solid var(--border);
+            overflow:hidden;
+            transition:.2s;
+        }
+
+        .theme-card:hover{
+            transform:translateY(-3px);
+            box-shadow:0 6px 20px rgba(0,0,0,0.1);
+        }
+
+        /* BANNER COLORS */
+        .theme-banner{
+            height:110px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:40px;
+        }
+
+        .diwali{ background:linear-gradient(135deg,#FFD700,#FF8C00); }
+        .christmas{ background:linear-gradient(135deg,#28A745,#155724); }
+        .pongal{ background:linear-gradient(135deg,#FF9800,#E65100); }
+        .newyear{ background:linear-gradient(135deg,#9C27B0,#1A237E); }
+
+        .theme-body{
+            padding:18px;
+            text-align:center;
+        }
+
+        .theme-name{
+            font-size:18px;
+            font-weight:600;
+            margin-bottom:10px;
+        }
+
+        input[type="date"]{
+            width:100%;
+            padding:8px;
+            margin:5px 0;
+            border-radius:6px;
+            border:1px solid #ddd;
+        }
+
+        .actions{
+            display:flex;
+            gap:8px;
+            margin-top:10px;
+        }
+
+        button{
+            flex:1;
+            padding:8px;
+            border:none;
+            border-radius:6px;
+            cursor:pointer;
+        }
+
+        .apply{
+            background:var(--magenta);
+            color:white;
+        }
+
+        .discard{
+            background:#ffe5e5;
+            color:red;
+        }
+    </style>
+
+    <script>
+    function confirmDiscard(name){
+        return confirm("Discard " + name + " theme?");
+    }
+    </script>
+
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <a href="/admin">Dashboard</a>
+    <a href="/themes" class="active">Themes</a>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+    <div class="topbar">
+        <h2>Theme Manager</h2>
+        <div>📅 {{ current_date }}</div>
+    </div>
+
+    <div class="content">
+
+        <div class="themes-grid">
+
+            {% for theme in themes %}
+            <div class="theme-card">
+
+                <!-- Dynamic banner -->
+                <div class="theme-banner {{ theme.slug }}">
+                    {{ theme.emoji }}
+                </div>
+
+                <div class="theme-body">
+                    <div class="theme-name">{{ theme.name }}</div>
+
+                    <!-- APPLY -->
+                    <form action="/schedule_theme/{{ theme.id }}" method="post">
+                        <input type="date" name="start_date" required>
+                        <input type="date" name="end_date" required>
+
+                        <div class="actions">
+                            <button class="apply" type="submit">Apply</button>
+                    </form>
+
+                    <!-- DISCARD -->
+                    <form action="/discard_theme/{{ theme.id }}" method="post"
+                          onsubmit="return confirmDiscard('{{ theme.name }}')">
+                            <button class="discard" type="submit">Discard</button>
+                        </form>
+                        </div>
+                </div>
+
+            </div>
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

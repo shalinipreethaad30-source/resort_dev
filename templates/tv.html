@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Room TV</title>
+</head>
+
+<body style="margin:0; overflow:hidden;">
+
+<iframe id="themeFrame"
+        style="width:100%; height:100vh; border:none;">
+</iframe>
+
+<script>
+let currentTheme = ""
+let roomNo = ""
+
+function getRoomNo() {
+    const parts = window.location.pathname.split("/")
+    return parts[parts.length - 1]
+}
+
+async function loadTheme() {
+    try {
+        const res = await fetch("/api/current-theme", { cache: "no-store" })
+        const data = await res.json()
+
+        let theme = data.template || "default.html"
+
+       if (currentTheme !== theme) {
+            currentTheme = theme
+
+            console.log("Switching theme →", theme)
+
+            document.getElementById("themeFrame").src =
+                "/theme/" + theme + "?room_no=" + roomNo + "&t=" + new Date().getTime()
+        }
+
+    } catch (e) {
+        console.log("Theme error:", e)
+    }
+}
+
+window.onload = function () {
+    roomNo = getRoomNo()
+
+    console.log("ROOM:", roomNo)
+
+    loadTheme()
+    setInterval(loadTheme, 5000)
+}
+</script>
+
+</body>
+</html>

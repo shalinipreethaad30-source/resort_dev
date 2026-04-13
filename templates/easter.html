@@ -1,0 +1,2106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Easter Theme – Vibe Munnar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Quicksand:wght@300;400;500;700&family=Dancing+Script:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --lavender:   #c9a8e0;
+            --lilac:      #e8d5f5;
+            --mint:       #a8ddc9;
+            --mint-deep:  #5bb89a;
+            --sky:        #b8e4f7;
+            --sky-deep:   #7ec8e3;
+            --peach:      #f7c5a0;
+            --peach-deep: #e8956a;
+            --yellow:     #f9e87f;
+            --pink:       #f5a7c7;
+            --pink-deep:  #e06fa0;
+            --green:      #6abf8a;
+            --green-deep: #3d9962;
+            --white:      #fffdf8;
+            --text-dark:  #4a3560;
+            --text-mid:   #7a6590;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            color: var(--text-dark);
+            overflow: hidden;
+            height: 100vh; width: 100vw;
+        }
+
+        /* ── SPRING SKY BACKGROUND ── */
+        .sky-bg {
+            position: fixed; inset: 0; z-index: 0;
+            background: linear-gradient(180deg,
+                #d4eeff 0%,
+                #e8f6ff 30%,
+                #f0faf5 60%,
+                #e8f5e0 100%);
+        }
+
+        /* ── CLOUDS ── */
+        .clouds { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 50px;
+            opacity: 0.85;
+            animation: cloud-drift linear infinite;
+        }
+        @keyframes cloud-drift {
+            0%   { transform: translateX(-200px); }
+            100% { transform: translateX(calc(100vw + 200px)); }
+        }
+
+        /* ── SUN ── */
+        .sun {
+            position: fixed; top: 30px; right: 100px; z-index: 2;
+            width: 70px; height: 70px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #fff176, #ffd600);
+            box-shadow: 0 0 40px rgba(255,214,0,0.6), 0 0 80px rgba(255,214,0,0.3);
+            animation: sun-pulse 4s ease-in-out infinite alternate;
+        }
+        .sun-ray {
+            position: absolute;
+            width: 4px; height: 20px;
+            background: linear-gradient(180deg, rgba(255,214,0,0.8), transparent);
+            border-radius: 2px;
+            top: 50%; left: 50%;
+            transform-origin: 0 0;
+        }
+        @keyframes sun-pulse {
+            0%   { box-shadow: 0 0 30px rgba(255,214,0,0.5), 0 0 60px rgba(255,214,0,0.2); transform: scale(1); }
+            100% { box-shadow: 0 0 50px rgba(255,214,0,0.7), 0 0 100px rgba(255,214,0,0.4); transform: scale(1.05); }
+        }
+
+        /* ── MEADOW GROUND ── */
+        .meadow {
+            position: fixed; bottom: 0; left: 0; right: 0; z-index: 3;
+            height: 180px;
+        }
+        .meadow svg { width: 100%; height: 100%; }
+
+        /* ── GRASS BLADES ── */
+        .grass-container {
+            position: fixed; bottom: 140px; left: 0; right: 0; z-index: 4;
+            pointer-events: none;
+        }
+        .blade {
+            position: absolute; bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, #4caf50, #2e7d32);
+            border-radius: 3px 3px 0 0;
+            transform-origin: bottom center;
+            animation: sway ease-in-out infinite alternate;
+        }
+        @keyframes sway {
+            0%   { transform: rotate(-6deg); }
+            100% { transform: rotate(6deg); }
+        }
+
+        /* ── FLOATING EGGS (canvas) ── */
+        #eggCanvas {
+            position: fixed; inset: 0; z-index: 5;
+            pointer-events: none;
+        }
+
+        /* ── BUTTERFLIES ── */
+        .butterfly {
+            position: fixed; z-index: 6; pointer-events: none;
+            font-size: 24px;
+            animation: butterfly-fly linear infinite;
+        }
+        @keyframes butterfly-fly {
+            0%   { transform: translateY(0px) rotate(0deg); }
+            25%  { transform: translateY(-20px) rotate(3deg); }
+            50%  { transform: translateY(5px) rotate(-2deg); }
+            75%  { transform: translateY(-12px) rotate(4deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        .butterfly-move { animation: bf-move linear infinite; }
+        @keyframes bf-move {
+            0%   { left: -80px; }
+            100% { left: 110vw; }
+        }
+
+        /* ── PETALS FALLING ── */
+        .petal {
+            position: fixed; top: -20px; z-index: 6;
+            pointer-events: none; font-size: 14px;
+            animation: petal-fall linear infinite;
+        }
+        @keyframes petal-fall {
+            0%   { transform: translateY(0) rotate(0deg) translateX(0); opacity: 0; }
+            10%  { opacity: 1; }
+            90%  { opacity: 0.8; }
+            100% { transform: translateY(110vh) rotate(720deg) translateX(60px); opacity: 0; }
+        }
+
+        /* ── FLOWERS ON GROUND ── */
+        .flower {
+            position: fixed; bottom: 150px; z-index: 7;
+            font-size: 28px;
+            animation: flower-bob 3s ease-in-out infinite alternate;
+        }
+        @keyframes flower-bob {
+            0%   { transform: rotate(-5deg) scale(1); }
+            100% { transform: rotate(5deg) scale(1.08); }
+        }
+
+        /* ── BUNNY ── */
+        .bunny {
+            position: fixed; bottom: 155px; left: 50%; z-index: 8;
+            transform: translateX(-50%);
+            font-size: 56px;
+            animation: bunny-hop 3s ease-in-out infinite;
+            filter: drop-shadow(0 8px 12px rgba(0,0,0,0.15));
+        }
+        @keyframes bunny-hop {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            20%       { transform: translateX(-50%) translateY(-18px) scaleX(0.92); }
+            40%       { transform: translateX(-50%) translateY(0); }
+            60%       { transform: translateX(-50%) translateY(-10px); }
+            80%       { transform: translateX(-50%) translateY(0); }
+        }
+
+        /* ── EGG BASKET ── */
+        .basket {
+            position: fixed; bottom: 152px;
+            font-size: 46px; z-index: 8;
+            animation: basket-wiggle 4s ease-in-out infinite;
+            filter: drop-shadow(0 6px 10px rgba(0,0,0,0.12));
+        }
+        .basket-left  { left: 38%;  animation-delay: 0.5s; }
+        .basket-right { right: 34%; animation-delay: 1.2s; }
+        @keyframes basket-wiggle {
+            0%, 100% { transform: rotate(-4deg); }
+            50%       { transform: rotate(4deg); }
+        }
+
+        /* ── TOP FLORAL BANNER ── */
+        .floral-banner {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 20;
+            height: 52px;
+            background: linear-gradient(90deg,
+                var(--mint) 0%, var(--lavender) 25%,
+                var(--peach) 50%, var(--yellow) 75%, var(--sky) 100%);
+            display: flex; align-items: center; justify-content: center;
+            gap: 10px;
+            box-shadow: 0 3px 20px rgba(180,140,220,0.3);
+        }
+        .banner-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: 24px; font-weight: 700;
+            color: white;
+            text-shadow: 0 2px 8px rgba(100,60,160,0.3);
+            letter-spacing: 2px;
+        }
+        .banner-emoji { font-size: 22px; animation: banner-bounce 2s ease-in-out infinite; }
+        .banner-emoji:nth-child(2) { animation-delay: 0.2s; }
+        .banner-emoji:nth-child(4) { animation-delay: 0.4s; }
+        @keyframes banner-bounce {
+            0%, 100% { transform: translateY(0); }
+            50%       { transform: translateY(-5px); }
+        }
+
+        /* ── CONTENT GRID ── */
+        .content {
+            position: relative; z-index: 15;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            grid-template-rows: auto 1fr;
+            gap: 20px;
+            padding: 70px 55px 210px;
+            height: 100vh;
+        }
+
+        /* ── HEADER ── */
+        .header { grid-column: 1; grid-row: 1; }
+
+        .header .eyebrow {
+            font-family: 'Dancing Script', cursive;
+            font-size: 18px; color: var(--pink-deep);
+            margin-bottom: 6px;
+            opacity: 0; animation: pop-in 0.6s 0.2s cubic-bezier(0.34,1.56,0.64,1) forwards;
+        }
+
+        .header h1 {
+            font-family: 'Abril Fatface', cursive;
+            font-size: 56px; line-height: 1.05;
+            background: linear-gradient(135deg, var(--lavender) 0%, var(--pink-deep) 40%, var(--peach-deep) 80%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(2px 3px 0px rgba(180,100,200,0.2));
+            opacity: 0; animation: pop-in 0.7s 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
+        }
+
+        .header .room-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            margin-top: 12px;
+            background: linear-gradient(135deg, var(--lavender), var(--pink));
+            padding: 6px 20px; border-radius: 30px;
+            font-size: 13px; font-weight: 700;
+            color: white; letter-spacing: 2px;
+            box-shadow: 0 4px 15px rgba(180,120,220,0.35);
+            opacity: 0; animation: pop-in 0.6s 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards;
+        }
+
+        .header .tagline {
+            margin-top: 12px;
+            font-family: 'Dancing Script', cursive;
+            font-size: 20px; color: var(--text-mid);
+            opacity: 0; animation: pop-in 0.6s 0.8s cubic-bezier(0.34,1.56,0.64,1) forwards;
+        }
+
+        .header .custom-msg {
+            margin-top: 8px;
+            font-size: 16px; font-weight: 500;
+            color: var(--green-deep);
+            opacity: 0; animation: pop-in 0.6s 1.0s cubic-bezier(0.34,1.56,0.64,1) forwards;
+        }
+
+        .icon-row {
+            margin-top: 18px; display: flex; gap: 14px; align-items: center;
+            opacity: 0; animation: pop-in 0.6s 1.2s cubic-bezier(0.34,1.56,0.64,1) forwards;
+        }
+        .icon-item {
+            font-size: 38px;
+            animation: icon-float 2.5s ease-in-out infinite;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.12));
+        }
+        .icon-item:nth-child(2) { animation-delay: 0.4s; }
+        .icon-item:nth-child(3) { animation-delay: 0.8s; font-size: 30px; }
+        .icon-item:nth-child(4) { animation-delay: 1.2s; }
+        @keyframes icon-float {
+            0%, 100% { transform: translateY(0) rotate(-3deg); }
+            50%       { transform: translateY(-10px) rotate(3deg); }
+        }
+
+        @keyframes pop-in {
+            from { opacity: 0; transform: translateY(16px) scale(0.95); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* ── ACTIVITIES PANEL ──
+           common.js targets #activities-list and injects:
+             .act-card  → each activity row
+             .ann-badge → announcement label (inside .act-card)
+             .reserve-pill → booking button (inside .act-card)
+        ── */
+        .activities { grid-column: 2; grid-row: 1 / 3; }
+
+        .activities-panel {
+            background: rgba(255,253,248,0.88);
+            border-radius: 24px;
+            padding: 20px 18px;
+            box-shadow: 0 8px 32px rgba(180,120,220,0.15), 0 2px 8px rgba(0,0,0,0.06);
+            border: 1.5px solid rgba(200,160,230,0.3);
+            backdrop-filter: blur(12px);
+        }
+
+        .activities h3 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 24px; color: var(--pink-deep);
+            text-align: center; margin-bottom: 4px;
+        }
+
+        /* Matches class injected by common.js */
+        .act-card {
+            background: linear-gradient(135deg,
+                rgba(200,168,224,0.12) 0%,
+                rgba(255,255,255,0.8) 100%);
+            border: 1.5px solid rgba(200,160,224,0.25);
+            border-left: 4px solid var(--lavender);
+            padding: 12px 14px;
+            border-radius: 14px;
+            margin-bottom: 10px;
+            position: relative; overflow: hidden;
+            transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+            backdrop-filter: blur(6px);
+            font-size: 13px; font-weight: 500;
+            color: var(--text-dark);
+        }
+        .act-card:nth-child(2) { border-left-color: var(--mint-deep); }
+        .act-card:nth-child(3) { border-left-color: var(--peach-deep); }
+        .act-card:nth-child(4) { border-left-color: var(--pink-deep); }
+        .act-card:nth-child(5) { border-left-color: var(--green-deep); }
+
+        .act-card::before {
+            content: '';
+            position: absolute; top: 0; left: -100%;
+            width: 60%; height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.6), transparent);
+            pointer-events: none;
+        }
+        .act-card:hover::before { animation: shine 0.7s forwards; }
+        @keyframes shine { to { left: 140%; } }
+
+        .act-card:hover {
+            transform: translateX(-5px);
+            box-shadow: 4px 0 20px rgba(180,120,220,0.2);
+            border-color: rgba(200,160,224,0.6);
+        }
+
+        /* common.js injects these inside .act-card */
+        .act-card strong {
+            display: block; font-weight: 700;
+            font-size: 14px; color: var(--text-dark);
+        }
+        .act-card small {
+            font-size: 11px; color: var(--text-mid);
+            margin-top: 3px; letter-spacing: 0.5px; display: block;
+        }
+
+        /* Injected by common.js for bookable activities */
+        .reserve-pill {
+            float: right;
+            background: linear-gradient(135deg, var(--lavender), var(--pink));
+            border: none; padding: 4px 12px;
+            border-radius: 20px; font-size: 10px; font-weight: 700;
+            color: white; text-transform: uppercase; letter-spacing: 1px;
+            cursor: pointer; font-family: 'Quicksand', sans-serif;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .reserve-pill:hover { transform: scale(1.08); box-shadow: 0 4px 12px rgba(180,100,200,0.35); }
+
+        /* Injected by common.js for announcements */
+        .ann-badge {
+            display: block;
+            font-size: 9px; letter-spacing: 0.35em;
+            text-transform: uppercase; color: var(--pink-deep);
+            margin-bottom: 3px; font-weight: 700;
+        }
+
+        /* ── SERVICES ──
+           common.js targets #services-container and injects:
+             .svc-card   → wrapper card
+             .svc-img    → background image div
+             .svc-arrow  → top-right arrow indicator
+             .svc-info   → bottom info strip
+             .svc-title  → service name
+             .svc-sub    → tagline (shown on hover)
+        ── */
+        .services { grid-column: 1; grid-row: 2; align-self: end; }
+
+        .services-label {
+            font-family: 'Dancing Script', cursive;
+            font-size: 18px; color: var(--text-mid);
+            margin-bottom: 10px;
+        }
+
+        /* The container common.js populates */
+        #services-container {
+            display: flex; gap: 12px;
+            overflow-x: auto; padding-bottom: 4px;
+            scrollbar-width: none;
+        }
+        #services-container::-webkit-scrollbar { display: none; }
+
+        /* Matches class common.js injects */
+        .svc-card {
+            flex-shrink: 0;
+            width: 188px; height: 118px;
+            border-radius: 18px; overflow: hidden;
+            position: relative;
+            background-size: cover; background-position: center;
+            border: 2.5px solid rgba(200,160,224,0.3);
+            transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        .svc-card::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(180deg, transparent 20%, rgba(74,53,96,0.6) 100%);
+            pointer-events: none;
+        }
+        .svc-card::before {
+            content: ''; position: absolute; top: 0; right: 0; z-index: 2;
+            width: 0; height: 0;
+            border-style: solid;
+            border-width: 0 28px 28px 0;
+            border-color: transparent rgba(200,168,224,0.7) transparent transparent;
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .svc-card:hover {
+            transform: translateY(-8px) scale(1.03);
+            border-color: var(--lavender);
+            box-shadow: 0 12px 30px rgba(180,120,220,0.3);
+        }
+        .svc-card:hover::before { opacity: 1; }
+
+        /* common.js child elements */
+        .svc-img {
+            position: absolute; inset: 0;
+            background: center/cover no-repeat;
+            transition: transform 0.4s ease;
+        }
+        .svc-card:hover .svc-img { transform: scale(1.06); }
+
+        .svc-info {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            z-index: 3; padding: 10px 10px 8px;
+        }
+        .svc-title {
+            font-size: 12px; font-weight: 700;
+            color: white; letter-spacing: 0.5px;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+        }
+        .svc-sub {
+            font-size: 10px; font-weight: 400;
+            color: rgba(255,255,255,0.7);
+            margin-top: 2px;
+            max-height: 0; overflow: hidden; opacity: 0;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+        }
+        .svc-card:hover .svc-sub { max-height: 24px; opacity: 1; }
+
+        .svc-arrow {
+            position: absolute; top: 8px; right: 8px; z-index: 3;
+            width: 22px; height: 22px; border-radius: 50%;
+            background: rgba(200,160,224,0);
+            border: 1px solid rgba(255,255,255,0);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; color: rgba(255,255,255,0);
+            transition: all 0.3s;
+        }
+        .svc-card:hover .svc-arrow {
+            background: rgba(200,120,220,0.55);
+            border-color: rgba(255,255,255,0.4);
+            color: white;
+        }
+
+        /* ── LIVE TV ── */
+        .live-tv {
+            position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+            z-index: 20;
+        }
+        .live-tv button {
+            background: linear-gradient(135deg, var(--mint-deep), var(--green-deep));
+            border: none; padding: 13px 46px;
+            font-family: 'Dancing Script', cursive;
+            font-size: 20px; font-weight: 700;
+            color: white; cursor: pointer;
+            border-radius: 40px;
+            box-shadow: 0 6px 20px rgba(91,184,154,0.4), 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.25s, box-shadow 0.25s;
+            animation: tv-pulse 3s ease-in-out infinite;
+        }
+        @keyframes tv-pulse {
+            0%, 100% { box-shadow: 0 6px 20px rgba(91,184,154,0.4); }
+            50%       { box-shadow: 0 6px 30px rgba(91,184,154,0.7), 0 0 0 6px rgba(91,184,154,0.15); }
+        }
+        .live-tv button:hover { transform: scale(1.06) translateY(-2px); }
+
+        /* ── FOOD OVERLAY ── Easter-tinted version of default.html overlay ── */
+        .food-overlay {
+            position: fixed; inset: 0; z-index: 100;
+            display: none; flex-direction: column;
+            background: rgba(28,8,38,0.96); backdrop-filter: blur(24px);
+        }
+        .food-overlay.active { display: flex; }
+
+        .food-topbar {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 28px 52px 20px;
+            border-bottom: 1px solid rgba(200,160,230,0.2);
+            flex-shrink: 0;
+        }
+        .food-topbar-left { display: flex; align-items: center; gap: 20px; }
+        .food-back-btn {
+            display: flex; align-items: center; gap: 8px;
+            cursor: pointer; font-size: 11px; letter-spacing: .3em;
+            text-transform: uppercase; color: rgba(200,168,230,0.45);
+            background: none; border: none;
+            font-family: 'Quicksand', sans-serif; transition: color .25s;
+        }
+        .food-back-btn:hover { color: var(--lavender); }
+        .food-back-btn svg { width: 16px; height: 16px; }
+        .food-page-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 36px; font-weight: 700;
+            color: var(--white);
+        }
+        .food-page-title em { color: var(--yellow); }
+
+        #foodCategoryScreen {
+            flex: 1; overflow: hidden; display: flex; flex-direction: column;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(200,168,230,0.1), transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(168,221,201,0.08), transparent 40%);
+        }
+        .cat-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 24px; padding: 40px 80px;
+        }
+        .cat-card {
+            position: relative; width: 100%; height: 240px;
+            border-radius: 18px; overflow: hidden; cursor: pointer;
+            background: #1a0820 center/cover no-repeat;
+            transition: all .3s ease;
+        }
+        .cat-card:hover { transform: translateY(-4px) scale(1.01); box-shadow: 0 10px 28px rgba(0,0,0,.5), 0 0 0 1px rgba(200,168,230,.4); }
+        .cat-card::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(20,5,30,0.88) 0%, rgba(20,5,30,0.25) 50%, rgba(20,5,30,0.05) 100%);
+            transition: opacity .3s;
+        }
+        .cat-card:hover::before { opacity: .85; }
+        .cat-card::after {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--lavender), var(--pink), transparent);
+            transform: scaleX(0); transform-origin: left; transition: transform .4s ease;
+        }
+        .cat-card:hover::after { transform: scaleX(1); }
+        .cat-card-img {
+            position: absolute; inset: 0;
+            background: center/cover no-repeat;
+            transition: transform .5s cubic-bezier(0.23,1,0.32,1);
+        }
+        .cat-card:hover .cat-card-img { transform: scale(1.04); }
+        .cat-card-body { position: absolute; bottom: 0; left: 0; right: 0; padding: 18px 20px; z-index: 2; }
+        .cat-card-name { font-size: 19px; font-weight: 700; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,.6); }
+        .cat-card:hover .cat-card-name { color: var(--yellow); }
+        .cat-card-sub { font-size: 12px; font-weight: 400; color: rgba(255,255,255,.55); margin-top: 3px; }
+
+        #foodItemsScreen { flex: 1; display: none; flex-direction: row; overflow: hidden; }
+        #foodItemsScreen.visible { display: flex; }
+        .items-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .items-cat-label {
+            padding: 18px 52px 8px;
+            font-family: 'Dancing Script', cursive;
+            font-size: 28px; font-weight: 700;
+            color: var(--yellow); letter-spacing: .05em; flex-shrink: 0;
+        }
+        .items-scroll {
+            flex: 1; overflow-y: auto; overflow-x: hidden;
+            display: grid; grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 16px; padding: 12px 32px 24px; align-content: start;
+        }
+        .item-card {
+            width: 100%; min-width: 0;
+            background: rgba(30,10,40,0.88);
+            border: 1px solid rgba(200,168,230,.2);
+            border-radius: 16px; overflow: hidden;
+            transition: border-color .3s, box-shadow .3s;
+        }
+        .item-card:hover { border-color: rgba(200,168,230,.5); box-shadow: 0 8px 28px rgba(0,0,0,.5); }
+        .item-img { width: 100%; height: 130px; background: #1a0820 center/cover no-repeat; }
+        .item-body { padding: 12px 14px 14px; }
+        .item-name { font-size: 14px; font-weight: 600; color: var(--white); margin-bottom: 2px; }
+        .item-price { font-family: 'Dancing Script', cursive; font-size: 20px; color: var(--yellow); margin-bottom: 12px; }
+        .item-price small { font-size: 13px; color: rgba(249,232,127,0.5); }
+        .qty-row {
+            display: flex; align-items: center;
+            background: rgba(255,255,255,.06); border-radius: 30px;
+            overflow: hidden; border: 1px solid rgba(255,255,255,.1);
+        }
+        .qty-btn {
+            width: 36px; height: 36px; border: none; background: transparent;
+            color: var(--white); font-size: 20px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: background .2s; line-height: 1;
+        }
+        .qty-btn:hover { background: rgba(200,168,230,.3); }
+        .qty-btn.minus { border-radius: 30px 0 0 30px; }
+        .qty-btn.plus  { border-radius: 0 30px 30px 0; background: var(--pink-deep); }
+        .qty-btn.plus:hover { background: var(--pink); }
+        .qty-val { flex: 1; text-align: center; font-size: 15px; font-weight: 600; color: var(--white); user-select: none; }
+
+        .cart-panel {
+            width: 240px; flex-shrink: 0;
+            background: rgba(20,5,30,0.92);
+            border-left: 1px solid rgba(200,168,230,.18);
+            display: flex; flex-direction: column; padding: 18px 20px 20px;
+        }
+        .cart-panel-title { font-family: 'Dancing Script', cursive; font-size: 28px; font-weight: 700; color: var(--white); margin-bottom: 6px; }
+        .cart-panel-title em { color: var(--yellow); }
+        .cart-divider { height: 1px; background: rgba(200,168,230,.2); margin-bottom: 16px; }
+        .cart-items-list { flex: 1; overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(200,168,230,.2) transparent; margin-bottom: 16px; }
+        .cart-item-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,.05); }
+        .cart-item-row:last-child { border-bottom: none; }
+        .ci-name { font-size: 13px; color: var(--white); max-width: 140px; }
+        .ci-qty  { font-size: 12px; color: rgba(200,168,230,.5); margin-top: 1px; }
+        .ci-price { font-family: 'Dancing Script', cursive; font-size: 18px; color: var(--yellow); }
+        .cart-empty { color: rgba(200,168,230,.3); font-size: 13px; text-align: center; margin-top: 24px; font-style: italic; }
+        .cart-total-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0 18px; border-top: 1px solid rgba(200,168,230,.2); }
+        .cart-total-label { font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: rgba(200,168,230,.5); }
+        .cart-total-amt { font-family: 'Dancing Script', cursive; font-size: 28px; font-weight: 700; color: var(--yellow); }
+        .cart-total-amt small { font-size: 14px; color: rgba(249,232,127,.5); }
+        .cart-clear-btn {
+            width: 100%; padding: 11px; border-radius: 10px; margin-bottom: 10px;
+            background: rgba(200,168,230,.15); border: 1px solid rgba(200,168,230,.35);
+            color: var(--lavender); font-family: 'Quicksand', sans-serif;
+            font-size: 12px; letter-spacing: .25em; text-transform: uppercase;
+            cursor: pointer; transition: background .25s;
+        }
+        .cart-clear-btn:hover { background: rgba(200,168,230,.3); }
+        .cart-place-btn {
+            width: 100%; padding: 14px; border-radius: 10px;
+            background: linear-gradient(135deg, var(--pink-deep), var(--lavender));
+            border: none; color: #fff; font-family: 'Quicksand', sans-serif;
+            font-size: 13px; font-weight: 700; letter-spacing: .3em; text-transform: uppercase;
+            cursor: pointer; transition: opacity .3s, box-shadow .3s;
+        }
+        .cart-place-btn:hover { opacity: .9; box-shadow: 0 0 24px rgba(200,168,230,.4); }
+        .cart-place-btn:disabled { opacity: .3; cursor: default; box-shadow: none; }
+    </style>
+<style>
+/* ═══ Vibe Munnar – Overlay CSS (shared + spa + bar + dine + ent) ═══ */
+        /* ══════════════════════════════════════════
+           SHARED OVERLAY BASE STYLES
+           (food, spa, bar all inherit from this pattern)
+        ══════════════════════════════════════════ */
+        .overlay-base {
+            position: fixed; inset: 0; z-index: 100;
+            display: none; flex-direction: column;
+            background: rgba(8,2,5,0.97);
+            backdrop-filter: blur(24px);
+        }
+        .overlay-base.active { display: flex; }
+
+        .overlay-topbar {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 28px 52px 20px;
+            border-bottom: .5px solid rgba(192,24,90,.15);
+            flex-shrink: 0;
+        }
+        .overlay-topbar-left { display: flex; align-items: center; gap: 20px; }
+        .overlay-back-btn {
+            display: flex; align-items: center; gap: 8px; cursor: pointer;
+            font-size: 11px; letter-spacing: .3em; text-transform: uppercase;
+            color: rgba(248,243,236,.4); background: none; border: none;
+            font-family: 'Jost', sans-serif; transition: color .25s; padding: 0;
+        }
+        .overlay-back-btn:hover { color: var(--gold); }
+        .overlay-back-btn svg { width: 16px; height: 16px; }
+        .overlay-page-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 36px; font-weight: 300; color: var(--cream); letter-spacing: .02em;
+        }
+        .overlay-page-title em { color: var(--gold-light); font-style: italic; }
+
+        /* close X button */
+        .overlay-close-btn {
+            width: 38px; height: 38px; border-radius: 50%; border: .5px solid rgba(255,255,255,.12);
+            background: rgba(255,255,255,.06); color: rgba(248,243,236,.45);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; cursor: pointer; transition: all .2s;
+        }
+        .overlay-close-btn:hover { background: rgba(192,24,90,.25); border-color: rgba(192,24,90,.5); color: var(--cream); }
+
+        /* shared cat-screen glow bg */
+        .cat-screen-bg {
+            flex: 1; overflow: hidden; display: flex; flex-direction: column;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(192,24,90,0.12), transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(212,168,67,0.10), transparent 40%);
+        }
+
+        /* ══════════════════════════════════════════
+           SHARED TOAST
+        ══════════════════════════════════════════ */
+        .svc-toast {
+            position: fixed; bottom: 40px; left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: rgba(26,188,156,.15); border: .5px solid #1abc9c;
+            color: #1abc9c; padding: 13px 32px; border-radius: 30px;
+            font-size: 12px; letter-spacing: .25em; text-transform: uppercase;
+            transition: transform .4s ease, opacity .4s; opacity: 0;
+            z-index: 400; pointer-events: none;
+        }
+        .svc-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+        /* ══════════════════════════════════════════
+           FOOD OVERLAY
+        ══════════════════════════════════════════ */
+        #foodCategoryScreen { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+        .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding: 40px 80px; }
+        .cat-card { position: relative; width: 100%; height: 240px; border-radius: 18px; overflow: hidden; cursor: pointer; background: #1a0510 center/cover no-repeat; transition: all .3s ease; }
+        .cat-card:hover { transform: translateY(-4px) scale(1.01); box-shadow: 0 10px 28px rgba(0,0,0,.5), 0 0 0 1px rgba(192,24,90,.4); }
+        .cat-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(8,2,5,0.88) 0%, rgba(8,2,5,0.25) 50%, rgba(8,2,5,0.05) 100%); transition: opacity .3s; }
+        .cat-card:hover::before { opacity: .85; }
+        .cat-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--pink), var(--gold), transparent); transform: scaleX(0); transform-origin: left; transition: transform .4s ease; }
+        .cat-card:hover::after { transform: scaleX(1); }
+       .cat-card-img {position: absolute;inset: 0;width: 100%;height: 100%;background-size: cover;background-position: center;background-repeat: no-repeat;transition: transform .55s cubic-bezier(0.23,1,0.32,1);}
+        .cat-card:hover .cat-card-img { transform: scale(1.04); }
+        .cat-card-body { position: absolute; bottom: 0; left: 0; right: 0; padding: 18px 20px; z-index: 2; }
+        .cat-card-name { font-size: 19px; font-weight: 600; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,.6); transition: color .25s; }
+        .cat-card:hover .cat-card-name { color: var(--gold-light); }
+        .cat-card-sub { font-size: 12px; font-weight: 400; color: rgba(255,255,255,.55); margin-top: 3px; letter-spacing: .04em; }
+
+        #foodItemsScreen { flex: 1; display: none; flex-direction: row; overflow: hidden; }
+        #foodItemsScreen.visible { display: flex; }
+        .items-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .items-cat-label { padding: 18px 52px 8px; font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; color: var(--gold-light); letter-spacing: .05em; text-transform: uppercase; flex-shrink: 0; }
+        .items-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; padding: 12px 32px 24px; align-content: start; }
+        .item-card { width: 100%; min-width: 0; background: rgba(20,4,12,0.88); border: .5px solid rgba(192,24,90,.2); border-radius: 16px; overflow: hidden; transition: border-color .3s, box-shadow .3s; }
+        .item-card:hover { border-color: rgba(192,24,90,.5); box-shadow: 0 8px 28px rgba(0,0,0,.5), 0 0 16px rgba(192,24,90,.12); }
+        .item-img {
+            width: 100%;
+            height: 130px;
+            background-color: #1a0510;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .item-body { padding: 12px 14px 14px; }
+        .item-name { font-size: 14px; font-weight: 500; color: var(--cream); margin-bottom: 2px; }
+        .item-price { font-family: 'Cormorant Garamond', serif; font-size: 18px; color: var(--gold-light); margin-bottom: 12px; }
+        .item-price small { font-size: 12px; color: rgba(212,168,67,.5); }
+        .qty-row { display: flex; align-items: center; background: rgba(255,255,255,.06); border-radius: 30px; overflow: hidden; border: .5px solid rgba(255,255,255,.1); }
+        .qty-btn { width: 36px; height: 36px; border: none; background: transparent; color: var(--cream); font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .2s; font-family: 'Jost', sans-serif; line-height: 1; }
+        .qty-btn:hover { background: rgba(192,24,90,.3); }
+        .qty-btn.minus { border-radius: 30px 0 0 30px; }
+        .qty-btn.plus  { border-radius: 0 30px 30px 0; background: var(--pink); }
+        .qty-btn.plus:hover { background: var(--pink-light); }
+        .qty-val { flex: 1; text-align: center; font-size: 15px; font-weight: 500; color: var(--cream); user-select: none; }
+
+        /* shared cart panel */
+        .cart-panel { width: 240px; flex-shrink: 0; background: rgba(16,3,10,0.92); border-left: .5px solid rgba(192,24,90,.18); display: flex; flex-direction: column; padding: 18px 20px 20px; }
+        .cart-panel-title { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 300; color: var(--cream); margin-bottom: 6px; letter-spacing: .03em; }
+        .cart-panel-title em { color: var(--gold-light); font-style: italic; }
+        .cart-divider { height: .5px; background: rgba(192,24,90,.2); margin-bottom: 16px; }
+        .cart-items-list { flex: 1; overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(192,24,90,.2) transparent; margin-bottom: 16px; }
+        .cart-item-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: .5px solid rgba(255,255,255,.05); }
+        .cart-item-row:last-child { border-bottom: none; }
+        .ci-name { font-size: 13px; color: var(--cream); max-width: 140px; }
+        .ci-qty  { font-size: 12px; color: rgba(248,243,236,.4); margin-top: 1px; }
+        .ci-price { font-family: 'Cormorant Garamond', serif; font-size: 16px; color: var(--gold-light); }
+        .cart-empty { color: rgba(248,243,236,.3); font-size: 13px; text-align: center; margin-top: 24px; font-style: italic; }
+        .cart-total-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0 18px; border-top: .5px solid rgba(212,168,67,.2); }
+        .cart-total-label { font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: rgba(248,243,236,.5); }
+        .cart-total-amt { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 300; color: var(--gold-light); }
+        .cart-total-amt small { font-size: 14px; color: rgba(212,168,67,.5); }
+        .cart-clear-btn { width: 100%; padding: 11px; border-radius: 10px; margin-bottom: 10px; background: rgba(192,24,90,.15); border: .5px solid rgba(192,24,90,.35); color: var(--pink-light); font-family: 'Jost', sans-serif; font-size: 12px; letter-spacing: .25em; text-transform: uppercase; cursor: pointer; transition: background .25s; }
+        .cart-clear-btn:hover { background: rgba(192,24,90,.3); }
+        .cart-place-btn { width: 100%; padding: 14px; border-radius: 10px; background: var(--pink); border: none; color: #fff; font-family: 'Jost', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: .3em; text-transform: uppercase; cursor: pointer; transition: background .3s, box-shadow .3s; }
+        .cart-place-btn:hover { background: var(--pink-light); box-shadow: 0 0 24px rgba(192,24,90,.4); }
+        .cart-place-btn:disabled { background: rgba(192,24,90,.2); color: rgba(255,255,255,.3); cursor: default; box-shadow: none; }
+
+        /* ══════════════════════════════════════════
+           SPA & WELLNESS OVERLAY
+        ══════════════════════════════════════════ */
+        #spaCategoryScreen { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+        .spa-cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding: 40px 80px; }
+        .spa-cat-card {
+            position: relative; width: 100%; height: 240px; border-radius: 18px; overflow: hidden;
+            cursor: pointer; background: #0a1510 center/cover no-repeat; transition: all .3s ease;
+        }
+        .spa-cat-card:hover { transform: translateY(-4px) scale(1.01); box-shadow: 0 10px 28px rgba(0,0,0,.5), 0 0 0 1px rgba(192,24,90,.4); }
+        .spa-cat-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(4,14,10,0.9) 0%, rgba(4,14,10,0.25) 55%, rgba(4,14,10,0.05) 100%); transition: opacity .3s; }
+        .spa-cat-card:hover::before { opacity: .85; }
+        .spa-cat-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--pink), var(--gold), transparent); transform: scaleX(0); transform-origin: left; transition: transform .4s ease; }
+        .spa-cat-card:hover::after { transform: scaleX(1); }
+        .spa-cat-img { position: absolute; inset: 0; width: 100%; height: 100%; background: center/cover no-repeat; transition: transform .5s cubic-bezier(0.23,1,0.32,1); }
+        .spa-cat-card:hover .spa-cat-img { transform: scale(1.04); }
+        .spa-cat-body { position: absolute; bottom: 0; left: 0; right: 0; padding: 18px 20px; z-index: 2; }
+        .spa-cat-name { font-size: 18px; font-weight: 600; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,.6); transition: color .25s; }
+        .spa-cat-card:hover .spa-cat-name { color: var(--gold-light); }
+        .spa-cat-sub { font-size: 12px; color: rgba(255,255,255,.5); margin-top: 3px; letter-spacing: .04em; }
+
+        #spaTreatmentsScreen { flex: 1; display: none; flex-direction: column; overflow: hidden; }
+        #spaTreatmentsScreen.visible { display: flex; }
+        .spa-treatments-label { padding: 18px 52px 8px; font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; color: var(--gold-light); letter-spacing: .05em; flex-shrink: 0; }
+        .spa-treatments-scroll {
+            flex: 1; overflow-y: auto; overflow-x: hidden;
+            display: grid; grid-template-columns: repeat(3, minmax(0,1fr));
+            gap: 20px; padding: 12px 52px 24px; align-content: start;
+        }
+
+        /* Card: full-bleed image; slot overlay appears on click */
+        .spa-treatment-card {
+            background: rgba(10,20,14,0.9); border: .5px solid rgba(192,24,90,.2);
+            border-radius: 16px; overflow: hidden; cursor: pointer;
+            position: relative; height: 280px;
+            transition: border-color .3s, box-shadow .3s, transform .25s;
+        }
+        .spa-treatment-card:hover { border-color: rgba(192,24,90,.5); box-shadow: 0 8px 28px rgba(0,0,0,.5); transform: translateY(-3px); }
+        .spa-treatment-card.expanded { border-color: rgba(192,24,90,.7); box-shadow: 0 12px 36px rgba(0,0,0,.6), 0 0 0 1px rgba(192,24,90,.4); transform: translateY(0); }
+
+        /* Full-bleed image fills entire card */
+        .spa-treatment-bg {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            background: #0a1510 center/cover no-repeat;
+        }
+        /* Title label sits at the bottom of the image (always visible) */
+        .spa-card-overlay-label {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            padding: 48px 14px 14px;
+            background: linear-gradient(to top, rgba(4,14,10,0.96) 0%, rgba(4,14,10,0.0) 100%);
+            transition: opacity .3s;
+        }
+        .spa-treatment-card.expanded .spa-card-overlay-label { opacity: 0; pointer-events: none; }
+        .spa-treatment-name { font-size: 15px; font-weight: 600; color: var(--cream); margin-bottom: 2px; }
+        .spa-treatment-desc { font-size: 11px; color: rgba(248,243,236,.5); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px; }
+        .spa-card-tap-hint {
+            font-size: 10px; letter-spacing: .25em; text-transform: uppercase;
+            color: var(--pink-light); opacity: .75;
+        }
+
+        /* Slot panel — overlays the card on click, does NOT push content down */
+        .spa-slot-panel {
+            position: absolute; inset: 0; z-index: 5;
+            opacity: 0; pointer-events: none;
+            transition: opacity .35s ease;
+            background: rgba(8,18,12,0.93);
+            backdrop-filter: blur(8px);
+            display: flex; flex-direction: column; justify-content: flex-end;
+            padding: 14px 14px 16px;
+        }
+        .spa-treatment-card.expanded .spa-slot-panel { opacity: 1; pointer-events: all; }
+        .spa-slots { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 12px; }
+        .spa-slot-badge {
+            background: rgba(255,255,255,.07); border: .5px solid rgba(255,255,255,.18);
+            color: rgba(248,243,236,.65); font-size: 11px; font-family: 'Jost', sans-serif;
+            padding: 5px 12px; border-radius: 20px; cursor: pointer; transition: all .2s;
+        }
+        .spa-slot-badge:hover { background: rgba(192,24,90,.2); border-color: rgba(192,24,90,.5); color: var(--cream); }
+        .spa-slot-badge.selected { background: var(--pink-dim); border-color: var(--pink-light); color: var(--pink-light); font-weight: 500; }
+        .spa-book-slot-btn {
+            width: 100%; padding: 11px; background: var(--pink); border: none; color: #fff;
+            border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 500;
+            letter-spacing: .25em; text-transform: uppercase; cursor: pointer; transition: background .25s, box-shadow .25s;
+        }
+        .spa-book-slot-btn:hover { background: var(--pink-light); box-shadow: 0 0 20px rgba(192,24,90,.4); }
+
+        /* Spa confirm modal */
+        .spa-confirm-overlay {
+            position: fixed; inset: 0; z-index: 200; display: none;
+            align-items: center; justify-content: center;
+            background: rgba(0,0,0,.72); backdrop-filter: blur(10px);
+        }
+        .spa-confirm-overlay.active { display: flex; }
+        .spa-confirm-modal {
+            background: linear-gradient(160deg, rgba(8,18,12,0.99), rgba(20,4,12,0.99));
+            border: .5px solid rgba(192,24,90,.35); border-radius: 22px;
+            padding: 40px 44px 36px; max-width: 460px; width: 90%; text-align: center;
+            position: relative;
+        }
+        .spa-confirm-icon { font-size: 38px; margin-bottom: 16px; }
+        .spa-confirm-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; color: var(--cream); margin-bottom: 4px; }
+        .spa-confirm-cat { font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); margin-bottom: 22px; }
+        .spa-confirm-details { background: rgba(255,255,255,.05); border: .5px solid rgba(255,255,255,.1); border-radius: 12px; padding: 18px 20px; margin-bottom: 24px; text-align: left; }
+        .spa-confirm-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: .5px solid rgba(255,255,255,.06); }
+        .spa-confirm-row:last-child { border-bottom: none; }
+        .spa-confirm-row-label { font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: rgba(248,243,236,.4); }
+        .spa-confirm-row-val { font-size: 14px; font-weight: 500; color: var(--cream); }
+        .spa-confirm-sub { font-size: 12px; color: rgba(248,243,236,.35); margin-bottom: 24px; font-style: italic; }
+        .spa-confirm-actions { display: flex; gap: 12px; }
+        .spa-cancel-btn { flex: 1; padding: 13px; background: rgba(255,255,255,.07); border: .5px solid rgba(255,255,255,.15); color: rgba(248,243,236,.6); border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; cursor: pointer; transition: all .2s; }
+        .spa-cancel-btn:hover { background: rgba(255,255,255,.12); color: var(--cream); }
+        .spa-confirm-btn { flex: 2; padding: 13px; background: var(--pink); border: none; color: #fff; border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: .25em; text-transform: uppercase; cursor: pointer; transition: background .25s, box-shadow .25s; }
+        .spa-confirm-btn:hover { background: var(--pink-light); box-shadow: 0 0 24px rgba(192,24,90,.4); }
+        .spa-confirm-btn:disabled { background: rgba(192,24,90,.2); color: rgba(255,255,255,.3); cursor: default; box-shadow: none; }
+
+        /* ══════════════════════════════════════════
+           BAR OVERLAY
+        ══════════════════════════════════════════ */
+        #barCategoryScreen { flex: 1; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .bar-cat-grid { display: flex; flex-direction: row; gap: 28px; padding: 32px 60px; width: 100%; max-width: 1000px; justify-content: center; }
+        .bar-cat-card {
+            position: relative; border-radius: 20px; overflow: hidden; cursor: pointer;
+            flex: 1; max-width: 420px; height: 260px;
+            background: #1a0800 center/cover no-repeat; transition: all .38s cubic-bezier(0.23,1,0.32,1);
+        }
+        .bar-cat-card:hover { transform: scale(1.025); box-shadow: 0 20px 60px rgba(0,0,0,.7), 0 0 0 1.5px var(--pink), 0 0 28px rgba(192,24,90,.35); }
+        .bar-cat-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,4,2,0.88) 0%, rgba(10,4,2,0.30) 55%, rgba(10,4,2,0.06) 100%); z-index: 1; }
+        .bar-cat-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, transparent, var(--pink), var(--gold), transparent); transform: scaleX(0); transform-origin: left; transition: transform .45s ease; z-index: 3; }
+        .bar-cat-card:hover::after { transform: scaleX(1); }
+        .bar-cat-img { position: absolute; inset: 0; width: 100%; height: 100%; background: center/cover no-repeat; transition: transform .55s cubic-bezier(0.23,1,0.32,1); z-index: 0; }
+        .bar-cat-card:hover .bar-cat-img { transform: scale(1.06); }
+        .bar-cat-body { position: absolute; bottom: 0; left: 0; right: 0; padding: 22px 28px; z-index: 2; }
+        .bar-cat-name { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 400; color: #fff; text-shadow: 0 2px 12px rgba(0,0,0,.8); transition: color .25s; margin-bottom: 5px; }
+        .bar-cat-card:hover .bar-cat-name { color: var(--gold-light); }
+        .bar-cat-sub { font-size: 13px; color: rgba(255,255,255,.6); letter-spacing: .04em; }
+
+        #barItemsScreen { flex: 1; display: none; flex-direction: row; overflow: hidden; }
+        #barItemsScreen.visible { display: flex; }
+        .bar-items-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .bar-items-cat-label { padding: 18px 52px 8px; font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; color: var(--gold-light); letter-spacing: .05em; text-transform: uppercase; flex-shrink: 0; }
+        .bar-items-scroll {
+            flex: 1; overflow-y: auto; overflow-x: hidden;
+            display: grid; grid-template-columns: repeat(4, minmax(0,1fr));
+            gap: 16px; padding: 12px 32px 24px; align-content: start;
+        }
+        .bar-item-card {
+            background: rgba(26,8,4,0.92); border: .5px solid rgba(192,24,90,.2);
+            border-radius: 16px; overflow: hidden; transition: border-color .3s, box-shadow .3s;
+        }
+        .bar-item-card:hover { border-color: rgba(192,24,90,.5); box-shadow: 0 8px 28px rgba(0,0,0,.5), 0 0 16px rgba(192,24,90,.12); }
+        .bar-item-img {
+            width: 100%;
+            height: 140px;
+            background-color: #1a0800;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .bar-item-body { padding: 12px 14px 14px; }
+        .bar-item-name { font-size: 14px; font-weight: 500; color: var(--cream); margin-bottom: 2px; }
+        .bar-item-price { font-family: 'Cormorant Garamond', serif; font-size: 18px; color: var(--gold-light); margin-bottom: 12px; }
+        .bar-item-price small { font-size: 12px; color: rgba(212,168,67,.5); }
+        .bar-qty-row { display: flex; align-items: center; background: rgba(255,255,255,.06); border-radius: 30px; overflow: hidden; border: .5px solid rgba(255,255,255,.1); }
+        .bar-qty-btn { width: 36px; height: 36px; border: none; background: transparent; color: var(--cream); font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .2s; font-family: 'Jost', sans-serif; line-height: 1; }
+        .bar-qty-btn:hover { background: rgba(192,24,90,.3); }
+        .bar-qty-btn.minus { border-radius: 30px 0 0 30px; }
+        .bar-qty-btn.plus  { border-radius: 0 30px 30px 0; background: var(--pink); }
+        .bar-qty-btn.plus:hover { background: var(--pink-light); }
+        .bar-qty-val { flex: 1; text-align: center; font-size: 15px; font-weight: 500; color: var(--cream); user-select: none; }
+
+        /* Bar cart panel reuses shared cart styles but with bar-specific IDs */
+        .bar-cart-item-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: .5px solid rgba(255,255,255,.05); }
+        .bar-cart-item-row:last-child { border-bottom: none; }
+        .bar-ci-name { font-size: 13px; color: var(--cream); max-width: 140px; }
+        .bar-ci-qty  { font-size: 12px; color: rgba(248,243,236,.4); margin-top: 1px; }
+        .bar-ci-price { font-family: 'Cormorant Garamond', serif; font-size: 16px; color: var(--gold-light); }
+        .bar-cart-empty { color: rgba(248,243,236,.3); font-size: 13px; text-align: center; margin-top: 24px; font-style: italic; }
+
+        /* ══════════════════════════════════════════
+           DINE-IN OVERLAY
+        ══════════════════════════════════════════ */
+        #dineCategoryScreen { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+        .dine-cat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; padding: 32px 60px; }
+        .dine-cat-card {
+            position: relative; width: 100%; height: 220px; border-radius: 18px; overflow: hidden;
+            cursor: pointer; background: #0a100a center/cover no-repeat; transition: all .3s ease;
+        }
+        .dine-cat-card:hover { transform: translateY(-4px) scale(1.01); box-shadow: 0 10px 28px rgba(0,0,0,.5), 0 0 0 1px rgba(212,168,67,.5); }
+        .dine-cat-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(8,6,2,0.92) 0%, rgba(8,6,2,0.30) 55%, rgba(8,6,2,0.05) 100%); transition: opacity .3s; }
+        .dine-cat-card:hover::before { opacity: .82; }
+        .dine-cat-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--gold), var(--pink), transparent); transform: scaleX(0); transform-origin: left; transition: transform .4s ease; }
+        .dine-cat-card:hover::after { transform: scaleX(1); }
+        .dine-cat-img { position: absolute; inset: 0; width: 100%; height: 100%; background: center/cover no-repeat; transition: transform .55s cubic-bezier(0.23,1,0.32,1); }
+        .dine-cat-card:hover .dine-cat-img { transform: scale(1.04); }
+        .dine-cat-body { position: absolute; bottom: 0; left: 0; right: 0; padding: 16px 18px; z-index: 2; }
+        .dine-cat-icon { font-size: 22px; margin-bottom: 4px; }
+        .dine-cat-name { font-size: 17px; font-weight: 600; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,.6); transition: color .25s; }
+        .dine-cat-card:hover .dine-cat-name { color: var(--gold-light); }
+        .dine-cat-sub { font-size: 11px; color: rgba(255,255,255,.5); margin-top: 2px; letter-spacing: .04em; }
+
+        #dinePackagesScreen { flex: 1; display: none; flex-direction: column; overflow: hidden; }
+        #dinePackagesScreen.visible { display: flex; }
+        .dine-pkg-label { padding: 18px 52px 8px; font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; color: var(--gold-light); letter-spacing: .05em; text-transform: uppercase; flex-shrink: 0; }
+        .dine-pkg-scroll {
+            flex: 1; overflow-y: auto; overflow-x: hidden;
+            display: grid; grid-template-columns: repeat(3, minmax(0,1fr));
+            gap: 20px; padding: 12px 52px 24px; align-content: start;
+        }
+
+        /* Card: full-bleed image; slot overlay appears on click */
+        .dine-pkg-card {
+            background: rgba(18,12,4,0.92); border: .5px solid rgba(212,168,67,.2);
+            border-radius: 16px; overflow: hidden; cursor: pointer;
+            position: relative; height: 280px;
+            transition: border-color .3s, box-shadow .3s, transform .25s;
+        }
+        .dine-pkg-card:hover { border-color: rgba(212,168,67,.5); box-shadow: 0 8px 28px rgba(0,0,0,.5); transform: translateY(-3px); }
+        .dine-pkg-card.expanded { border-color: rgba(212,168,67,.8); box-shadow: 0 12px 36px rgba(0,0,0,.6), 0 0 0 1px rgba(212,168,67,.35); transform: translateY(0); }
+
+        /* Full-bleed image fills entire card */
+        .dine-pkg-bg {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            background: #12100a center/cover no-repeat;
+        }
+        /* Title label sits at the bottom of the image (always visible) */
+        .dine-card-overlay-label {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            padding: 48px 16px 14px;
+            background: linear-gradient(to top, rgba(8,6,2,0.96) 0%, rgba(8,6,2,0.0) 100%);
+            transition: opacity .3s;
+        }
+        .dine-pkg-card.expanded .dine-card-overlay-label { opacity: 0; pointer-events: none; }
+        .dine-pkg-name { font-size: 15px; font-weight: 600; color: var(--cream); margin-bottom: 2px; }
+        .dine-pkg-desc { font-size: 11px; color: rgba(248,243,236,.45); margin-bottom: 4px; letter-spacing: .03em; font-style: italic; }
+        .dine-card-tap-hint {
+            font-size: 10px; letter-spacing: .25em; text-transform: uppercase;
+            color: var(--gold-light); opacity: .7;
+        }
+
+        /* Slot panel — overlays the card on click, does NOT push content down */
+        .dine-slot-panel {
+            position: absolute; inset: 0; z-index: 5;
+            opacity: 0; pointer-events: none;
+            transition: opacity .35s ease;
+            background: rgba(10,8,2,0.93);
+            backdrop-filter: blur(8px);
+            display: flex; flex-direction: column; justify-content: flex-end;
+            padding: 14px 16px 16px;
+        }
+        .dine-pkg-card.expanded .dine-slot-panel { opacity: 1; pointer-events: all; }
+        .dine-slots { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 12px; }
+        .dine-slot-badge {
+            background: rgba(255,255,255,.07); border: .5px solid rgba(255,255,255,.18);
+            color: rgba(248,243,236,.65); font-size: 11px; font-family: 'Jost', sans-serif;
+            padding: 5px 12px; border-radius: 20px; cursor: pointer; transition: all .2s;
+        }
+        .dine-slot-badge:hover { background: rgba(212,168,67,.2); border-color: rgba(212,168,67,.5); color: var(--cream); }
+        .dine-slot-badge.selected { background: var(--gold-dim); border-color: var(--gold); color: var(--gold-light); font-weight: 500; }
+        .dine-book-btn {
+            width: 100%; padding: 11px; background: linear-gradient(135deg, #b8860b, var(--gold)); border: none; color: #0e0608;
+            border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 600;
+            letter-spacing: .2em; text-transform: uppercase; cursor: pointer; transition: opacity .25s, box-shadow .25s;
+        }
+        .dine-book-btn:hover { opacity: .88; box-shadow: 0 0 20px rgba(212,168,67,.4); }
+
+        /* Dine confirm modal */
+        .dine-confirm-overlay {
+            position: fixed; inset: 0; z-index: 200; display: none;
+            align-items: center; justify-content: center;
+            background: rgba(0,0,0,.72); backdrop-filter: blur(10px);
+        }
+        .dine-confirm-overlay.active { display: flex; }
+        .dine-confirm-modal {
+            background: linear-gradient(160deg, rgba(18,14,4,0.99), rgba(8,4,2,0.99));
+            border: .5px solid rgba(212,168,67,.4); border-radius: 22px;
+            padding: 40px 44px 36px; max-width: 480px; width: 90%; text-align: center; position: relative;
+        }
+        .dine-confirm-icon { font-size: 40px; margin-bottom: 14px; }
+        .dine-confirm-title { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 300; color: var(--cream); margin-bottom: 4px; }
+        .dine-confirm-occ { font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; }
+        .dine-confirm-details { background: rgba(255,255,255,.05); border: .5px solid rgba(255,255,255,.1); border-radius: 12px; padding: 16px 20px; margin-bottom: 22px; text-align: left; }
+        .dine-confirm-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: .5px solid rgba(255,255,255,.06); }
+        .dine-confirm-row:last-child { border-bottom: none; }
+        .dine-confirm-row-label { font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: rgba(248,243,236,.4); }
+        .dine-confirm-row-val { font-size: 14px; font-weight: 500; color: var(--cream); }
+        .dine-confirm-sub { font-size: 12px; color: rgba(248,243,236,.35); margin-bottom: 22px; font-style: italic; }
+        .dine-confirm-actions { display: flex; gap: 12px; }
+        .dine-cancel-btn { flex: 1; padding: 13px; background: rgba(255,255,255,.07); border: .5px solid rgba(255,255,255,.15); color: rgba(248,243,236,.6); border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; cursor: pointer; transition: all .2s; }
+        .dine-cancel-btn:hover { background: rgba(255,255,255,.12); color: var(--cream); }
+        .dine-confirm-btn { flex: 2; padding: 13px; background: linear-gradient(135deg, #b8860b, var(--gold)); border: none; color: #0e0608; border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; cursor: pointer; transition: opacity .25s, box-shadow .25s; }
+        .dine-confirm-btn:hover { opacity: .88; box-shadow: 0 0 24px rgba(212,168,67,.4); }
+        .dine-confirm-btn:disabled { opacity: .3; cursor: default; box-shadow: none; }
+        /* ══════════════════════════════════════════
+           ENTERTAINMENT OVERLAY
+        ══════════════════════════════════════════ */
+        #entCategoryScreen { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+        .ent-cat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; padding: 32px 60px; }
+        .ent-cat-card {
+            position: relative; width: 100%; height: 230px; border-radius: 18px; overflow: hidden;
+            cursor: pointer; background: #0a0a1a center/cover no-repeat; transition: all .3s ease;
+        }
+        .ent-cat-card:hover { transform: translateY(-4px) scale(1.01); box-shadow: 0 10px 28px rgba(0,0,0,.5), 0 0 0 1px rgba(192,24,90,.4); }
+        .ent-cat-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(4,4,14,0.9) 0%, rgba(4,4,14,0.25) 55%, rgba(4,4,14,0.05) 100%); transition: opacity .3s; }
+        .ent-cat-card:hover::before { opacity: .85; }
+        .ent-cat-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--pink), var(--gold), transparent); transform: scaleX(0); transform-origin: left; transition: transform .4s ease; }
+        .ent-cat-card:hover::after { transform: scaleX(1); }
+        .ent-cat-img { position: absolute; inset: 0; width: 100%; height: 100%; background: center/cover no-repeat; transition: transform .5s cubic-bezier(0.23,1,0.32,1); }
+        .ent-cat-card:hover .ent-cat-img { transform: scale(1.04); }
+        .ent-cat-body { position: absolute; bottom: 0; left: 0; right: 0; padding: 16px 18px; z-index: 2; }
+        .ent-cat-name { font-size: 17px; font-weight: 600; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,.6); transition: color .25s; }
+        .ent-cat-card:hover .ent-cat-name { color: var(--gold-light); }
+        .ent-cat-sub { font-size: 11px; color: rgba(255,255,255,.5); margin-top: 3px; letter-spacing: .04em; }
+
+        #entActivitiesScreen { flex: 1; display: none; flex-direction: column; overflow: hidden; }
+        #entActivitiesScreen.visible { display: flex; }
+        .ent-activities-label { padding: 18px 52px 8px; font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; color: var(--gold-light); letter-spacing: .05em; flex-shrink: 0; }
+        .ent-activities-scroll {
+            flex: 1; overflow-y: auto; overflow-x: hidden;
+            display: grid; grid-template-columns: repeat(3, minmax(0,1fr));
+            gap: 20px; padding: 12px 52px 24px; align-content: start;
+        }
+
+        .ent-activity-card {
+            background: rgba(6,6,18,0.9); border: .5px solid rgba(192,24,90,.2);
+            border-radius: 16px; overflow: hidden; cursor: pointer;
+            position: relative; height: 280px;
+            transition: border-color .3s, box-shadow .3s, transform .25s;
+        }
+        .ent-activity-card:hover { border-color: rgba(192,24,90,.5); box-shadow: 0 8px 28px rgba(0,0,0,.5); transform: translateY(-3px); }
+        .ent-activity-card.expanded { border-color: rgba(192,24,90,.7); box-shadow: 0 12px 36px rgba(0,0,0,.6), 0 0 0 1px rgba(192,24,90,.4); transform: translateY(0); }
+
+        .ent-activity-bg {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            background: #06060e center/cover no-repeat;
+        }
+        .ent-card-overlay-label {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            padding: 48px 14px 14px;
+            background: linear-gradient(to top, rgba(4,4,14,0.96) 0%, rgba(4,4,14,0.0) 100%);
+            transition: opacity .3s;
+        }
+        .ent-activity-card.expanded .ent-card-overlay-label { opacity: 0; pointer-events: none; }
+        .ent-activity-name { font-size: 15px; font-weight: 600; color: var(--cream); margin-bottom: 4px; }
+        .ent-activity-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 3px; }
+        .ent-activity-cat { font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: rgba(248,243,236,.45); }
+        .ent-activity-price { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: var(--gold-light); }
+        .ent-activity-venue { font-size: 10px; color: rgba(248,243,236,.4); margin-bottom: 4px; }
+        .ent-card-tap-hint { font-size: 10px; letter-spacing: .25em; text-transform: uppercase; color: var(--pink-light); opacity: .75; }
+
+        .ent-slot-panel {
+            position: absolute; inset: 0; z-index: 5;
+            opacity: 0; pointer-events: none;
+            transition: opacity .35s ease;
+            background: rgba(6,6,20,0.93);
+            backdrop-filter: blur(8px);
+            display: flex; flex-direction: column; justify-content: flex-end;
+            padding: 14px 14px 16px;
+        }
+        .ent-activity-card.expanded .ent-slot-panel { opacity: 1; pointer-events: all; }
+        .ent-slots { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 12px; }
+        .ent-slot-badge {
+            background: rgba(255,255,255,.07); border: .5px solid rgba(255,255,255,.18);
+            color: rgba(248,243,236,.65); font-size: 11px; font-family: 'Jost', sans-serif;
+            padding: 5px 12px; border-radius: 20px; cursor: pointer; transition: all .2s;
+        }
+        .ent-slot-badge:hover { background: rgba(192,24,90,.2); border-color: rgba(192,24,90,.5); color: var(--cream); }
+        .ent-slot-badge.selected { background: var(--pink-dim); border-color: var(--pink-light); color: var(--pink-light); font-weight: 500; }
+        .ent-book-slot-btn {
+            width: 100%; padding: 11px; background: var(--pink); border: none; color: #fff;
+            border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 500;
+            letter-spacing: .25em; text-transform: uppercase; cursor: pointer; transition: background .25s, box-shadow .25s;
+        }
+        .ent-book-slot-btn:hover { background: var(--pink-light); box-shadow: 0 0 20px rgba(192,24,90,.4); }
+
+        /* Entertainment confirm modal */
+        .ent-confirm-overlay {
+            position: fixed; inset: 0; z-index: 200; display: none;
+            align-items: center; justify-content: center;
+            background: rgba(0,0,0,.72); backdrop-filter: blur(10px);
+        }
+        .ent-confirm-overlay.active { display: flex; }
+        .ent-confirm-modal {
+            background: linear-gradient(160deg, rgba(6,6,20,0.99), rgba(20,4,12,0.99));
+            border: .5px solid rgba(192,24,90,.35); border-radius: 22px;
+            padding: 40px 44px 36px; max-width: 460px; width: 90%; text-align: center; position: relative;
+        }
+        .ent-confirm-icon { font-size: 38px; margin-bottom: 16px; }
+        .ent-confirm-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; color: var(--cream); margin-bottom: 4px; }
+        .ent-confirm-cat { font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); margin-bottom: 22px; }
+        .ent-confirm-details { background: rgba(255,255,255,.05); border: .5px solid rgba(255,255,255,.1); border-radius: 12px; padding: 18px 20px; margin-bottom: 24px; text-align: left; }
+        .ent-confirm-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: .5px solid rgba(255,255,255,.06); }
+        .ent-confirm-row:last-child { border-bottom: none; }
+        .ent-confirm-row-label { font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: rgba(248,243,236,.4); }
+        .ent-confirm-row-val { font-size: 14px; font-weight: 500; color: var(--cream); }
+        .ent-confirm-actions { display: flex; gap: 12px; }
+        .ent-cancel-btn { flex: 1; padding: 13px; background: rgba(255,255,255,.07); border: .5px solid rgba(255,255,255,.15); color: rgba(248,243,236,.6); border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; cursor: pointer; transition: all .2s; }
+        .ent-cancel-btn:hover { background: rgba(255,255,255,.12); color: var(--cream); }
+        .ent-confirm-btn { flex: 2; padding: 13px; background: var(--pink); border: none; color: #fff; border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: .25em; text-transform: uppercase; cursor: pointer; transition: background .25s, box-shadow .25s; }
+        .ent-confirm-btn:hover { background: var(--pink-light); box-shadow: 0 0 24px rgba(192,24,90,.4); }
+        .ent-confirm-btn:disabled { background: rgba(192,24,90,.2); color: rgba(255,255,255,.3); cursor: default; box-shadow: none; }
+
+        /* ══════════════════════════════════════════
+           ROOM SERVICE OVERLAY
+        ══════════════════════════════════════════ */
+        #rsGrid {
+            flex: 1; overflow-y: auto; overflow-x: hidden;
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 24px;
+            padding: 32px 60px;
+            align-content: start;
+        }
+        .rs-loading {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: rgba(248,243,236,.35);
+            font-style: italic;
+            padding: 60px 0;
+            font-size: 15px;
+        }
+        .rs-card {
+            background: rgba(20,4,12,0.88);
+            border: .5px solid rgba(192,24,90,.2);
+            border-radius: 18px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: border-color .3s, box-shadow .3s, transform .25s;
+            display: flex; flex-direction: column;
+        }
+        .rs-card:hover {
+            border-color: rgba(192,24,90,.5);
+            box-shadow: 0 8px 28px rgba(0,0,0,.5), 0 0 18px rgba(192,24,90,.12);
+            transform: translateY(-4px);
+        }
+        .rs-card-img {
+            width: 100%; height: 160px;
+            background: #1a0510 center/cover no-repeat;
+            flex-shrink: 0;
+        }
+        .rs-card-body {
+            padding: 16px 18px 18px;
+            display: flex; flex-direction: column; gap: 5px; flex: 1;
+        }
+        .rs-card-icon { font-size: 22px; }
+        .rs-card-title {
+            font-size: 16px; font-weight: 600;
+            color: var(--cream); line-height: 1.25;
+            transition: color .25s;
+        }
+        .rs-card:hover .rs-card-title { color: var(--gold-light); }
+        .rs-card-desc {
+            font-size: 12px; color: rgba(248,243,236,.45);
+            font-weight: 300; line-height: 1.5;
+        }
+        .rs-request-btn {
+            margin-top: auto; padding-top: 8px;
+            width: 100%; padding: 10px;
+            background: var(--pink-dim); border: .5px solid rgba(192,24,90,.45);
+            color: #f080a8; border-radius: 10px;
+            font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 500;
+            letter-spacing: .25em; text-transform: uppercase;
+            cursor: pointer; transition: background .25s, box-shadow .25s;
+        }
+        .rs-card:hover .rs-request-btn {
+            background: rgba(192,24,90,.3);
+            box-shadow: 0 0 14px rgba(192,24,90,.25);
+        }
+        .rs-confirm-overlay {
+            position: fixed; inset: 0; z-index: 200; display: none;
+            align-items: center; justify-content: center;
+            background: rgba(0,0,0,.75); backdrop-filter: blur(12px);
+        }
+        .rs-confirm-overlay.active { display: flex; }
+        .rs-confirm-modal {
+            background: linear-gradient(160deg, rgba(20,4,12,0.99), rgba(8,2,5,0.99));
+            border: .5px solid rgba(192,24,90,.35); border-radius: 22px;
+            padding: 40px 44px 36px; max-width: 480px; width: 92%;
+            text-align: center; position: relative;
+        }
+        .rs-confirm-icon { font-size: 44px; margin-bottom: 12px; }
+        .rs-confirm-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 30px; font-weight: 300; color: var(--cream); margin-bottom: 4px;
+        }
+        .rs-confirm-desc {
+            font-size: 13px; color: rgba(248,243,236,.45);
+            font-style: italic; margin-bottom: 20px; line-height: 1.6;
+        }
+        .rs-confirm-details {
+            background: rgba(255,255,255,.05); border: .5px solid rgba(255,255,255,.1);
+            border-radius: 12px; padding: 14px 20px; margin-bottom: 18px; text-align: left;
+        }
+        .rs-confirm-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 6px 0; border-bottom: .5px solid rgba(255,255,255,.06);
+        }
+        .rs-confirm-row:last-child { border-bottom: none; }
+        .rs-confirm-row-label {
+            font-size: 11px; letter-spacing: .15em; text-transform: uppercase;
+            color: rgba(248,243,236,.4);
+        }
+        .rs-confirm-row-val { font-size: 14px; font-weight: 500; color: var(--cream); }
+        .rs-note-label {
+            font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+            color: rgba(212,168,67,.6); text-align: left; margin-bottom: 6px;
+            display: block;
+        }
+        .rs-note-input {
+            width: 100%; background: rgba(255,255,255,.05);
+            border: .5px solid rgba(255,255,255,.15); border-radius: 10px;
+            color: var(--cream); font-family: 'Jost', sans-serif; font-size: 13px;
+            padding: 10px 14px; resize: none; outline: none; margin-bottom: 20px;
+            transition: border-color .2s;
+        }
+        .rs-note-input:focus { border-color: rgba(192,24,90,.5); }
+        .rs-confirm-actions { display: flex; gap: 12px; }
+        .rs-cancel-btn {
+            flex: 1; padding: 13px;
+            background: rgba(255,255,255,.07); border: .5px solid rgba(255,255,255,.15);
+            color: rgba(248,243,236,.6); border-radius: 10px;
+            font-family: 'Jost', sans-serif; font-size: 12px;
+            letter-spacing: .2em; text-transform: uppercase; cursor: pointer; transition: all .2s;
+        }
+        .rs-cancel-btn:hover { background: rgba(255,255,255,.12); color: var(--cream); }
+        .rs-send-btn {
+            flex: 2; padding: 13px;
+            background: linear-gradient(135deg, var(--pink), var(--pink-light));
+            border: none; color: #fff; border-radius: 10px;
+            font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 600;
+            letter-spacing: .2em; text-transform: uppercase; cursor: pointer;
+            transition: opacity .25s, box-shadow .25s;
+        }
+        .rs-send-btn:hover { opacity: .88; box-shadow: 0 0 24px rgba(192,24,90,.45); }
+        .rs-send-btn:disabled { opacity: .3; cursor: default; box-shadow: none; }
+
+        /* ══════════════════════════════════════════
+           MY ORDERS OVERLAY
+        ══════════════════════════════════════════ */
+        #myOrdersOverlay {
+            position: fixed; inset: 0; z-index: 100;
+            display: none; flex-direction: column;
+            background: rgba(8,2,5,0.97);
+            backdrop-filter: blur(24px);
+        }
+        #myOrdersOverlay.active { display: flex; }
+        .mo-panel {
+            width: min(600px, 96vw); margin: 0 auto;
+            padding: 32px 40px 40px; overflow-y: auto; height: 100%;
+        }
+        .mo-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 28px; padding-bottom: 18px;
+            border-bottom: .5px solid rgba(192,24,90,.15);
+        }
+        .mo-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 36px; font-weight: 300; color: var(--cream); letter-spacing: .02em;
+        }
+        .mo-title em { color: var(--gold-light); font-style: italic; }
+</style>
+</head>
+<body>
+
+<!-- SKY + ATMOSPHERE -->
+<div class="sky-bg"></div>
+<div class="clouds" id="clouds"></div>
+<div class="sun" id="sun"></div>
+<canvas id="eggCanvas"></canvas>
+<div id="petals"></div>
+<div id="butterflies"></div>
+
+<!-- MEADOW -->
+<div class="meadow">
+<svg viewBox="0 0 1440 180" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grass1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#81c784"/>
+      <stop offset="100%" stop-color="#388e3c"/>
+    </linearGradient>
+    <linearGradient id="grass2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#a5d6a7"/>
+      <stop offset="100%" stop-color="#4caf50"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="720" cy="200" rx="900" ry="120" fill="url(#grass2)" opacity="0.6"/>
+  <path d="M0 80 Q180 40 360 65 Q540 90 720 55 Q900 20 1080 60 Q1260 95 1440 50 L1440 180 L0 180 Z" fill="url(#grass1)"/>
+  <path d="M0 100 Q180 65 360 85 Q540 105 720 75 Q900 45 1080 80 Q1260 110 1440 70" fill="none" stroke="#66bb6a" stroke-width="2" opacity="0.5"/>
+</svg>
+</div>
+
+<!-- GRASS + FLOWERS -->
+<div class="grass-container" id="grassContainer"></div>
+<div id="flowers"></div>
+
+<!-- BUNNY + BASKETS -->
+<div class="basket basket-left">🧺</div>
+<div class="bunny">🐰</div>
+<div class="basket basket-right">🧺</div>
+
+<!-- TOP BANNER -->
+<div class="floral-banner">
+    <span class="banner-emoji">🌸</span>
+    <span class="banner-text">Happy Easter from Vibe Munnar</span>
+    <span class="banner-emoji">🐣</span>
+    <span class="banner-emoji">🌷</span>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="content">
+
+    <!-- HEADER — col 1 -->
+    <div class="header">
+        <div class="eyebrow">✿ Spring Blessings ✿</div>
+
+        <!--
+            id="guestName"
+            common.js will replace innerHTML with: Welcome, <em>Name</em>
+            Fallback shown until first API response.
+        -->
+        <h1 id="guestName">Happy Easter,<br><em>Dear Guest</em></h1>
+
+        <div class="room-badge">
+            🌷  <span id="roomNo">—</span> 🌷
+        </div>
+        <p class="tagline">Wishing you a season full of joy &amp; renewal</p>
+
+        <!--
+            id="customMessage"
+            common.js writes the hotel's custom message here.
+        -->
+        <p class="custom-msg" id="customMessage">May this Easter bring you hope, love &amp; happiness 🌸</p>
+
+        <div class="icon-row">
+            <div class="icon-item">🐣</div>
+            <div class="icon-item">🌷</div>
+            <div class="icon-item">🦋</div>
+            <div class="icon-item">🪺</div>
+        </div>
+    </div>
+
+    <!-- ACTIVITIES PANEL — col 2, spans both rows
+         common.js populates #activities-list with .act-card elements.
+         .ann-badge and .reserve-pill are injected inside each .act-card.
+    -->
+    <div class="activities">
+        <div class="activities-panel">
+            <h3>🐰 Easter Events</h3>
+            <div id="activities-list">
+                <div class="act-card">Loading…</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SERVICES — col 1, row 2
+         common.js populates #services-container with .svc-card elements.
+         Food cards call openFoodMenu() which is defined below.
+    -->
+    <div class="services">
+        <div class="services-label">✦ Hotel Services ✦</div>
+        <div id="services-container"><!-- populated by common.js --></div>
+    </div>
+
+</div>
+
+<!-- LIVE TV -->
+<div class="live-tv">
+    <button onclick="window.location.href='/live-tv'">📺 Watch Live TV</button>
+
+    <button onclick="openMyOrders()" style="margin-top:10px;">My Bookings</button>
+</div>
+
+<!-- ░░ FOOD MENU OVERLAY ░░
+     Needed because common.js calls openFoodMenu() for food service cards.
+     Styled in Easter palette but functionally identical to default.html.
+-->
+<div class="food-overlay" id="foodOverlay">
+    <div class="food-topbar">
+        <div class="food-topbar-left">
+            <button class="food-back-btn" onclick="foodGoBack()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M19 12H5M5 12l7 7M5 12l7-7"/>
+                </svg>
+                <span id="foodBackLabel">Home</span>
+            </button>
+            <div class="food-page-title" id="foodPageTitle">Food <em>Menu</em></div>
+        </div>
+    </div>
+    <div id="foodCategoryScreen">
+        <div class="cat-grid" id="catGrid"></div>
+    </div>
+    <div id="foodItemsScreen">
+        <div class="items-main">
+            <div class="items-cat-label" id="itemsCatLabel">Menu</div>
+            <div class="items-scroll" id="itemsScroll"></div>
+        </div>
+        <div class="cart-panel">
+            <div class="cart-panel-title">Your <em>Cart</em></div>
+            <div class="cart-divider"></div>
+            <div class="cart-items-list" id="cartList">
+                <div class="cart-empty">No items yet</div>
+            </div>
+            <div class="cart-total-row">
+                <span class="cart-total-label">Total</span>
+                <span class="cart-total-amt"><small>₹</small><span id="cartTotal">0</span></span>
+            </div>
+            <button class="cart-clear-btn" onclick="clearCart()">Clear Cart</button>
+            <button class="cart-place-btn" id="placeOrderBtn" onclick="placeOrder()" disabled>Place Order</button>
+        </div>
+    </div>
+</div>
+
+<!-- ░░ PAGE-SPECIFIC SCRIPTS ░░ -->
+<script>
+/*
+ * This block contains ONLY Easter-specific visuals + the food menu logic.
+ * Room data, activities, services, and clock are all handled by common.js below.
+ * openFoodMenu() must be defined BEFORE common.js loads so buildServiceCard() can find it.
+ */
+
+/* ── SUN RAYS ── */
+const sun = document.getElementById('sun');
+for (let i = 0; i < 12; i++) {
+    const ray = document.createElement('div');
+    ray.className = 'sun-ray';
+    ray.style.cssText = `transform:rotate(${i*30}deg) translateX(-50%) translateY(-140%);opacity:${0.4+Math.random()*0.4};`;
+    sun.appendChild(ray);
+}
+
+/* ── CLOUDS ── */
+const cloudsEl = document.getElementById('clouds');
+[
+    { top:8,  w:180, h:50, dur:38, delay:0   },
+    { top:15, w:140, h:40, dur:52, delay:-15 },
+    { top:5,  w:220, h:60, dur:45, delay:-28 },
+    { top:20, w:160, h:45, dur:60, delay:-40 },
+    { top:10, w:120, h:35, dur:35, delay:-8  },
+].forEach(cd => {
+    const c = document.createElement('div');
+    c.className = 'cloud';
+    c.style.cssText = `top:${cd.top}%;width:${cd.w}px;height:${cd.h}px;animation-duration:${cd.dur}s;animation-delay:${cd.delay}s;left:-${cd.w}px;`;
+    [0,1].forEach(j => {
+        const b = document.createElement('div');
+        b.style.cssText = `position:absolute;background:white;border-radius:50%;width:${cd.w*(0.5-j*0.1)}px;height:${cd.h*(1.3-j*0.2)}px;top:-${cd.h*(0.5-j*0.2)}px;left:${cd.w*(0.2+j*0.3)}px;`;
+        c.appendChild(b);
+    });
+    cloudsEl.appendChild(c);
+});
+
+/* ── GRASS BLADES ── */
+const grassEl = document.getElementById('grassContainer');
+for (let i = 0; i < 120; i++) {
+    const b = document.createElement('div');
+    b.className = 'blade';
+    const greens = ['#4caf50','#388e3c','#66bb6a','#2e7d32','#81c784'];
+    b.style.cssText = `left:${Math.random()*100}%;height:${15+Math.random()*35}px;background:linear-gradient(180deg,${greens[Math.floor(Math.random()*greens.length)]},#2e7d32);animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*2}s;width:${2+Math.random()*2}px;opacity:${0.6+Math.random()*0.4};`;
+    grassEl.appendChild(b);
+}
+
+/* ── FLOWERS ── */
+const flowersEl = document.getElementById('flowers');
+['🌸','🌼','🌺','🌻','🌷','💐'].forEach((emoji, i) => {
+    const f = document.createElement('div');
+    f.className = 'flower';
+    f.style.cssText = `left:${[8,16,24,75,82,90][i]}%;animation-delay:${i*0.4}s;font-size:${22+Math.random()*14}px;`;
+    f.textContent = emoji;
+    flowersEl.appendChild(f);
+});
+
+/* ── PETALS ── */
+const petalsEl = document.getElementById('petals');
+for (let i = 0; i < 20; i++) {
+    const p = document.createElement('div');
+    p.className = 'petal';
+    p.style.cssText = `left:${Math.random()*100}%;animation-duration:${6+Math.random()*10}s;animation-delay:${Math.random()*10}s;font-size:${10+Math.random()*10}px;`;
+    p.textContent = ['🌸','🌺','🌼','✿','❀'][Math.floor(Math.random()*5)];
+    petalsEl.appendChild(p);
+}
+
+/* ── BUTTERFLIES ── */
+const bfEl = document.getElementById('butterflies');
+['🦋','🦋','🦋'].forEach((emoji, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'butterfly-move';
+    wrap.style.cssText = `position:fixed;top:${15+i*15}%;z-index:6;animation-duration:${20+i*8}s;animation-delay:${-i*6}s;font-size:${20+i*4}px;`;
+    const inner = document.createElement('div');
+    inner.className = 'butterfly';
+    inner.textContent = emoji;
+    inner.style.cssText = `animation-duration:${1.5+i*0.4}s;animation-delay:${i*0.3}s;`;
+    wrap.appendChild(inner);
+    bfEl.appendChild(wrap);
+});
+
+/* ── FLOATING EGG CANVAS ── */
+const ec = document.getElementById('eggCanvas');
+const ectx = ec.getContext('2d');
+function resizeEC(){ ec.width=window.innerWidth; ec.height=window.innerHeight; }
+resizeEC(); window.addEventListener('resize', resizeEC);
+
+const EGG_COLORS=[['#f5a7c7','#e06fa0'],['#c9a8e0','#9b59b6'],['#a8ddc9','#5bb89a'],['#f9e87f','#f0c030'],['#b8e4f7','#7ec8e3'],['#f7c5a0','#e8956a']];
+
+class FloatEgg {
+    constructor(){ this.reset(true); }
+    reset(init=false){
+        this.x=Math.random()*ec.width;
+        this.y=init?Math.random()*ec.height:ec.height+40;
+        this.ry=18+Math.random()*14; this.rx=this.ry*0.72;
+        this.vy=-(0.3+Math.random()*0.6); this.vx=(Math.random()-0.5)*0.4;
+        this.rot=Math.random()*Math.PI*2; this.rotSpeed=(Math.random()-0.5)*0.015;
+        this.alpha=0.55+Math.random()*0.35;
+        this.colors=EGG_COLORS[Math.floor(Math.random()*EGG_COLORS.length)];
+        this.pattern=Math.floor(Math.random()*4);
+        this.wobble=Math.random()*Math.PI*2; this.wobbleSpeed=0.02+Math.random()*0.02;
+    }
+    update(){
+        this.y+=this.vy; this.x+=this.vx+Math.sin(this.wobble)*0.5;
+        this.rot+=this.rotSpeed; this.wobble+=this.wobbleSpeed;
+        if(this.y<-60) this.reset();
+    }
+    draw(ctx){
+        ctx.save(); ctx.translate(this.x,this.y); ctx.rotate(this.rot); ctx.globalAlpha=this.alpha;
+        ctx.beginPath(); ctx.save(); ctx.scale(this.rx,this.ry);
+        ctx.moveTo(0,-1); ctx.bezierCurveTo(0.6,-1,1,-0.4,1,0.2);
+        ctx.bezierCurveTo(1,0.8,0.6,1.1,0,1.1); ctx.bezierCurveTo(-0.6,1.1,-1,0.8,-1,0.2);
+        ctx.bezierCurveTo(-1,-0.4,-0.6,-1,0,-1); ctx.closePath(); ctx.restore();
+        const g=ctx.createLinearGradient(-this.rx,-this.ry,this.rx,this.ry);
+        g.addColorStop(0,this.colors[0]); g.addColorStop(1,this.colors[1]);
+        ctx.fillStyle=g; ctx.fill(); ctx.clip();
+        ctx.strokeStyle='rgba(255,255,255,0.45)'; ctx.lineWidth=2;
+        if(this.pattern===0){ for(let s=-this.ry;s<this.ry;s+=8){ctx.beginPath();ctx.moveTo(-this.rx,s);ctx.lineTo(this.rx,s);ctx.stroke();} }
+        else if(this.pattern===1){ ctx.beginPath(); for(let s=-this.rx;s<this.rx;s+=6)ctx.lineTo(s,(s/6%2===0?-1:1)*this.ry*0.3); ctx.stroke(); }
+        else if(this.pattern===2){ for(let dx=-this.rx+6;dx<this.rx;dx+=10) for(let dy=-this.ry+6;dy<this.ry;dy+=10){ctx.beginPath();ctx.arc(dx,dy,2,0,Math.PI*2);ctx.stroke();} }
+        else{ ctx.beginPath();ctx.moveTo(0,-this.ry*0.5);ctx.lineTo(this.rx*0.5,0);ctx.lineTo(0,this.ry*0.5);ctx.lineTo(-this.rx*0.5,0);ctx.closePath();ctx.stroke(); }
+        ctx.fillStyle='rgba(255,255,255,0.25)';
+        ctx.beginPath();ctx.ellipse(-this.rx*0.2,-this.ry*0.35,this.rx*0.25,this.ry*0.15,-0.4,0,Math.PI*2);ctx.fill();
+        ctx.restore();
+    }
+}
+const eggs=Array.from({length:18},()=>new FloatEgg());
+(function animEggs(){ ectx.clearRect(0,0,ec.width,ec.height); eggs.forEach(e=>{e.update();e.draw(ectx);}); requestAnimationFrame(animEggs); })();
+
+/* ═══════════════════════════════════════════
+   FOOD MENU LOGIC
+   openFoodMenu() is called by common.js via buildServiceCard()
+   when the user taps a food service card.
+   ═══════════════════════════════════════════ */
+const FOOD_CATEGORIES=[
+    {id:'breakfast',name:'Breakfast',sub:'Start your day fresh'},
+    {id:'lunch',    name:'Lunch',    sub:'Hearty midday meals'},
+    {id:'dinner',   name:'Dinner',   sub:'Delicious night dining'},
+    {id:'snacks',   name:'Snacks',   sub:'Quick bites'},
+    {id:'desserts', name:'Desserts', sub:'Sweet treats'},
+    {id:'drinks',   name:'Drinks',   sub:'Refresh yourself'},
+];
+let cart={}, currentScreen='categories', currentCatItems=[];
+
+function openFoodMenu(){
+    document.getElementById('foodOverlay').classList.add('active');
+    document.body.style.overflow='hidden';
+    showCategoryScreen();
+    loadCategoryPreviews();
+}
+function closeFoodMenu(){
+    document.getElementById('foodOverlay').classList.remove('active');
+    document.body.style.overflow='';
+}
+function foodGoBack(){
+    currentScreen==='items' ? showCategoryScreen() : closeFoodMenu();
+}
+function showCategoryScreen(){
+    currentScreen='categories';
+    document.getElementById('foodCategoryScreen').style.display='flex';
+    document.getElementById('foodItemsScreen').classList.remove('visible');
+    document.getElementById('foodPageTitle').innerHTML='Food <em>Menu</em>';
+    document.getElementById('foodBackLabel').textContent='Home';
+}
+async function showItemsScreen(catId,catName){
+    currentScreen='items';
+    document.getElementById('foodCategoryScreen').style.display='none';
+    document.getElementById('foodItemsScreen').classList.add('visible');
+    document.getElementById('foodPageTitle').innerHTML=catName+' <em>Menu</em>';
+    document.getElementById('foodBackLabel').textContent='Categories';
+    document.getElementById('itemsCatLabel').textContent=catName.toUpperCase()+' MENU';
+    document.getElementById('itemsScroll').innerHTML='<div style="color:rgba(200,168,230,.3);padding:40px;font-style:italic;">Loading…</div>';
+    await loadItemsForCategory(catId);
+}
+async function loadCategoryPreviews(){
+    document.getElementById('catGrid').innerHTML=FOOD_CATEGORIES.map(c=>
+        `<div class="cat-card" id="cat-${c.id}" onclick="showItemsScreen('${c.id}','${c.name}')">
+            <div class="cat-card-img" id="catimg-${c.id}"></div>
+            <div class="cat-card-body">
+                <div class="cat-card-name">${c.name}</div>
+                <div class="cat-card-sub">${c.sub}</div>
+            </div>
+        </div>`
+    ).join('');
+    await Promise.allSettled(FOOD_CATEGORIES.map(async c=>{
+        try{
+            const items=await fetch(`/api/food-items?category=${c.id}`).then(r=>r.json());
+            const img=document.getElementById('catimg-'+c.id);
+            if(img&&items.length&&items[0].image_url) img.style.backgroundImage=`url('${items[0].image_url}')`;
+            if(!items.length){ const card=document.getElementById('cat-'+c.id); if(card){card.style.opacity='0.4';card.style.cursor='default';card.onclick=null;} }
+        }catch(e){}
+    }));
+}
+async function loadItemsForCategory(catId){
+    try{
+        const items=await fetch(`/api/food-items?category=${catId}`).then(r=>r.json());
+        currentCatItems=items.map(i=>({id:i.id,name:i.title,price:i.price,image_url:i.image_url}));
+        renderItems();
+    }catch(e){
+        document.getElementById('itemsScroll').innerHTML='<div style="color:rgba(200,168,230,.3);padding:40px;font-style:italic;">Failed to load items.</div>';
+    }
+}
+function renderItems(){
+    const el=document.getElementById('itemsScroll');
+    if(!currentCatItems.length){el.innerHTML='<div style="color:rgba(200,168,230,.3);padding:40px;font-style:italic;">No items yet.</div>';return;}
+    el.innerHTML=currentCatItems.map(item=>{
+        const qty=cart[item.id]?cart[item.id].qty:0;
+        return `<div class="item-card" id="icard-${item.id}">
+            <div class="item-img" style="background-image:url('${item.image_url}');"></div>
+            <div class="item-body">
+                <div class="item-name">${item.name}</div>
+                <div class="item-price"><small>₹</small>${item.price}</div>
+                <div class="qty-row">
+                    <button class="qty-btn minus" onclick="changeQty(${item.id},-1)">−</button>
+                    <span class="qty-val" id="qty-${item.id}">${qty}</span>
+                    <button class="qty-btn plus" onclick="changeQty(${item.id},+1)">+</button>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+function changeQty(id,delta){
+    const item=currentCatItems.find(i=>i.id===id); if(!item)return;
+    if(!cart[id]) cart[id]={...item,qty:0};
+    cart[id].qty=Math.max(0,cart[id].qty+delta);
+    if(cart[id].qty===0) delete cart[id];
+    const el=document.getElementById('qty-'+id);
+    if(el) el.textContent=cart[id]?cart[id].qty:0;
+    updateCartPanel();
+}
+function updateCartPanel(){
+    const items=Object.values(cart);
+    document.getElementById('cartTotal').textContent=items.reduce((s,i)=>s+i.price*i.qty,0);
+    document.getElementById('cartList').innerHTML=!items.length
+        ?'<div class="cart-empty">No items yet</div>'
+        :items.map(i=>`<div class="cart-item-row"><div><div class="ci-name">${i.name}</div><div class="ci-qty">×${i.qty}</div></div><div class="ci-price">₹${i.price*i.qty}</div></div>`).join('');
+    document.getElementById('placeOrderBtn').disabled=items.length===0;
+}
+function clearCart(){
+    cart={};
+    document.querySelectorAll('.qty-val').forEach(el=>el.textContent='0');
+    updateCartPanel();
+}
+async function placeOrder(){
+    const items=Object.values(cart); if(!items.length)return;
+    const btn=document.getElementById('placeOrderBtn');
+    btn.disabled=true; btn.textContent='Placing…';
+    try{
+        const res=await fetch('/api/order',{
+            method:'POST',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({
+                room_no:window.ROOM_NO,
+                items:items.map(i=>({id:i.id,name:i.name,qty:i.qty,price:i.price})),
+                total:items.reduce((s,i)=>s+i.price*i.qty,0)
+            })
+        });
+        if(!res.ok)throw new Error();
+    }catch(e){}
+    btn.textContent='✓ Order Placed!'; btn.style.background='#5bb89a';
+    setTimeout(()=>{ clearCart(); btn.textContent='Place Order'; btn.style.background=''; closeFoodMenu(); },2000);
+}
+</script>
+
+<!--
+    common.js handles everything below automatically:
+      • Clock  → #clockTime, #clockDate  (not present on this page — silently skipped)
+      • Room   → #guestName, #roomNo, #customMessage
+      • Acts   → #activities-list  (injects .act-card / .ann-badge / .reserve-pill)
+      • Svcs   → #services-container  (injects .svc-card / .svc-img / .svc-arrow / .svc-info / .svc-title / .svc-sub)
+      • Food cards call openFoodMenu() defined above
+-->
+
+
+<!-- ░░ INJECTED: Spa & Wellness Overlay ░░ -->
+<!-- Food order success toast (stays on page) -->
+<div class="svc-toast" id="foodToast">✓ Order placed successfully!</div>
+
+
+<div class="overlay-base" id="spaOverlay">
+    <div class="overlay-topbar">
+        <div class="overlay-topbar-left">
+            <button class="overlay-back-btn" onclick="spaGoBack()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M19 12H5M5 12l7 7M5 12l7-7"/>
+                </svg>
+                <span id="spaBackLabel">Home</span>
+            </button>
+            <div class="overlay-page-title" id="spaPageTitle">Spa &amp; <em>Wellness</em></div>
+        </div>
+        <button class="overlay-close-btn" onclick="spaGoBack()" title="Close">✕</button>
+    </div>
+
+    <!-- Category screen -->
+    <div class="cat-screen-bg" id="spaCategoryScreen">
+        <div class="spa-cat-grid" id="spaCatGrid"></div>
+    </div>
+
+    <!-- Treatments screen -->
+    <div id="spaTreatmentsScreen">
+        <div class="spa-treatments-label" id="spaTreatmentsLabel">Treatments</div>
+        <div class="spa-treatments-scroll" id="spaTreatmentsScroll"></div>
+    </div>
+</div>
+
+<!-- Spa booking confirmation modal (z-index 200, above spaOverlay) -->
+<div class="spa-confirm-overlay" id="spaConfirmOverlay">
+    <div class="spa-confirm-modal">
+        <button class="overlay-close-btn"
+                style="position:absolute;top:16px;right:16px;"
+                onclick="closeSpaConfirm()" title="Close">✕</button>
+        <div class="spa-confirm-icon">🧖</div>
+        <div class="spa-confirm-title" id="spaConfirmName">Treatment</div>
+        <div class="spa-confirm-cat" id="spaConfirmCat">Category</div>
+        <div class="spa-confirm-details">
+            <div class="spa-confirm-row">
+                <span class="spa-confirm-row-label">Time Slot</span>
+                <span class="spa-confirm-row-val" id="spaConfirmSlot">—</span>
+            </div>
+            <div class="spa-confirm-row">
+                <span class="spa-confirm-row-label">Room</span>
+                <span class="spa-confirm-row-val" id="spaConfirmRoom">—</span>
+            </div>
+        </div>
+        <div class="spa-confirm-sub" id="spaConfirmSub">Your treatment slot will be reserved</div>
+        <div class="spa-confirm-actions">
+            <button class="spa-cancel-btn" onclick="closeSpaConfirm()">Cancel</button>
+            <button class="spa-confirm-btn" id="spaBookBtn" onclick="confirmSpaBooking()">Confirm Booking</button>
+        </div>
+    </div>
+</div>
+<!-- Spa booking success toast (stays on treatments page) -->
+<div class="svc-toast" id="spaToast">✓ Treatment booked! See you soon.</div>
+
+<!-- ░░ INJECTED: Bar Menu Overlay ░░ -->
+<div class="overlay-base" id="barOverlay">
+    <div class="overlay-topbar">
+        <div class="overlay-topbar-left">
+            <button class="overlay-back-btn" onclick="barGoBack()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M19 12H5M5 12l7 7M5 12l7-7"/>
+                </svg>
+                <span id="barBackLabel">Home</span>
+            </button>
+            <div class="overlay-page-title" id="barPageTitle">Bar <em>Menu</em></div>
+        </div>
+        <button class="overlay-close-btn" onclick="barGoBack()" title="Close">✕</button>
+    </div>
+
+    <!-- Category screen -->
+    <div class="cat-screen-bg" id="barCategoryScreen">
+        <div class="bar-cat-grid" id="barCatGrid"></div>
+    </div>
+
+    <!-- Items + cart screen -->
+    <div id="barItemsScreen">
+        <div class="bar-items-main">
+            <div class="bar-items-cat-label" id="barItemsCatLabel">Drinks</div>
+            <div class="bar-items-scroll" id="barItemsScroll"></div>
+        </div>
+        <div class="cart-panel">
+            <div class="cart-panel-title">Your <em>Order</em></div>
+            <div class="cart-divider"></div>
+            <div class="cart-items-list" id="barCartList">
+                <div class="bar-cart-empty">No drinks yet</div>
+            </div>
+            <div class="cart-total-row">
+                <span class="cart-total-label">Total</span>
+                <span class="cart-total-amt"><small>₹</small><span id="barCartTotal">0</span></span>
+            </div>
+            <button class="cart-clear-btn" onclick="clearBarCart()">Clear Order</button>
+            <button class="cart-place-btn" id="barOrderBtn" onclick="placeBarOrder()" disabled>Place Order</button>
+        </div>
+    </div>
+</div>
+<!-- Bar order success toast (stays on page) -->
+<div class="svc-toast" id="barToast">✓ Drinks order placed! Cheers 🥂</div>
+
+<!-- ░░ INJECTED: Dine-In Overlay ░░ -->
+<div class="overlay-base" id="dineOverlay">
+    <div class="overlay-topbar">
+        <div class="overlay-topbar-left">
+            <button class="overlay-back-btn" onclick="dineGoBack()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M19 12H5M5 12l7 7M5 12l7-7"/>
+                </svg>
+                <span id="dineBackLabel">Home</span>
+            </button>
+            <div class="overlay-page-title" id="dinePageTitle">Dine-In <em>Reservations</em></div>
+        </div>
+        <button class="overlay-close-btn" onclick="dineGoBack()" title="Close">✕</button>
+    </div>
+
+    <!-- Occasion category screen -->
+    <div class="cat-screen-bg" id="dineCategoryScreen">
+        <div class="dine-cat-grid" id="dineCatGrid"></div>
+    </div>
+
+    <!-- Packages screen -->
+    <div id="dinePackagesScreen">
+        <div class="dine-pkg-label" id="dinePkgLabel">Packages</div>
+        <div class="dine-pkg-scroll" id="dinePkgScroll"></div>
+    </div>
+</div>
+
+<!-- Dine-In booking confirmation modal -->
+<div class="dine-confirm-overlay" id="dineConfirmOverlay">
+    <div class="dine-confirm-modal">
+        <button class="overlay-close-btn"
+                style="position:absolute;top:16px;right:16px;"
+                onclick="closeDineConfirm()" title="Close">✕</button>
+        <div class="dine-confirm-icon">🕯️</div>
+        <div class="dine-confirm-title" id="dineConfirmName">Package</div>
+        <div class="dine-confirm-occ" id="dineConfirmOcc">Occasion</div>
+        <div class="dine-confirm-details">
+            <div class="dine-confirm-row">
+                <span class="dine-confirm-row-label">Time Slot</span>
+                <span class="dine-confirm-row-val" id="dineConfirmSlot">—</span>
+            </div>
+            <div class="dine-confirm-row">
+                <span class="dine-confirm-row-label">Price</span>
+                <span class="dine-confirm-row-val" id="dineConfirmPrice">—</span>
+            </div>
+            <div class="dine-confirm-row">
+                <span class="dine-confirm-row-label">Room</span>
+                <span class="dine-confirm-row-val" id="dineConfirmRoom">—</span>
+            </div>
+        </div>
+        <div class="dine-confirm-sub">Your table will be reserved — our team will confirm shortly</div>
+        <div class="dine-confirm-actions">
+            <button class="dine-cancel-btn" onclick="closeDineConfirm()">Cancel</button>
+            <button class="dine-confirm-btn" id="dineBookBtn" onclick="confirmDineBooking()">Confirm Reservation</button>
+        </div>
+    </div>
+</div>
+<div class="svc-toast" id="dineToast">✓ Table reserved! See you at dinner 🕯️</div>
+
+<!-- ░░ INJECTED: Entertainment Overlay ░░ -->
+<div class="overlay-base" id="entOverlay">
+    <div class="overlay-topbar">
+        <div class="overlay-topbar-left">
+            <button class="overlay-back-btn" onclick="entGoBack()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M19 12H5M5 12l7 7M5 12l7-7"/>
+                </svg>
+                <span id="entBackLabel">Home</span>
+            </button>
+            <div class="overlay-page-title" id="entPageTitle">Entertainment</div>
+        </div>
+        <button class="overlay-close-btn" onclick="entGoBack()" title="Close">✕</button>
+    </div>
+
+    <!-- Category screen -->
+    <div class="cat-screen-bg" id="entCategoryScreen">
+        <div class="ent-cat-grid" id="entCatGrid"></div>
+    </div>
+
+    <!-- Activities screen -->
+    <div id="entActivitiesScreen">
+        <div class="ent-activities-label" id="entActivitiesLabel">Activities</div>
+        <div class="ent-activities-scroll" id="entActivitiesScroll"></div>
+    </div>
+</div>
+
+<!-- Entertainment booking confirmation modal (z-index 200, above entOverlay) -->
+<div class="ent-confirm-overlay" id="entConfirmOverlay">
+    <div class="ent-confirm-modal">
+        <button class="overlay-close-btn"
+                style="position:absolute;top:16px;right:16px;"
+                onclick="closeEntConfirm()" title="Close">✕</button>
+        <div class="ent-confirm-icon">🎮</div>
+        <div class="ent-confirm-title" id="entConfirmName">Activity</div>
+        <div class="ent-confirm-cat" id="entConfirmCat">Category</div>
+        <div class="ent-confirm-details">
+            <div class="ent-confirm-row">
+                <span class="ent-confirm-row-label">Time Slot</span>
+                <span class="ent-confirm-row-val" id="entConfirmSlot">—</span>
+            </div>
+            <div class="ent-confirm-row">
+                <span class="ent-confirm-row-label">Venue</span>
+                <span class="ent-confirm-row-val" id="entConfirmVenue">—</span>
+            </div>
+            <div class="ent-confirm-row">
+                <span class="ent-confirm-row-label">Price</span>
+                <span class="ent-confirm-row-val" id="entConfirmPrice">—</span>
+            </div>
+            <div class="ent-confirm-row">
+                <span class="ent-confirm-row-label">Room</span>
+                <span class="ent-confirm-row-val" id="entConfirmRoom">—</span>
+            </div>
+        </div>
+        <div class="ent-confirm-actions">
+            <button class="ent-cancel-btn" onclick="closeEntConfirm()">Cancel</button>
+            <button class="ent-confirm-btn" id="entBookBtn" onclick="confirmEntBooking()">Confirm Booking</button>
+        </div>
+    </div>
+</div>
+<!-- Entertainment booking success toast -->
+<div class="svc-toast" id="entToast">✓ Activity booked! Get ready for some fun 🎮</div>
+
+
+<!-- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+     ACTIVITY RESERVATION CONFIRM MODAL
+     Logic handled by common.js (openActConfirm, confirmActBooking…)
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ -->
+<div class="spa-confirm-overlay" id="actConfirmOverlay">
+    <div class="spa-confirm-modal">
+        <button class="overlay-close-btn"
+                style="position:absolute;top:16px;right:16px;"
+                onclick="closeActConfirm()" title="Close">✕</button>
+        <div class="spa-confirm-icon">🎪</div>
+        <div class="spa-confirm-title" id="actConfirmName">Activity</div>
+        <div class="spa-confirm-cat">Today's Experience</div>
+        <div class="spa-confirm-details">
+            <div class="spa-confirm-row">
+                <span class="spa-confirm-row-label">Time Slot</span>
+                <span class="spa-confirm-row-val" id="actConfirmSlot">—</span>
+            </div>
+            <div class="spa-confirm-row">
+                <span class="spa-confirm-row-label">Room</span>
+                <span class="spa-confirm-row-val" id="actConfirmRoom">—</span>
+            </div>
+        </div>
+        <div class="spa-confirm-sub">Our team will confirm your reservation shortly</div>
+        <div class="spa-confirm-actions">
+            <button class="spa-cancel-btn" onclick="closeActConfirm()">Cancel</button>
+            <button class="spa-confirm-btn" id="actBookBtn" onclick="confirmActBooking()">Confirm Reservation</button>
+        </div>
+    </div>
+</div>
+<!-- Activity booking success toast -->
+<div class="svc-toast" id="actToast">✓ Reserved! See you at the activity 🎉</div>
+
+<!-- ░░ SHARED: clock + room data + activities + services (auto-updates) ░░ -->
+<script src="/static/common.js"></script>
+
+
+<!-- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+     ROOM SERVICE OVERLAY
+     All logic handled by common.js (openRoomServiceMenu, openRsConfirm, confirmRsRequest…)
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ -->
+<div class="overlay-base" id="roomServiceOverlay">
+    <div class="overlay-topbar">
+        <div class="overlay-topbar-left">
+            <button class="overlay-back-btn" onclick="rsGoBack()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M19 12H5M5 12l7 7M5 12l7-7"/>
+                </svg>
+                <span>Home</span>
+            </button>
+            <div class="overlay-page-title">Room <em>Service</em></div>
+        </div>
+        <button class="overlay-close-btn" onclick="rsGoBack()" title="Close">✕</button>
+    </div>
+
+    <!-- Service cards grid -->
+    <div class="cat-screen-bg" style="overflow-y:auto;">
+        <div id="rsGrid"></div>
+    </div>
+</div>
+
+<!-- Room Service confirm modal -->
+<div class="rs-confirm-overlay" id="rsConfirmOverlay">
+    <div class="rs-confirm-modal">
+        <button class="overlay-close-btn"
+                style="position:absolute;top:16px;right:16px;"
+                onclick="closeRsConfirm()" title="Close">✕</button>
+        <div class="rs-confirm-icon" id="rsConfirmIcon">🛎️</div>
+        <div class="rs-confirm-title" id="rsConfirmTitle">Service</div>
+        <div class="rs-confirm-desc" id="rsConfirmDesc">Our team will be with you shortly.</div>
+        <div class="rs-confirm-details">
+            <div class="rs-confirm-row">
+                <span class="rs-confirm-row-label">Service</span>
+                <span class="rs-confirm-row-val" id="rsConfirmTitleDetail">—</span>
+            </div>
+            <div class="rs-confirm-row">
+                <span class="rs-confirm-row-label">Room</span>
+                <span class="rs-confirm-row-val" id="rsConfirmRoom">—</span>
+            </div>
+        </div>
+        <label class="rs-note-label">Additional Note <span style="opacity:.45;">(optional)</span></label>
+        <textarea class="rs-note-input" id="rsGuestNote" rows="2"
+                  placeholder="e.g. Please bring extra pillows…"></textarea>
+        <div class="rs-confirm-actions">
+            <button class="rs-cancel-btn" onclick="closeRsConfirm()">Cancel</button>
+            <button class="rs-send-btn" id="rsSendBtn" onclick="confirmRsRequest()">Send Request</button>
+        </div>
+    </div>
+</div>
+<!-- Room service success toast -->
+<div class="svc-toast" id="rsToast">✓ Request sent! Our team will be with you shortly 🛎️</div>
+
+
+<!-- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+     MY ORDERS OVERLAY
+     Logic handled by common.js (openMyOrders, closeMyOrders, loadMyOrders)
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ -->
+<div id="myOrdersOverlay">
+    <div class="mo-panel">
+        <div class="mo-header">
+            <div class="mo-title">My <em>Bookings</em></div>
+            <button class="overlay-close-btn" onclick="closeMyOrders()" title="Close">&#10005;</button>
+        </div>
+        <div id="myOrdersContent">
+            <p style="color:rgba(248,243,236,.3);text-align:center;padding:40px 0;font-style:italic;">Loading&#8230;</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

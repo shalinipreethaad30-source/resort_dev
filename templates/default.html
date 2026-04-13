@@ -1,0 +1,1952 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vibe Munnar – Welcome</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --pink:        #c0185a;
+            --pink-light:  #e0206e;
+            --pink-dim:    rgba(192,24,90,0.18);
+            --pink-glow:   rgba(192,24,90,0.35);
+            --gold:        #d4a843;
+            --gold-light:  #ecc96a;
+            --gold-dim:    rgba(212,168,67,0.18);
+            --cream:       #f8f3ec;
+            --dark:        #0e0608;
+        }
+
+        html, body { width: 100vw; height: 100vh; overflow: hidden; font-family: 'Jost', sans-serif; color: var(--cream); background: var(--dark); }
+
+        /* ── Smooth page load — eliminates refresh blink ── */
+        body {
+            opacity: 0;
+            transition: opacity 0.55s ease;
+        }
+        body.page-ready {
+            opacity: 1;
+        }
+
+        .bg-base { position: fixed; inset: 0; z-index: 0; background: radial-gradient(ellipse 140% 90% at 50% 110%, #2a0418 0%, transparent 55%), radial-gradient(ellipse 80% 60% at 0% 0%, #1a0210 0%, transparent 50%), #0e0608; }
+        .bg-mountains { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+        .bg-mountains svg { width: 100%; height: 100%; }
+        .bg-texture { position: fixed; inset: 0; z-index: 2; pointer-events: none; background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.012) 2px, rgba(255,255,255,0.012) 3px); }
+        .bg-glow { position: fixed; inset: 0; z-index: 3; pointer-events: none; background: radial-gradient(ellipse 70% 45% at 50% 105%, rgba(192,24,90,0.28) 0%, transparent 65%), radial-gradient(ellipse 40% 30% at 15% 85%, rgba(212,168,67,0.10) 0%, transparent 60%); }
+        .mist { position: fixed; z-index: 4; pointer-events: none; height: 55%; width: 160%; background: radial-gradient(ellipse 55% 40% at 50% 50%, rgba(220,140,170,0.04) 0%, transparent 70%); animation: floatMist linear infinite; }
+        .mist:nth-child(1){ top:32%; left:-30%; animation-duration:32s; }
+        .mist:nth-child(2){ top:42%; left:-55%; animation-duration:44s; animation-delay:-18s; opacity:.6; }
+        .mist:nth-child(3){ top:22%; left:-70%; animation-duration:56s; animation-delay:-30s; opacity:.4; }
+        @keyframes floatMist { from { transform: translateX(0); } to { transform: translateX(80%); } }
+        .vignette { position: fixed; inset: 0; z-index: 5; pointer-events: none; background: radial-gradient(ellipse 92% 88% at 50% 50%, transparent 35%, rgba(0,0,0,0.65) 100%); }
+
+        .screen { position: relative; z-index: 10; width: 100vw; height: 100vh; }
+        .corner { position: absolute; width: 36px; height: 36px; z-index: 30; opacity: .5; }
+        .c-tl { top:20px; left:20px;   border-top:.5px solid var(--gold); border-left:.5px solid var(--gold); }
+        .c-tr { top:20px; right:20px;  border-top:.5px solid var(--gold); border-right:.5px solid var(--gold); }
+        .c-bl { bottom:20px; left:20px;  border-bottom:.5px solid var(--gold); border-left:.5px solid var(--gold); }
+        .c-br { bottom:20px; right:20px; border-bottom:.5px solid var(--gold); border-right:.5px solid var(--gold); }
+
+        .header { position: absolute; top: 100px; left: 64px; max-width: 520px; animation: fadeUp .9s ease .1s both; }
+        .brand-eyebrow { display: flex; align-items: center; gap: 10px; font-size: 10px; letter-spacing: .55em; text-transform: uppercase; color: var(--gold); font-weight: 400; margin-bottom: 16px; }
+        .brand-eyebrow span { opacity: .5; font-size: 8px; }
+        .vibe-logo { display: inline-flex; align-items: center; gap: 10px; }
+        .logo-diamond { width: 28px; height: 28px; background: var(--pink); clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .logo-diamond::after { content: 'V'; font-family: 'Cormorant Garamond', serif; font-size: 14px; color: #fff; font-weight: 600; }
+        .guest-name { font-family: 'Cormorant Garamond', serif; font-size: 60px; font-weight: 300; line-height: 1.0; color: var(--cream); }
+        .guest-name em { font-style: italic; color: var(--gold-light); }
+        .room-info { margin-top: 12px; display: flex; align-items: center; gap: 14px; }
+        .room-chip { background: var(--pink-dim); border: .5px solid var(--pink-light); color: var(--pink-light); font-size: 11px; letter-spacing: .18em; padding: 5px 14px; border-radius: 20px; }
+        .room-divider { width: .5px; height: 14px; background: rgba(255,255,255,.15); }
+        .tagline-text { font-size: 13px; font-weight: 300; color: rgba(248,243,236,.45); letter-spacing: .04em; }
+        .custom-msg { margin-top: 14px; font-family: 'Cormorant Garamond', serif; font-size: 20px; font-style: italic; font-weight: 300; color: var(--gold, #D4A843); }
+
+        .clock { position: absolute; top: 44px; left: 50%; transform: translateX(-50%); text-align: center; animation: fadeUp .9s ease .2s both; }
+        .clock-time { font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 300; color: rgba(248,243,236,.65); letter-spacing: .12em; }
+        .clock-date { font-size: 10px; letter-spacing: .32em; text-transform: uppercase; color: rgba(212,168,67,.5); margin-top: 4px; }
+
+        .activities { position: absolute; top: 150px; right: 72px; width: 280px; animation: fadeUp .9s ease .3s both; }
+        .panel-title { font-size: 9px; letter-spacing: .5em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; font-weight: 400; display: flex; align-items: center; gap: 8px; }
+        .panel-title::after { content: ''; flex: 1; height: .5px; background: linear-gradient(90deg, rgba(212,168,67,.4), transparent); }
+        .act-card { background: rgba(20,4,10,0.72); border: .5px solid rgba(192,24,90,.22); backdrop-filter: blur(12px); padding: 12px 14px; border-radius: 10px; margin-bottom: 9px; font-size: 13px; font-weight: 300; color: rgba(248,243,236,.82); transition: border-color .3s; }
+        .act-card:hover { border-color: rgba(192,24,90,.5); }
+        .act-card strong { display: block; margin-bottom: 2px; font-weight: 500; color: var(--cream); font-size: 13px; }
+        .act-card small { color: var(--gold); font-size: 11px; letter-spacing: .05em; }
+        .reserve-pill { float: right; background: var(--pink-dim); border: .5px solid rgba(192,24,90,.45); color: #f080a8; font-size: 10px; padding: 3px 10px; border-radius: 20px; letter-spacing: .07em; }
+        .ann-badge { font-size: 9px; letter-spacing: .3em; text-transform: uppercase; color: var(--pink-light); display: block; margin-bottom: 3px; }
+
+        .services-section { position: absolute; bottom: 101px; left: 52px; right: 52px; animation: fadeUp .9s ease .5s both; }
+        .services-heading { font-size: 20px; font-weight: 500; color: var(--cream); margin-bottom: 16px; letter-spacing: .01em; }
+        .services-heading span { color: var(--gold); font-style: italic; font-family: 'Cormorant Garamond', serif; font-size: 24px; }
+        .services-row { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 6px; scroll-snap-type: x mandatory; -ms-overflow-style: none; scrollbar-width: none; }
+        .services-row::-webkit-scrollbar { display: none; }
+        .svc-card { position: relative; flex-shrink: 0; width: 200px; height: 220px; border-radius: 14px; overflow: hidden; cursor: pointer; scroll-snap-align: start; background: #1a0510 center/cover no-repeat; transition: transform .38s cubic-bezier(0.23,1,0.32,1), box-shadow .38s ease; z-index: 1; }
+        .services-row:hover .svc-card { transform: scale(0.96); }
+        .services-row:hover .svc-card:hover { transform: scale(1.08); box-shadow: 0 16px 48px rgba(0,0,0,0.75), 0 0 0 1.5px var(--pink), 0 0 24px rgba(192,24,90,0.4); z-index: 10; }
+        .svc-card::before { content: ''; position: absolute; inset: 0; z-index: 1; background: linear-gradient(to top, rgba(10,2,6,0.92) 0%, rgba(10,2,6,0.40) 40%, rgba(10,2,6,0.08) 100%); transition: opacity .35s; }
+        .svc-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; z-index: 3; background: linear-gradient(90deg, transparent, var(--pink), var(--gold), transparent); transform: scaleX(0); transform-origin: left; transition: transform .4s ease .05s; }
+        .svc-card:hover::after { transform: scaleX(1); }
+        .svc-img { position: absolute; inset: 0; background: center/cover no-repeat; transition: transform .55s cubic-bezier(0.23,1,0.32,1); }
+        .svc-card:hover .svc-img { transform: scale(1.06); }
+        .svc-info { position: absolute; bottom: 0; left: 0; right: 0; z-index: 2; padding: 14px; }
+        .svc-title { font-size: 15px; font-weight: 600; color: #fff; line-height: 1.25; text-shadow: 0 1px 8px rgba(0,0,0,.7); transition: color .25s; }
+        .svc-card:hover .svc-title { color: var(--gold-light); }
+        .svc-sub { font-size: 11px; font-weight: 300; color: rgba(255,255,255,.62); margin-top: 4px; letter-spacing: .03em; max-height: 0; overflow: hidden; transition: max-height .35s ease, opacity .35s ease; opacity: 0; }
+        .svc-card:hover .svc-sub { max-height: 36px; opacity: 1; }
+        .svc-arrow { position: absolute; top: 12px; right: 12px; z-index: 3; width: 26px; height: 26px; border-radius: 50%; background: rgba(192,24,90,0.0); border: .5px solid rgba(255,255,255,0); display: flex; align-items: center; justify-content: center; font-size: 12px; color: rgba(255,255,255,0); transition: all .3s; }
+        .svc-card:hover .svc-arrow { background: rgba(192,24,90,0.55); border-color: rgba(255,255,255,.3); color: #fff; }
+
+        .hr { position: absolute; bottom: 99px; left: 0; right: 0; height: .5px; background: linear-gradient(90deg, transparent 0%, rgba(212,168,67,.12) 8%, rgba(192,24,90,.25) 50%, rgba(212,168,67,.12) 92%, transparent 100%); }
+        .bottom-bar { position: absolute; bottom: 0; left: 0; right: 0; height: 98px; background: linear-gradient(to top, rgba(14,6,8,.9) 0%, rgba(14,6,8,.4) 100%); backdrop-filter: blur(14px); border-top: .5px solid rgba(192,24,90,.15); display: flex; align-items: center; justify-content: center; gap: 20px; }
+        .tv-btn { background: transparent; border: .5px solid rgba(212,168,67,.55); padding: 13px 52px; font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 400; letter-spacing: .4em; text-transform: uppercase; color: var(--gold-light); border-radius: 40px; cursor: pointer; transition: background .3s, border-color .3s, color .3s, box-shadow .3s; }
+        .tv-btn:hover { background: var(--gold-dim); border-color: var(--gold); color: var(--cream); box-shadow: 0 0 18px rgba(212,168,67,.2); }
+
+        /* ══════════════════════════════════════════
+           ROOM SERVICE OVERLAY
+        ══════════════════════════════════════════ */
+        #rsGrid {
+            flex: 1; overflow-y: auto; overflow-x: hidden;
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 24px;
+            padding: 32px 60px;
+            align-content: start;
+        }
+        .rs-loading {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: rgba(248,243,236,.35);
+            font-style: italic;
+            padding: 60px 0;
+            font-size: 15px;
+        }
+        .rs-card {
+            background: rgba(20,4,12,0.88);
+            border: .5px solid rgba(192,24,90,.2);
+            border-radius: 18px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: border-color .3s, box-shadow .3s, transform .25s;
+            display: flex; flex-direction: column;
+        }
+        .rs-card:hover {
+            border-color: rgba(192,24,90,.5);
+            box-shadow: 0 8px 28px rgba(0,0,0,.5), 0 0 18px rgba(192,24,90,.12);
+            transform: translateY(-4px);
+        }
+        .rs-card::after {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--pink), var(--gold), transparent);
+            transform: scaleX(0); transform-origin: left; transition: transform .4s ease;
+        }
+        .rs-card:hover::after { transform: scaleX(1); }
+        .rs-card-img {
+            width: 100%; height: 160px;
+            background: #1a0510 center/cover no-repeat;
+            flex-shrink: 0;
+        }
+        .rs-card-body {
+            padding: 16px 18px 18px;
+            display: flex; flex-direction: column; gap: 5px; flex: 1;
+        }
+        .rs-card-icon { font-size: 22px; }
+        .rs-card-title {
+            font-size: 16px; font-weight: 600;
+            color: var(--cream); line-height: 1.25;
+            transition: color .25s;
+        }
+        .rs-card:hover .rs-card-title { color: var(--gold-light); }
+        .rs-card-desc {
+            font-size: 12px; color: rgba(248,243,236,.45);
+            font-weight: 300; line-height: 1.5;
+        }
+        .rs-request-btn {
+            margin-top: auto; padding-top: 8px;
+            width: 100%; padding: 10px;
+            background: var(--pink-dim); border: .5px solid rgba(192,24,90,.45);
+            color: #f080a8; border-radius: 10px;
+            font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 500;
+            letter-spacing: .25em; text-transform: uppercase;
+            cursor: pointer; transition: background .25s, box-shadow .25s;
+        }
+        .rs-card:hover .rs-request-btn {
+            background: rgba(192,24,90,.3);
+            box-shadow: 0 0 14px rgba(192,24,90,.25);
+        }
+
+        /* Room Service confirm modal */
+        .rs-confirm-overlay {
+            position: fixed; inset: 0; z-index: 200;
+            display: flex;
+            align-items: center; justify-content: center;
+            background: rgba(0,0,0,.75); backdrop-filter: blur(12px);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .rs-confirm-overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: all;
+        }
+        .rs-confirm-modal {
+            background: linear-gradient(160deg, rgba(20,4,12,0.99), rgba(8,2,5,0.99));
+            border: .5px solid rgba(192,24,90,.35); border-radius: 22px;
+            padding: 40px 44px 36px; max-width: 480px; width: 92%;
+            text-align: center; position: relative;
+        }
+        .rs-confirm-icon { font-size: 44px; margin-bottom: 12px; }
+        .rs-confirm-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 30px; font-weight: 300; color: var(--cream); margin-bottom: 4px;
+        }
+        .rs-confirm-desc {
+            font-size: 13px; color: rgba(248,243,236,.45);
+            font-style: italic; margin-bottom: 20px; line-height: 1.6;
+        }
+        .rs-confirm-details {
+            background: rgba(255,255,255,.05); border: .5px solid rgba(255,255,255,.1);
+            border-radius: 12px; padding: 14px 20px; margin-bottom: 18px; text-align: left;
+        }
+        .rs-confirm-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 6px 0; border-bottom: .5px solid rgba(255,255,255,.06);
+        }
+        .rs-confirm-row:last-child { border-bottom: none; }
+        .rs-confirm-row-label {
+            font-size: 11px; letter-spacing: .15em; text-transform: uppercase;
+            color: rgba(248,243,236,.4);
+        }
+        .rs-confirm-row-val { font-size: 14px; font-weight: 500; color: var(--cream); }
+        .rs-note-label {
+            font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+            color: rgba(212,168,67,.6); text-align: left; margin-bottom: 6px;
+            display: block;
+        }
+        .rs-note-input {
+            width: 100%; background: rgba(255,255,255,.05);
+            border: .5px solid rgba(255,255,255,.15); border-radius: 10px;
+            color: var(--cream); font-family: 'Jost', sans-serif; font-size: 13px;
+            padding: 10px 14px; resize: none; outline: none; margin-bottom: 20px;
+            transition: border-color .2s;
+        }
+        .rs-note-input:focus { border-color: rgba(192,24,90,.5); }
+        .rs-confirm-actions { display: flex; gap: 12px; }
+        .rs-cancel-btn {
+            flex: 1; padding: 13px;
+            background: rgba(255,255,255,.07); border: .5px solid rgba(255,255,255,.15);
+            color: rgba(248,243,236,.6); border-radius: 10px;
+            font-family: 'Jost', sans-serif; font-size: 12px;
+            letter-spacing: .2em; text-transform: uppercase; cursor: pointer; transition: all .2s;
+        }
+        .rs-cancel-btn:hover { background: rgba(255,255,255,.12); color: var(--cream); }
+        .rs-send-btn {
+            flex: 2; padding: 13px;
+            background: linear-gradient(135deg, var(--pink), var(--pink-light));
+            border: none; color: #fff; border-radius: 10px;
+            font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 600;
+            letter-spacing: .2em; text-transform: uppercase; cursor: pointer;
+            transition: opacity .25s, box-shadow .25s;
+        }
+        .rs-send-btn:hover { opacity: .88; box-shadow: 0 0 24px rgba(192,24,90,.45); }
+        .rs-send-btn:disabled { opacity: .3; cursor: default; box-shadow: none; }
+
+        #galleryGrid {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); /* better fit */
+    gap: 20px;
+
+    padding: 24px 30px;
+    
+    align-items: start;      /* 🔥 prevents vertical stretching */
+}
+
+/* CARD */
+.gallery-thumb {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+
+    width: 100%;
+    height: 320px;              /* 🔥 fixed height = no overlap */
+    
+    background: #1a0510 center/cover no-repeat;
+    border: .5px solid rgba(192,24,90,.18);
+
+    transition: border-color .3s, box-shadow .3s, transform .28s;
+}
+
+/* OPTIONAL: if you want responsive height instead */
+/*
+.gallery-thumb {
+    aspect-ratio: 3/4;
+}
+*/
+
+.gallery-thumb:hover {
+    border-color: rgba(212,168,67,.55);
+    box-shadow: 0 10px 36px rgba(0,0,0,.6), 0 0 20px rgba(212,168,67,.12);
+
+    transform: translateY(-5px); /* 🔥 removed scale to avoid overlap */
+}
+
+/* IMAGE OVERLAY */
+.gallery-thumb::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+
+    background: linear-gradient(
+        to top,
+        rgba(8,2,5,.92) 0%,
+        rgba(8,2,5,.28) 50%,
+        transparent 80%
+    );
+}
+
+/* TEXT CONTENT */
+.gallery-thumb-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    padding: 16px 18px;
+}
+
+/* SMALL TEXT FIX */
+.gallery-thumb-number {
+    font-size: 10px;   /* 🔥 4px was too small */
+    letter-spacing: .12em;
+    color: var(--gold);
+    margin-bottom: 6px;
+}
+
+/* TITLE */
+.gallery-thumb-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--cream);
+    line-height: 1.2;
+    text-shadow: 0 1px 8px rgba(0,0,0,.7);
+}
+
+/* DESCRIPTION */
+.gallery-thumb-desc {
+    font-size: 11px;
+    color: rgba(248,243,236,.0);
+    margin-top: 4px;
+
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+
+    transition: all .3s ease;
+}
+
+.gallery-thumb:hover .gallery-thumb-desc {
+    max-height: 60px;
+    opacity: 1;
+    color: rgba(248,243,236,.62);
+}
+        /* ══════════════════════════════════════════
+           SHARED OVERLAY BASE STYLES
+           (food, spa, bar all inherit from this pattern)
+        ══════════════════════════════════════════ */
+        .overlay-base {
+            position: fixed; inset: 0; z-index: 100;
+            display: flex; flex-direction: column;
+            background: rgba(8,2,5,0.97);
+            backdrop-filter: blur(24px);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+        }
+        .overlay-base.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: all;
+        }
+
+        .overlay-topbar {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 28px 52px 20px;
+            border-bottom: .5px solid rgba(192,24,90,.15);
+            flex-shrink: 0;
+        }
+        .overlay-topbar-left { display: flex; align-items: center; gap: 20px; }
+        .overlay-back-btn {
+            display: flex; align-items: center; gap: 8px; cursor: pointer;
+            font-size: 11px; letter-spacing: .3em; text-transform: uppercase;
+            color: rgba(248,243,236,.4); background: none; border: none;
+            font-family: 'Jost', sans-serif; transition: color .25s; padding: 0;
+        }
+        .overlay-back-btn:hover { color: var(--gold); }
+        .overlay-back-btn svg { width: 16px; height: 16px; }
+        .overlay-page-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 36px; font-weight: 300; color: var(--cream); letter-spacing: .02em;
+        }
+        .overlay-page-title em { color: var(--gold-light); font-style: italic; }
+
+        /* close X button */
+        .overlay-close-btn {
+            width: 38px; height: 38px; border-radius: 50%; border: .5px solid rgba(255,255,255,.12);
+            background: rgba(255,255,255,.06); color: rgba(248,243,236,.45);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; cursor: pointer; transition: all .2s;
+        }
+        .overlay-close-btn:hover { background: rgba(192,24,90,.25); border-color: rgba(192,24,90,.5); color: var(--cream); }
+
+        /* shared cat-screen glow bg */
+        .cat-screen-bg {
+            flex: 1; overflow: hidden; display: flex; flex-direction: column;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(192,24,90,0.12), transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(212,168,67,0.10), transparent 40%);
+        }
+
+        /* ══════════════════════════════════════════
+           SHARED TOAST
+        ══════════════════════════════════════════ */
+        .svc-toast {
+            position: fixed; bottom: 40px; left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: rgba(26,188,156,.15); border: .5px solid #1abc9c;
+            color: #1abc9c; padding: 13px 32px; border-radius: 30px;
+            font-size: 12px; letter-spacing: .25em; text-transform: uppercase;
+            transition: transform .4s ease, opacity .4s; opacity: 0;
+            z-index: 400; pointer-events: none;
+        }
+        .svc-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+        /* ══════════════════════════════════════════
+           FOOD OVERLAY
+        ══════════════════════════════════════════ */
+        #foodCategoryScreen { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+        .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding: 40px 80px; }
+        .cat-card { position: relative; width: 100%; height: 240px; border-radius: 18px; overflow: hidden; cursor: pointer; background: #1a0510 center/cover no-repeat; transition: all .3s ease; }
+        .cat-card:hover { transform: translateY(-4px) scale(1.01); box-shadow: 0 10px 28px rgba(0,0,0,.5), 0 0 0 1px rgba(192,24,90,.4); }
+        .cat-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(8,2,5,0.88) 0%, rgba(8,2,5,0.25) 50%, rgba(8,2,5,0.05) 100%); transition: opacity .3s; }
+        .cat-card:hover::before { opacity: .85; }
+        .cat-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--pink), var(--gold), transparent); transform: scaleX(0); transform-origin: left; transition: transform .4s ease; }
+        .cat-card:hover::after { transform: scaleX(1); }
+       .cat-card-img {position: absolute;inset: 0;width: 100%;height: 100%;background-size: cover;background-position: center;background-repeat: no-repeat;transition: transform .55s cubic-bezier(0.23,1,0.32,1);}
+        .cat-card:hover .cat-card-img { transform: scale(1.04); }
+        .cat-card-body { position: absolute; bottom: 0; left: 0; right: 0; padding: 18px 20px; z-index: 2; }
+        .cat-card-name { font-size: 19px; font-weight: 600; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,.6); transition: color .25s; }
+        .cat-card:hover .cat-card-name { color: var(--gold-light); }
+        .cat-card-sub { font-size: 12px; font-weight: 400; color: rgba(255,255,255,.55); margin-top: 3px; letter-spacing: .04em; }
+
+        #foodItemsScreen { flex: 1; display: none; flex-direction: row; overflow: hidden; }
+        #foodItemsScreen.visible { display: flex; }
+        .items-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .items-cat-label { padding: 18px 52px 8px; font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; color: var(--gold-light); letter-spacing: .05em; text-transform: uppercase; flex-shrink: 0; }
+        .items-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; padding: 12px 32px 24px; align-content: start; }
+        .item-card { width: 100%; min-width: 0; background: rgba(20,4,12,0.88); border: .5px solid rgba(192,24,90,.2); border-radius: 16px; overflow: hidden; transition: border-color .3s, box-shadow .3s; }
+        .item-card:hover { border-color: rgba(192,24,90,.5); box-shadow: 0 8px 28px rgba(0,0,0,.5), 0 0 16px rgba(192,24,90,.12); }
+        .item-img {
+            width: 100%;
+            height: 130px;
+            background-color: #1a0510;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .item-body { padding: 12px 14px 14px; }
+        .item-name { font-size: 14px; font-weight: 500; color: var(--cream); margin-bottom: 2px; }
+        .item-price { font-family: 'Cormorant Garamond', serif; font-size: 18px; color: var(--gold-light); margin-bottom: 12px; }
+        .item-price small { font-size: 12px; color: rgba(212,168,67,.5); }
+        .qty-row { display: flex; align-items: center; background: rgba(255,255,255,.06); border-radius: 30px; overflow: hidden; border: .5px solid rgba(255,255,255,.1); }
+        .qty-btn { width: 36px; height: 36px; border: none; background: transparent; color: var(--cream); font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .2s; font-family: 'Jost', sans-serif; line-height: 1; }
+        .qty-btn:hover { background: rgba(192,24,90,.3); }
+        .qty-btn.minus { border-radius: 30px 0 0 30px; }
+        .qty-btn.plus  { border-radius: 0 30px 30px 0; background: var(--pink); }
+        .qty-btn.plus:hover { background: var(--pink-light); }
+        .qty-val { flex: 1; text-align: center; font-size: 15px; font-weight: 500; color: var(--cream); user-select: none; }
+
+        /* shared cart panel */
+        .cart-panel { width: 240px; flex-shrink: 0; background: rgba(16,3,10,0.92); border-left: .5px solid rgba(192,24,90,.18); display: flex; flex-direction: column; padding: 18px 20px 20px; }
+        .cart-panel-title { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 300; color: var(--cream); margin-bottom: 6px; letter-spacing: .03em; }
+        .cart-panel-title em { color: var(--gold-light); font-style: italic; }
+        .cart-divider { height: .5px; background: rgba(192,24,90,.2); margin-bottom: 16px; }
+        .cart-items-list { flex: 1; overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(192,24,90,.2) transparent; margin-bottom: 16px; }
+        .cart-item-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: .5px solid rgba(255,255,255,.05); }
+        .cart-item-row:last-child { border-bottom: none; }
+        .ci-name { font-size: 13px; color: var(--cream); max-width: 140px; }
+        .ci-qty  { font-size: 12px; color: rgba(248,243,236,.4); margin-top: 1px; }
+        .ci-price { font-family: 'Cormorant Garamond', serif; font-size: 16px; color: var(--gold-light); }
+        .cart-empty { color: rgba(248,243,236,.3); font-size: 13px; text-align: center; margin-top: 24px; font-style: italic; }
+        .cart-total-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0 18px; border-top: .5px solid rgba(212,168,67,.2); }
+        .cart-total-label { font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: rgba(248,243,236,.5); }
+        .cart-total-amt { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 300; color: var(--gold-light); }
+        .cart-total-amt small { font-size: 14px; color: rgba(212,168,67,.5); }
+        .cart-clear-btn { width: 100%; padding: 11px; border-radius: 10px; margin-bottom: 10px; background: rgba(192,24,90,.15); border: .5px solid rgba(192,24,90,.35); color: var(--pink-light); font-family: 'Jost', sans-serif; font-size: 12px; letter-spacing: .25em; text-transform: uppercase; cursor: pointer; transition: background .25s; }
+        .cart-clear-btn:hover { background: rgba(192,24,90,.3); }
+        .cart-place-btn { width: 100%; padding: 14px; border-radius: 10px; background: var(--pink); border: none; color: #fff; font-family: 'Jost', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: .3em; text-transform: uppercase; cursor: pointer; transition: background .3s, box-shadow .3s; }
+        .cart-place-btn:hover { background: var(--pink-light); box-shadow: 0 0 24px rgba(192,24,90,.4); }
+        .cart-place-btn:disabled { background: rgba(192,24,90,.2); color: rgba(255,255,255,.3); cursor: default; box-shadow: none; }
+
+        /* ══════════════════════════════════════════
+           SPA & WELLNESS OVERLAY
+        ══════════════════════════════════════════ */
+        #spaCategoryScreen { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+        .spa-cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding: 40px 80px; }
+        .spa-cat-card {
+            position: relative; width: 100%; height: 240px; border-radius: 18px; overflow: hidden;
+            cursor: pointer; background: #0a1510 center/cover no-repeat; transition: all .3s ease;
+        }
+        .spa-cat-card:hover { transform: translateY(-4px) scale(1.01); box-shadow: 0 10px 28px rgba(0,0,0,.5), 0 0 0 1px rgba(192,24,90,.4); }
+        .spa-cat-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(4,14,10,0.9) 0%, rgba(4,14,10,0.25) 55%, rgba(4,14,10,0.05) 100%); transition: opacity .3s; }
+        .spa-cat-card:hover::before { opacity: .85; }
+        .spa-cat-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--pink), var(--gold), transparent); transform: scaleX(0); transform-origin: left; transition: transform .4s ease; }
+        .spa-cat-card:hover::after { transform: scaleX(1); }
+        .spa-cat-img { position: absolute; inset: 0; width: 100%; height: 100%; background: center/cover no-repeat; transition: transform .5s cubic-bezier(0.23,1,0.32,1); }
+        .spa-cat-card:hover .spa-cat-img { transform: scale(1.04); }
+        .spa-cat-body { position: absolute; bottom: 0; left: 0; right: 0; padding: 18px 20px; z-index: 2; }
+        .spa-cat-name { font-size: 18px; font-weight: 600; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,.6); transition: color .25s; }
+        .spa-cat-card:hover .spa-cat-name { color: var(--gold-light); }
+        .spa-cat-sub { font-size: 12px; color: rgba(255,255,255,.5); margin-top: 3px; letter-spacing: .04em; }
+
+        #spaTreatmentsScreen { flex: 1; display: none; flex-direction: column; overflow: hidden; }
+        #spaTreatmentsScreen.visible { display: flex; }
+        .spa-treatments-label { padding: 18px 52px 8px; font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; color: var(--gold-light); letter-spacing: .05em; flex-shrink: 0; }
+        .spa-treatments-scroll {
+            flex: 1; overflow-y: auto; overflow-x: hidden;
+            display: grid; grid-template-columns: repeat(3, minmax(0,1fr));
+            gap: 20px; padding: 12px 52px 24px; align-content: start;
+        }
+
+        /* Card: full-bleed image; slot overlay appears on click */
+        .spa-treatment-card {
+            background: rgba(10,20,14,0.9); border: .5px solid rgba(192,24,90,.2);
+            border-radius: 16px; overflow: hidden; cursor: pointer;
+            position: relative; height: 280px;
+            transition: border-color .3s, box-shadow .3s, transform .25s;
+        }
+        .spa-treatment-card:hover { border-color: rgba(192,24,90,.5); box-shadow: 0 8px 28px rgba(0,0,0,.5); transform: translateY(-3px); }
+        .spa-treatment-card.expanded { border-color: rgba(192,24,90,.7); box-shadow: 0 12px 36px rgba(0,0,0,.6), 0 0 0 1px rgba(192,24,90,.4); transform: translateY(0); }
+
+        /* Full-bleed image fills entire card */
+        .spa-treatment-bg {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            background: #0a1510 center/cover no-repeat;
+        }
+        /* Title label sits at the bottom of the image (always visible) */
+        .spa-card-overlay-label {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            padding: 48px 14px 14px;
+            background: linear-gradient(to top, rgba(4,14,10,0.96) 0%, rgba(4,14,10,0.0) 100%);
+            transition: opacity .3s;
+        }
+        .spa-treatment-card.expanded .spa-card-overlay-label { opacity: 0; pointer-events: none; }
+        .spa-treatment-name { font-size: 15px; font-weight: 600; color: var(--cream); margin-bottom: 2px; }
+        .spa-treatment-desc { font-size: 11px; color: rgba(248,243,236,.5); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px; }
+        .spa-card-tap-hint {
+            font-size: 10px; letter-spacing: .25em; text-transform: uppercase;
+            color: var(--pink-light); opacity: .75;
+        }
+
+        .spa-treatment-price {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 16px; color: var(--gold-light);
+            margin-bottom: 6px; display: block;
+        }
+
+        /* Slot panel — overlays the card on click, does NOT push content down */
+        .spa-slot-panel {
+            position: absolute; inset: 0; z-index: 5;
+            opacity: 0; pointer-events: none;
+            transition: opacity .35s ease;
+            background: rgba(8,18,12,0.93);
+            backdrop-filter: blur(8px);
+            display: flex; flex-direction: column; justify-content: flex-end;
+            padding: 14px 14px 16px;
+        }
+        .spa-treatment-card.expanded .spa-slot-panel { opacity: 1; pointer-events: all; }
+        .spa-slots { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 12px; }
+        .spa-slot-badge {
+            background: rgba(255,255,255,.07); border: .5px solid rgba(255,255,255,.18);
+            color: rgba(248,243,236,.65); font-size: 11px; font-family: 'Jost', sans-serif;
+            padding: 5px 12px; border-radius: 20px; cursor: pointer; transition: all .2s;
+        }
+        .spa-slot-badge:hover { background: rgba(192,24,90,.2); border-color: rgba(192,24,90,.5); color: var(--cream); }
+        .spa-slot-badge.selected { background: var(--pink-dim); border-color: var(--pink-light); color: var(--pink-light); font-weight: 500; }
+        .spa-book-slot-btn {
+            width: 100%; padding: 11px; background: var(--pink); border: none; color: #fff;
+            border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 500;
+            letter-spacing: .25em; text-transform: uppercase; cursor: pointer; transition: background .25s, box-shadow .25s;
+        }
+        .spa-book-slot-btn:hover { background: var(--pink-light); box-shadow: 0 0 20px rgba(192,24,90,.4); }
+
+        /* Spa confirm modal */
+        .spa-confirm-overlay {
+            position: fixed; inset: 0; z-index: 200;
+            display: flex;
+            align-items: center; justify-content: center;
+            background: rgba(0,0,0,.72); backdrop-filter: blur(10px);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .spa-confirm-overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: all;
+        }
+        .spa-confirm-modal {
+            background: linear-gradient(160deg, rgba(8,18,12,0.99), rgba(20,4,12,0.99));
+            border: .5px solid rgba(192,24,90,.35); border-radius: 22px;
+            padding: 40px 44px 36px; max-width: 460px; width: 90%; text-align: center;
+            position: relative;
+        }
+        .spa-confirm-icon { font-size: 38px; margin-bottom: 16px; }
+        .spa-confirm-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; color: var(--cream); margin-bottom: 4px; }
+        .spa-confirm-cat { font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); margin-bottom: 22px; }
+        .spa-confirm-details { background: rgba(255,255,255,.05); border: .5px solid rgba(255,255,255,.1); border-radius: 12px; padding: 18px 20px; margin-bottom: 24px; text-align: left; }
+        .spa-confirm-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: .5px solid rgba(255,255,255,.06); }
+        .spa-confirm-row:last-child { border-bottom: none; }
+        .spa-confirm-row-label { font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: rgba(248,243,236,.4); }
+        .spa-confirm-row-val { font-size: 14px; font-weight: 500; color: var(--cream); }
+        .spa-confirm-sub { font-size: 12px; color: rgba(248,243,236,.35); margin-bottom: 24px; font-style: italic; }
+        .spa-confirm-actions { display: flex; gap: 12px; }
+        .spa-cancel-btn { flex: 1; padding: 13px; background: rgba(255,255,255,.07); border: .5px solid rgba(255,255,255,.15); color: rgba(248,243,236,.6); border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; cursor: pointer; transition: all .2s; }
+        .spa-cancel-btn:hover { background: rgba(255,255,255,.12); color: var(--cream); }
+        .spa-confirm-btn { flex: 2; padding: 13px; background: var(--pink); border: none; color: #fff; border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: .25em; text-transform: uppercase; cursor: pointer; transition: background .25s, box-shadow .25s; }
+        .spa-confirm-btn:hover { background: var(--pink-light); box-shadow: 0 0 24px rgba(192,24,90,.4); }
+        .spa-confirm-btn:disabled { background: rgba(192,24,90,.2); color: rgba(255,255,255,.3); cursor: default; box-shadow: none; }
+
+        /* ══════════════════════════════════════════
+           BAR OVERLAY
+        ══════════════════════════════════════════ */
+        #barCategoryScreen { flex: 1; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .bar-cat-grid { display: flex; flex-direction: row; gap: 28px; padding: 32px 60px; width: 100%; max-width: 1000px; justify-content: center; }
+        .bar-cat-card {
+            position: relative; border-radius: 20px; overflow: hidden; cursor: pointer;
+            flex: 1; max-width: 420px; height: 260px;
+            background: #1a0800 center/cover no-repeat; transition: all .38s cubic-bezier(0.23,1,0.32,1);
+        }
+        .bar-cat-card:hover { transform: scale(1.025); box-shadow: 0 20px 60px rgba(0,0,0,.7), 0 0 0 1.5px var(--pink), 0 0 28px rgba(192,24,90,.35); }
+        .bar-cat-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,4,2,0.88) 0%, rgba(10,4,2,0.30) 55%, rgba(10,4,2,0.06) 100%); z-index: 1; }
+        .bar-cat-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, transparent, var(--pink), var(--gold), transparent); transform: scaleX(0); transform-origin: left; transition: transform .45s ease; z-index: 3; }
+        .bar-cat-card:hover::after { transform: scaleX(1); }
+        .bar-cat-img { position: absolute; inset: 0; width: 100%; height: 100%; background: center/cover no-repeat; transition: transform .55s cubic-bezier(0.23,1,0.32,1); z-index: 0; }
+        .bar-cat-card:hover .bar-cat-img { transform: scale(1.06); }
+        .bar-cat-body { position: absolute; bottom: 0; left: 0; right: 0; padding: 22px 28px; z-index: 2; }
+        .bar-cat-name { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 400; color: #fff; text-shadow: 0 2px 12px rgba(0,0,0,.8); transition: color .25s; margin-bottom: 5px; }
+        .bar-cat-card:hover .bar-cat-name { color: var(--gold-light); }
+        .bar-cat-sub { font-size: 13px; color: rgba(255,255,255,.6); letter-spacing: .04em; }
+
+        #barItemsScreen { flex: 1; display: none; flex-direction: row; overflow: hidden; }
+        #barItemsScreen.visible { display: flex; }
+        .bar-items-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .bar-items-cat-label { padding: 18px 52px 8px; font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; color: var(--gold-light); letter-spacing: .05em; text-transform: uppercase; flex-shrink: 0; }
+        .bar-items-scroll {
+            flex: 1; overflow-y: auto; overflow-x: hidden;
+            display: grid; grid-template-columns: repeat(4, minmax(0,1fr));
+            gap: 16px; padding: 12px 32px 24px; align-content: start;
+        }
+        .bar-item-card {
+            background: rgba(26,8,4,0.92); border: .5px solid rgba(192,24,90,.2);
+            border-radius: 16px; overflow: hidden; transition: border-color .3s, box-shadow .3s;
+        }
+        .bar-item-card:hover { border-color: rgba(192,24,90,.5); box-shadow: 0 8px 28px rgba(0,0,0,.5), 0 0 16px rgba(192,24,90,.12); }
+        .bar-item-img {
+            width: 100%;
+            height: 140px;
+            background-color: #1a0800;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .bar-item-body { padding: 12px 14px 14px; }
+        .bar-item-name { font-size: 14px; font-weight: 500; color: var(--cream); margin-bottom: 2px; }
+        .bar-item-price { font-family: 'Cormorant Garamond', serif; font-size: 18px; color: var(--gold-light); margin-bottom: 12px; }
+        .bar-item-price small { font-size: 12px; color: rgba(212,168,67,.5); }
+        .bar-qty-row { display: flex; align-items: center; background: rgba(255,255,255,.06); border-radius: 30px; overflow: hidden; border: .5px solid rgba(255,255,255,.1); }
+        .bar-qty-btn { width: 36px; height: 36px; border: none; background: transparent; color: var(--cream); font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .2s; font-family: 'Jost', sans-serif; line-height: 1; }
+        .bar-qty-btn:hover { background: rgba(192,24,90,.3); }
+        .bar-qty-btn.minus { border-radius: 30px 0 0 30px; }
+        .bar-qty-btn.plus  { border-radius: 0 30px 30px 0; background: var(--pink); }
+        .bar-qty-btn.plus:hover { background: var(--pink-light); }
+        .bar-qty-val { flex: 1; text-align: center; font-size: 15px; font-weight: 500; color: var(--cream); user-select: none; }
+
+        /* Bar cart panel reuses shared cart styles but with bar-specific IDs */
+        .bar-cart-item-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: .5px solid rgba(255,255,255,.05); }
+        .bar-cart-item-row:last-child { border-bottom: none; }
+        .bar-ci-name { font-size: 13px; color: var(--cream); max-width: 140px; }
+        .bar-ci-qty  { font-size: 12px; color: rgba(248,243,236,.4); margin-top: 1px; }
+        .bar-ci-price { font-family: 'Cormorant Garamond', serif; font-size: 16px; color: var(--gold-light); }
+        .bar-cart-empty { color: rgba(248,243,236,.3); font-size: 13px; text-align: center; margin-top: 24px; font-style: italic; }
+
+        /* ══════════════════════════════════════════
+           DINE-IN OVERLAY
+        ══════════════════════════════════════════ */
+        #dineCategoryScreen { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+        .dine-cat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; padding: 32px 60px; }
+        .dine-cat-card {
+            position: relative; width: 100%; height: 220px; border-radius: 18px; overflow: hidden;
+            cursor: pointer; background: #0a100a center/cover no-repeat; transition: all .3s ease;
+        }
+        .dine-cat-card:hover { transform: translateY(-4px) scale(1.01); box-shadow: 0 10px 28px rgba(0,0,0,.5), 0 0 0 1px rgba(212,168,67,.5); }
+        .dine-cat-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(8,6,2,0.92) 0%, rgba(8,6,2,0.30) 55%, rgba(8,6,2,0.05) 100%); transition: opacity .3s; }
+        .dine-cat-card:hover::before { opacity: .82; }
+        .dine-cat-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--gold), var(--pink), transparent); transform: scaleX(0); transform-origin: left; transition: transform .4s ease; }
+        .dine-cat-card:hover::after { transform: scaleX(1); }
+        .dine-cat-img { position: absolute; inset: 0; width: 100%; height: 100%; background: center/cover no-repeat; transition: transform .55s cubic-bezier(0.23,1,0.32,1); }
+        .dine-cat-card:hover .dine-cat-img { transform: scale(1.04); }
+        .dine-cat-body { position: absolute; bottom: 0; left: 0; right: 0; padding: 16px 18px; z-index: 2; }
+        .dine-cat-icon { font-size: 22px; margin-bottom: 4px; }
+        .dine-cat-name { font-size: 17px; font-weight: 600; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,.6); transition: color .25s; }
+        .dine-cat-card:hover .dine-cat-name { color: var(--gold-light); }
+        .dine-cat-sub { font-size: 11px; color: rgba(255,255,255,.5); margin-top: 2px; letter-spacing: .04em; }
+
+        #dinePackagesScreen { flex: 1; display: none; flex-direction: column; overflow: hidden; }
+        #dinePackagesScreen.visible { display: flex; }
+        .dine-pkg-label { padding: 18px 52px 8px; font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; color: var(--gold-light); letter-spacing: .05em; text-transform: uppercase; flex-shrink: 0; }
+        .dine-pkg-scroll {
+            flex: 1; overflow-y: auto; overflow-x: hidden;
+            display: grid; grid-template-columns: repeat(3, minmax(0,1fr));
+            gap: 20px; padding: 12px 52px 24px; align-content: start;
+        }
+
+        /* Card: full-bleed image; slot overlay appears on click */
+        .dine-pkg-card {
+            background: rgba(18,12,4,0.92); border: .5px solid rgba(212,168,67,.2);
+            border-radius: 16px; overflow: hidden; cursor: pointer;
+            position: relative; height: 280px;
+            transition: border-color .3s, box-shadow .3s, transform .25s;
+        }
+        .dine-pkg-card:hover { border-color: rgba(212,168,67,.5); box-shadow: 0 8px 28px rgba(0,0,0,.5); transform: translateY(-3px); }
+        .dine-pkg-card.expanded { border-color: rgba(212,168,67,.8); box-shadow: 0 12px 36px rgba(0,0,0,.6), 0 0 0 1px rgba(212,168,67,.35); transform: translateY(0); }
+
+        /* Full-bleed image fills entire card */
+        .dine-pkg-bg {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            background: #12100a center/cover no-repeat;
+        }
+        /* Title label sits at the bottom of the image (always visible) */
+        .dine-card-overlay-label {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            padding: 48px 16px 14px;
+            background: linear-gradient(to top, rgba(8,6,2,0.96) 0%, rgba(8,6,2,0.0) 100%);
+            transition: opacity .3s;
+        }
+        .dine-pkg-card.expanded .dine-card-overlay-label { opacity: 0; pointer-events: none; }
+        .dine-pkg-name { font-size: 15px; font-weight: 600; color: var(--cream); margin-bottom: 2px; }
+        .dine-pkg-desc { font-size: 11px; color: rgba(248,243,236,.45); margin-bottom: 4px; letter-spacing: .03em; font-style: italic; }
+        .dine-card-tap-hint {
+            font-size: 10px; letter-spacing: .25em; text-transform: uppercase;
+            color: var(--gold-light); opacity: .7;
+        }
+
+        /* Slot panel — overlays the card on click, does NOT push content down */
+        .dine-slot-panel {
+            position: absolute; inset: 0; z-index: 5;
+            opacity: 0; pointer-events: none;
+            transition: opacity .35s ease;
+            background: rgba(10,8,2,0.93);
+            backdrop-filter: blur(8px);
+            display: flex; flex-direction: column; justify-content: flex-end;
+            padding: 14px 16px 16px;
+        }
+        .dine-pkg-card.expanded .dine-slot-panel { opacity: 1; pointer-events: all; }
+        .dine-slots { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 12px; }
+        .dine-slot-badge {
+            background: rgba(255,255,255,.07); border: .5px solid rgba(255,255,255,.18);
+            color: rgba(248,243,236,.65); font-size: 11px; font-family: 'Jost', sans-serif;
+            padding: 5px 12px; border-radius: 20px; cursor: pointer; transition: all .2s;
+        }
+        .dine-slot-badge:hover { background: rgba(212,168,67,.2); border-color: rgba(212,168,67,.5); color: var(--cream); }
+        .dine-slot-badge.selected { background: var(--gold-dim); border-color: var(--gold); color: var(--gold-light); font-weight: 500; }
+        .dine-book-btn {
+            width: 100%; padding: 11px; background: linear-gradient(135deg, #b8860b, var(--gold)); border: none; color: #0e0608;
+            border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 600;
+            letter-spacing: .2em; text-transform: uppercase; cursor: pointer; transition: opacity .25s, box-shadow .25s;
+        }
+        .dine-book-btn:hover { opacity: .88; box-shadow: 0 0 20px rgba(212,168,67,.4); }
+
+        /* Dine confirm modal */
+        .dine-confirm-overlay {
+            position: fixed; inset: 0; z-index: 200;
+            display: flex;
+            align-items: center; justify-content: center;
+            background: rgba(0,0,0,.72); backdrop-filter: blur(10px);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .dine-confirm-overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: all;
+        }
+        .dine-confirm-modal {
+            background: linear-gradient(160deg, rgba(18,14,4,0.99), rgba(8,4,2,0.99));
+            border: .5px solid rgba(212,168,67,.4); border-radius: 22px;
+            padding: 40px 44px 36px; max-width: 480px; width: 90%; text-align: center; position: relative;
+        }
+        .dine-confirm-icon { font-size: 40px; margin-bottom: 14px; }
+        .dine-confirm-title { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 300; color: var(--cream); margin-bottom: 4px; }
+        .dine-confirm-occ { font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; }
+        .dine-confirm-details { background: rgba(255,255,255,.05); border: .5px solid rgba(255,255,255,.1); border-radius: 12px; padding: 16px 20px; margin-bottom: 22px; text-align: left; }
+        .dine-confirm-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: .5px solid rgba(255,255,255,.06); }
+        .dine-confirm-row:last-child { border-bottom: none; }
+        .dine-confirm-row-label { font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: rgba(248,243,236,.4); }
+        .dine-confirm-row-val { font-size: 14px; font-weight: 500; color: var(--cream); }
+        .dine-confirm-sub { font-size: 12px; color: rgba(248,243,236,.35); margin-bottom: 22px; font-style: italic; }
+        .dine-confirm-actions { display: flex; gap: 12px; }
+        .dine-cancel-btn { flex: 1; padding: 13px; background: rgba(255,255,255,.07); border: .5px solid rgba(255,255,255,.15); color: rgba(248,243,236,.6); border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; cursor: pointer; transition: all .2s; }
+        .dine-cancel-btn:hover { background: rgba(255,255,255,.12); color: var(--cream); }
+        .dine-confirm-btn { flex: 2; padding: 13px; background: linear-gradient(135deg, #b8860b, var(--gold)); border: none; color: #0e0608; border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; cursor: pointer; transition: opacity .25s, box-shadow .25s; }
+        .dine-confirm-btn:hover { opacity: .88; box-shadow: 0 0 24px rgba(212,168,67,.4); }
+        .dine-confirm-btn:disabled { opacity: .3; cursor: default; box-shadow: none; }
+        /* ══════════════════════════════════════════
+           ENTERTAINMENT OVERLAY
+        ══════════════════════════════════════════ */
+        #entCategoryScreen { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+        .ent-cat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; padding: 32px 60px; }
+        .ent-cat-card {
+            position: relative; width: 100%; height: 230px; border-radius: 18px; overflow: hidden;
+            cursor: pointer; background: #0a0a1a center/cover no-repeat; transition: all .3s ease;
+        }
+        .ent-cat-card:hover { transform: translateY(-4px) scale(1.01); box-shadow: 0 10px 28px rgba(0,0,0,.5), 0 0 0 1px rgba(192,24,90,.4); }
+        .ent-cat-card::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(4,4,14,0.9) 0%, rgba(4,4,14,0.25) 55%, rgba(4,4,14,0.05) 100%); transition: opacity .3s; }
+        .ent-cat-card:hover::before { opacity: .85; }
+        .ent-cat-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--pink), var(--gold), transparent); transform: scaleX(0); transform-origin: left; transition: transform .4s ease; }
+        .ent-cat-card:hover::after { transform: scaleX(1); }
+        .ent-cat-img { position: absolute; inset: 0; width: 100%; height: 100%; background: center/cover no-repeat; transition: transform .5s cubic-bezier(0.23,1,0.32,1); }
+        .ent-cat-card:hover .ent-cat-img { transform: scale(1.04); }
+        .ent-cat-body { position: absolute; bottom: 0; left: 0; right: 0; padding: 16px 18px; z-index: 2; }
+        .ent-cat-name { font-size: 17px; font-weight: 600; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,.6); transition: color .25s; }
+        .ent-cat-card:hover .ent-cat-name { color: var(--gold-light); }
+        .ent-cat-sub { font-size: 11px; color: rgba(255,255,255,.5); margin-top: 3px; letter-spacing: .04em; }
+
+        #entActivitiesScreen { flex: 1; display: none; flex-direction: column; overflow: hidden; }
+        #entActivitiesScreen.visible { display: flex; }
+        .ent-activities-label { padding: 18px 52px 8px; font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; color: var(--gold-light); letter-spacing: .05em; flex-shrink: 0; }
+        .ent-activities-scroll {
+            flex: 1; overflow-y: auto; overflow-x: hidden;
+            display: grid; grid-template-columns: repeat(3, minmax(0,1fr));
+            gap: 20px; padding: 12px 52px 24px; align-content: start;
+        }
+
+        .ent-activity-card {
+            background: rgba(6,6,18,0.9); border: .5px solid rgba(192,24,90,.2);
+            border-radius: 16px; overflow: hidden; cursor: pointer;
+            position: relative; height: 280px;
+            transition: border-color .3s, box-shadow .3s, transform .25s;
+        }
+        .ent-activity-card:hover { border-color: rgba(192,24,90,.5); box-shadow: 0 8px 28px rgba(0,0,0,.5); transform: translateY(-3px); }
+        .ent-activity-card.expanded { border-color: rgba(192,24,90,.7); box-shadow: 0 12px 36px rgba(0,0,0,.6), 0 0 0 1px rgba(192,24,90,.4); transform: translateY(0); }
+
+        .ent-activity-bg {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            background: #06060e center/cover no-repeat;
+        }
+        .ent-card-overlay-label {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            padding: 48px 14px 14px;
+            background: linear-gradient(to top, rgba(4,4,14,0.96) 0%, rgba(4,4,14,0.0) 100%);
+            transition: opacity .3s;
+        }
+        .ent-activity-card.expanded .ent-card-overlay-label { opacity: 0; pointer-events: none; }
+        .ent-activity-name { font-size: 15px; font-weight: 600; color: var(--cream); margin-bottom: 4px; }
+        .ent-activity-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 3px; }
+        .ent-activity-cat { font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: rgba(248,243,236,.45); }
+        .ent-activity-price { font-family: 'Cormorant Garamond', serif; font-size: 14px; color: var(--gold-light); }
+        .ent-activity-venue { font-size: 10px; color: rgba(248,243,236,.4); margin-bottom: 4px; }
+        .ent-card-tap-hint { font-size: 10px; letter-spacing: .25em; text-transform: uppercase; color: var(--pink-light); opacity: .75; }
+
+        .ent-slot-panel {
+            position: absolute; inset: 0; z-index: 5;
+            opacity: 0; pointer-events: none;
+            transition: opacity .35s ease;
+            background: rgba(6,6,20,0.93);
+            backdrop-filter: blur(8px);
+            display: flex; flex-direction: column; justify-content: flex-end;
+            padding: 14px 14px 16px;
+        }
+        .ent-activity-card.expanded .ent-slot-panel { opacity: 1; pointer-events: all; }
+        .ent-slots { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 12px; }
+        .ent-slot-badge {
+            background: rgba(255,255,255,.07); border: .5px solid rgba(255,255,255,.18);
+            color: rgba(248,243,236,.65); font-size: 11px; font-family: 'Jost', sans-serif;
+            padding: 5px 12px; border-radius: 20px; cursor: pointer; transition: all .2s;
+        }
+        .ent-slot-badge:hover { background: rgba(192,24,90,.2); border-color: rgba(192,24,90,.5); color: var(--cream); }
+        .ent-slot-badge.selected { background: var(--pink-dim); border-color: var(--pink-light); color: var(--pink-light); font-weight: 500; }
+        .ent-book-slot-btn {
+            width: 100%; padding: 11px; background: var(--pink); border: none; color: #fff;
+            border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 500;
+            letter-spacing: .25em; text-transform: uppercase; cursor: pointer; transition: background .25s, box-shadow .25s;
+        }
+        .ent-book-slot-btn:hover { background: var(--pink-light); box-shadow: 0 0 20px rgba(192,24,90,.4); }
+
+        /* Entertainment confirm modal */
+        .ent-confirm-overlay {
+            position: fixed; inset: 0; z-index: 200;
+            display: flex;
+            align-items: center; justify-content: center;
+            background: rgba(0,0,0,.72); backdrop-filter: blur(10px);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .ent-confirm-overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: all;
+        }
+        .ent-confirm-modal {
+            background: linear-gradient(160deg, rgba(6,6,20,0.99), rgba(20,4,12,0.99));
+            border: .5px solid rgba(192,24,90,.35); border-radius: 22px;
+            padding: 40px 44px 36px; max-width: 460px; width: 90%; text-align: center; position: relative;
+        }
+        .ent-confirm-icon { font-size: 38px; margin-bottom: 16px; }
+        .ent-confirm-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; color: var(--cream); margin-bottom: 4px; }
+        .ent-confirm-cat { font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); margin-bottom: 22px; }
+        .ent-confirm-details { background: rgba(255,255,255,.05); border: .5px solid rgba(255,255,255,.1); border-radius: 12px; padding: 18px 20px; margin-bottom: 24px; text-align: left; }
+        .ent-confirm-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: .5px solid rgba(255,255,255,.06); }
+        .ent-confirm-row:last-child { border-bottom: none; }
+        .ent-confirm-row-label { font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: rgba(248,243,236,.4); }
+        .ent-confirm-row-val { font-size: 14px; font-weight: 500; color: var(--cream); }
+        .ent-confirm-actions { display: flex; gap: 12px; }
+        .ent-cancel-btn { flex: 1; padding: 13px; background: rgba(255,255,255,.07); border: .5px solid rgba(255,255,255,.15); color: rgba(248,243,236,.6); border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; cursor: pointer; transition: all .2s; }
+        .ent-cancel-btn:hover { background: rgba(255,255,255,.12); color: var(--cream); }
+        .ent-confirm-btn { flex: 2; padding: 13px; background: var(--pink); border: none; color: #fff; border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: .25em; text-transform: uppercase; cursor: pointer; transition: background .25s, box-shadow .25s; }
+        .ent-confirm-btn:hover { background: var(--pink-light); box-shadow: 0 0 24px rgba(192,24,90,.4); }
+        .ent-confirm-btn:disabled { background: rgba(192,24,90,.2); color: rgba(255,255,255,.3); cursor: default; box-shadow: none; }
+
+        /* ══════════════════════════════════════════
+           MY ORDERS OVERLAY
+        ══════════════════════════════════════════ */
+        #myOrdersOverlay {
+            position: fixed; inset: 0; z-index: 100;
+            display: flex; flex-direction: column;
+            background: rgba(8,2,5,0.97);
+            backdrop-filter: blur(24px);
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+        }
+        #myOrdersOverlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: all;
+        }
+        .mo-panel {
+            width: min(600px, 96vw); margin: 0 auto;
+            padding: 32px 40px 40px;
+            overflow-y: auto; height: 100%;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .mo-panel::-webkit-scrollbar { display: none; }
+        .mo-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 28px; padding-bottom: 18px;
+            border-bottom: .5px solid rgba(192,24,90,.15);
+        }
+        .mo-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 36px; font-weight: 300; color: var(--cream); letter-spacing: .02em;
+        }
+        .mo-title em { color: var(--gold-light); font-style: italic; }
+
+        .mo-title em { color: var(--gold-light); font-style: italic; }
+
+
+        /* ── Services Scroll Arrows ──────────────────────────── */
+.services-wrapper {
+    position: relative;
+}
+.svc-arrow-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 20;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: rgba(20,4,10,0.82);
+    border: .5px solid rgba(212,168,67,.45);
+    color: var(--gold-light);
+    font-size: 20px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: background .25s, border-color .25s, opacity .3s, transform .3s;
+    backdrop-filter: blur(8px);
+}
+.svc-arrow-btn:hover {
+    background: rgba(192,24,90,.35);
+    border-color: var(--pink-light);
+    color: #fff;
+}
+.svc-arrow-btn.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+.svc-arrow-left  { left: -22px; }
+.svc-arrow-right { right: -22px; }
+    </style>
+</head>
+<body>
+
+<!-- ░░ BACKGROUND ░░ -->
+<div class="bg-base"></div>
+<div class="bg-mountains">
+    <svg viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <ellipse cx="960" cy="1080" rx="900" ry="400" fill="rgba(130,10,50,0.18)"/>
+        <path d="M0,560 Q150,400 320,445 Q480,490 580,370 Q680,250 820,320 Q960,390 1060,290 Q1160,190 1290,255 Q1420,320 1530,240 Q1660,160 1800,210 Q1880,240 1920,195 L1920,1080 L0,1080 Z" fill="#1a0410" opacity="0.75"/>
+        <path d="M0,660 Q90,590 200,618 Q330,645 430,520 Q530,395 680,478 Q820,555 940,455 Q1060,355 1190,425 Q1320,495 1450,400 Q1580,305 1720,385 Q1840,445 1920,410 L1920,1080 L0,1080 Z" fill="#140310" opacity="0.85"/>
+        <path d="M0,790 Q110,730 220,755 Q370,778 470,688 Q570,598 700,665 Q840,740 960,665 Q1080,590 1210,648 Q1340,706 1470,655 Q1600,604 1740,682 Q1860,742 1920,718 L1920,1080 L0,1080 Z" fill="#0e0608" opacity="0.95"/>
+        <g opacity="0.06" stroke="#d4a843" stroke-width="0.7">
+            <path d="M380,595 Q500,588 620,595 Q740,602 860,595"/>
+            <path d="M360,612 Q490,605 620,612 Q750,619 880,612"/>
+            <path d="M340,629 Q480,622 620,629 Q760,636 900,629"/>
+        </g>
+    </svg>
+</div>
+<div class="bg-texture"></div>
+<div class="bg-glow"></div>
+<div class="mist"></div><div class="mist"></div><div class="mist"></div>
+<div class="vignette"></div>
+
+<!-- ░░ MAIN SCREEN ░░ -->
+<div class="screen">
+    <div class="corner c-tl"></div>
+    <div class="corner c-tr"></div>
+    <div class="corner c-bl"></div>
+    <div class="corner c-br"></div>
+
+    <div class="header">
+        <div class="brand-eyebrow">
+            <div class="vibe-logo">
+                <div class="logo-diamond"></div>
+                Vibe Munnar
+            </div>
+            <span>&#9679;</span>
+            Resort &amp; Spa
+        </div>
+        <div class="guest-name" id="guestName">Welcome, <em>Guest</em></div>
+        <div class="room-info">
+            <div class="room-chip" id="roomNo">Room 101</div>
+            <div class="room-divider"></div>
+            <div class="tagline-text">The Ultimate Luxury that touches mountains to sky.</div>
+        </div>
+        <div class="custom-msg" id="customMessage">{{ custom_message or "Have a beautiful stay." }}</div>
+    </div>
+
+    <div class="clock">
+        <div class="clock-time" id="clockTime">--:--</div>
+        <div class="clock-date" id="clockDate">---</div>
+    </div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     WiFi Widget Styles
+═══════════════════════════════════════════════════════════════ -->
+<style id="INSERT_1_INSIDE_STYLE">
+
+/* ── WiFi Widget ─────────────────────────────────────────── */
+.wifi-widget {
+    position: absolute;
+    top: 44px;
+    right: 72px;
+    width: 280px;
+    animation: fadeUp .9s ease .15s both;
+    cursor: pointer;
+    z-index: 20;
+}
+.wifi-bar {
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(20,4,10,0.72);
+    border: .5px solid rgba(212,168,67,.28);
+    backdrop-filter: blur(12px);
+    border-radius: 10px;
+    padding: 10px 14px;
+    transition: border-color .3s, box-shadow .3s;
+}
+.wifi-bar:hover {
+    border-color: rgba(212,168,67,.55);
+    box-shadow: 0 0 18px rgba(212,168,67,.1);
+}
+.wifi-icon {
+    width: 28px; height: 28px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+}
+.wifi-icon svg { width: 20px; height: 20px; }
+.wifi-bar-text { flex: 1; min-width: 0; }
+.wifi-bar-label {
+    font-size: 9px; letter-spacing: .45em; text-transform: uppercase;
+    color: var(--gold); font-weight: 400; margin-bottom: 2px;
+}
+.wifi-bar-ssid {
+    font-size: 13px; font-weight: 500; color: var(--cream);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.wifi-tap-hint {
+    font-size: 9px; letter-spacing: .2em; text-transform: uppercase;
+    color: rgba(212,168,67,.45); flex-shrink: 0;
+}
+
+/* ── WiFi Modal ──────────────────────────────────────────── */
+.wifi-modal-overlay {
+    position: fixed; inset: 0; z-index: 250;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,.78); backdrop-filter: blur(16px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.wifi-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all;
+}
+.wifi-modal {
+    background: linear-gradient(160deg, rgba(20,4,12,0.99), rgba(8,2,5,0.99));
+    border: .5px solid rgba(212,168,67,.3);
+    border-radius: 22px;
+    padding: 36px 40px 32px;
+    width: min(440px, 92vw);
+    text-align: center;
+    position: relative;
+    animation: fadeUp .35s ease both;
+}
+.wifi-modal-close {
+    position: absolute; top: 16px; right: 16px;
+    width: 34px; height: 34px; border-radius: 50%;
+    border: .5px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.06);
+    color: rgba(248,243,236,.45);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; cursor: pointer; transition: all .2s;
+}
+.wifi-modal-close:hover {
+    background: rgba(212,168,67,.2);
+    border-color: rgba(212,168,67,.5);
+    color: var(--cream);
+}
+.wifi-modal-eyebrow {
+    font-size: 9px; letter-spacing: .55em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 8px;
+}
+.wifi-modal-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 30px; font-weight: 300; color: var(--cream);
+    margin-bottom: 24px; letter-spacing: .02em;
+}
+.wifi-modal-title em { color: var(--gold-light); font-style: italic; }
+
+/* QR code box */
+.wifi-qr-wrap {
+    width: 160px; height: 160px;
+    background: #fff;
+    border-radius: 14px;
+    margin: 0 auto 22px;
+    display: flex; align-items: center; justify-content: center;
+    padding: 10px;
+    box-shadow: 0 0 0 1px rgba(212,168,67,.25), 0 0 24px rgba(212,168,67,.08);
+}
+.wifi-qr-wrap canvas,
+.wifi-qr-wrap img { width: 100%; height: 100%; }
+
+/* Credentials */
+.wifi-creds {
+    background: rgba(255,255,255,.04);
+    border: .5px solid rgba(255,255,255,.09);
+    border-radius: 14px;
+    padding: 14px 20px;
+    margin-bottom: 18px;
+    text-align: left;
+}
+.wifi-cred-row {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    padding: 9px 0;
+    border-bottom: .5px solid rgba(255,255,255,.06);
+}
+.wifi-cred-row:last-child { border-bottom: none; }
+.wifi-cred-label {
+    font-size: 10px; letter-spacing: .25em; text-transform: uppercase;
+    color: rgba(248,243,236,.38);
+}
+.wifi-cred-value {
+    font-size: 14px; font-weight: 500; color: var(--cream);
+    letter-spacing: .04em;
+}
+.wifi-copy-btn {
+    background: none; border: none;
+    font-size: 11px; letter-spacing: .15em; text-transform: uppercase;
+    color: var(--gold); cursor: pointer; padding: 2px 6px;
+    border-radius: 4px; transition: color .2s, background .2s;
+    font-family: 'Jost', sans-serif;
+}
+.wifi-copy-btn:hover { color: var(--gold-light); background: rgba(212,168,67,.1); }
+.wifi-copy-btn.copied { color: #1abc9c; }
+
+.wifi-modal-note {
+    font-size: 11px; font-weight: 300;
+    color: rgba(248,243,236,.3);
+    font-style: italic; line-height: 1.6;
+}
+</style>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     INSERT 2 — paste ABOVE the <div class="activities"> div
+     (i.e. directly before:  <div class="activities">  )
+═══════════════════════════════════════════════════════════════ -->
+
+<!-- WiFi Widget -->
+<div class="wifi-widget" onclick="openWifiModal()">
+    <div class="wifi-bar">
+        <div class="wifi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="rgba(212,168,67,0.85)" stroke-width="1.6" stroke-linecap="round">
+                <path d="M5 12.55a11 11 0 0 1 14 0"/>
+                <path d="M1.42 9A16 16 0 0 1 22.58 9"/>
+                <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+                <circle cx="12" cy="20" r="1" fill="rgba(212,168,67,0.85)" stroke="none"/>
+            </svg>
+        </div>
+        <div class="wifi-bar-text">
+            <div class="wifi-bar-label">Complimentary WiFi</div>
+            <div class="wifi-bar-ssid">VibeMunnar_Premium</div>
+        </div>
+        <div class="wifi-tap-hint">Tap</div>
+    </div>
+</div>
+
+<!-- WiFi Modal -->
+<div class="wifi-modal-overlay" id="wifiModalOverlay">
+    <div class="wifi-modal">
+        <button class="wifi-modal-close" onclick="closeWifiModal()">✕</button>
+        <div class="wifi-modal-eyebrow">Vibe Munnar · Resort &amp; Spa</div>
+        <div class="wifi-modal-title">Complimentary <em>WiFi</em></div>
+
+        <!-- QR Code — generated by JS -->
+        <div class="wifi-qr-wrap" id="wifiQrWrap">
+            <!-- canvas injected by script -->
+        </div>
+
+        <!-- Credentials -->
+        <div class="wifi-creds">
+            <div class="wifi-cred-row">
+                <span class="wifi-cred-label">Network</span>
+                <span class="wifi-cred-value" id="wifiNetworkDisplay">VibeMunnar_Premium</span>
+                <button class="wifi-copy-btn" onclick="wifiCopy('wifiNetworkDisplay', this)">Copy</button>
+            </div>
+            <div class="wifi-cred-row">
+                <span class="wifi-cred-label">Username</span>
+                <span class="wifi-cred-value" id="wifiUserDisplay">vibeguest</span>
+                <button class="wifi-copy-btn" onclick="wifiCopy('wifiUserDisplay', this)">Copy</button>
+            </div>
+            <div class="wifi-cred-row">
+                <span class="wifi-cred-label">Password</span>
+                <span class="wifi-cred-value" id="wifiPassDisplay">Munnar@2025</span>
+                <button class="wifi-copy-btn" onclick="wifiCopy('wifiPassDisplay', this)">Copy</button>
+            </div>
+        </div>
+
+        <div class="wifi-modal-note">
+            Scan the QR code with your device camera to connect instantly.<br>
+            For assistance, dial <strong style="color:var(--gold);">0</strong> from your room phone.
+        </div>
+    </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     INSERT 3 — paste just before </body>  (after common.js script)
+═══════════════════════════════════════════════════════════════ -->
+<script>
+/* ── WiFi Config — change these values to match your actual network ── */
+const WIFI_CONFIG = {
+    ssid:     'VibeMunnar_Premium',
+    username: 'vibeguest',
+    password: 'Munnar@2025',
+    security: 'WPA'   /* WPA | WEP | nopass */
+};
+
+/* ── Open / Close ─────────────────────────────────────────── */
+function openWifiModal() {
+    document.getElementById('wifiModalOverlay').classList.add('active');
+    buildWifiQR();
+}
+function closeWifiModal() {
+    document.getElementById('wifiModalOverlay').classList.remove('active');
+}
+/* close on backdrop click */
+document.getElementById('wifiModalOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closeWifiModal();
+});
+
+/* ── QR Code generator (pure JS, no library needed) ───────── */
+/* We use the Google Charts QR API — swap with your own if offline */
+function buildWifiQR() {
+    const wrap = document.getElementById('wifiQrWrap');
+    if (wrap.querySelector('img')) return; /* already built */
+
+    /* WiFi QR string format: WIFI:T:WPA;S:ssid;P:pass;U:user;; */
+    const str = `WIFI:T:${WIFI_CONFIG.security};S:${WIFI_CONFIG.ssid};P:${WIFI_CONFIG.password};U:${WIFI_CONFIG.username};;`;
+    const encoded = encodeURIComponent(str);
+    const src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encoded}&bgcolor=ffffff&color=0e0608&margin=0`;
+
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = 'WiFi QR Code';
+    img.style.cssText = 'width:100%;height:100%;border-radius:6px;';
+
+    /* fallback: plain text if image fails */
+    img.onerror = function() {
+        wrap.innerHTML = `<div style="font-size:11px;color:#555;padding:10px;text-align:center;line-height:1.6;">
+            <strong>${WIFI_CONFIG.ssid}</strong><br>${WIFI_CONFIG.password}
+        </div>`;
+    };
+    wrap.innerHTML = '';
+    wrap.appendChild(img);
+}
+
+/* ── Copy to clipboard ────────────────────────────────────── */
+function wifiCopy(elementId, btn) {
+    const text = document.getElementById(elementId).textContent;
+    navigator.clipboard.writeText(text).then(() => {
+        const orig = btn.textContent;
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1800);
+    }).catch(() => {
+        /* fallback for older browsers */
+        const ta = document.createElement('textarea');
+        ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        btn.textContent = 'Copied!'; btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1800);
+    });
+}
+</script>
+
+
+    <div class="activities">
+        <div class="panel-title">Today's Experiences</div>
+        <div id="activities-list">
+            <div class="act-card">Loading…</div>
+        </div>
+    </div>
+
+    <div class="services-section">
+        <div class="services-heading">Explore <span>Resort Services</span></div>
+        <div class="services-wrapper">
+            <button class="svc-arrow-btn svc-arrow-left hidden" id="svcArrowLeft" onclick="scrollServices(-1)">&#8249;</button>
+            <div class="services-row" id="services-container"><!-- populated by common.js --></div>
+            <button class="svc-arrow-btn svc-arrow-right" id="svcArrowRight" onclick="scrollServices(1)">&#8250;</button>
+        </div>
+    </div>
+
+    <div class="hr"></div>
+    <div class="bottom-bar">
+        <button class="tv-btn" onclick="window.location.href='/live-tv'">&#9646; Live TV</button>
+        <button class="tv-btn" onclick="openMyOrders()">My Bookings</button>
+    </div>
+</div>
+
+
+<!-- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+     FOOD MENU OVERLAY
+     All logic handled by common.js (openFoodMenu, changeFoodQty, placeOrder…)
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ -->
+<div class="overlay-base" id="foodOverlay">
+    <div class="overlay-topbar">
+        <div class="overlay-topbar-left">
+            <button class="overlay-back-btn" onclick="foodGoBack()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M19 12H5M5 12l7 7M5 12l7-7"/>
+                </svg>
+                <span id="foodBackLabel">Home</span>
+            </button>
+            <div class="overlay-page-title" id="foodPageTitle">Food <em>Menu</em></div>
+        </div>
+        <button class="overlay-close-btn" onclick="foodGoBack()" title="Close">✕</button>
+    </div>
+
+    <!-- Category screen -->
+    <div class="cat-screen-bg" id="foodCategoryScreen">
+        <div class="cat-grid" id="catGrid"></div>
+    </div>
+
+    <!-- Items + cart screen -->
+    <div id="foodItemsScreen">
+        <div class="items-main">
+            <div class="items-cat-label" id="itemsCatLabel">Menu</div>
+            <div class="items-scroll" id="itemsScroll"></div>
+        </div>
+        <div class="cart-panel">
+            <div class="cart-panel-title">Your <em>Cart</em></div>
+            <div class="cart-divider"></div>
+            <div class="cart-items-list" id="cartList">
+                <div class="cart-empty">No items yet</div>
+            </div>
+            <div class="cart-total-row">
+                <span class="cart-total-label">Total</span>
+                <span class="cart-total-amt"><small>₹</small><span id="cartTotal">0</span></span>
+            </div>
+            <button class="cart-clear-btn" onclick="clearCart()">Clear Cart</button>
+            <button class="cart-place-btn" id="placeOrderBtn" onclick="placeOrder()" disabled>Place Order</button>
+        </div>
+    </div>
+</div>
+<!-- Food order success toast (stays on page) -->
+<div class="svc-toast" id="foodToast">✓ Order placed successfully!</div>
+
+
+<!-- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+     SPA & WELLNESS OVERLAY
+     All logic handled by common.js (openSpaMenu, selectSpaSlot, confirmSpaBooking…)
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ -->
+<div class="overlay-base" id="spaOverlay">
+    <div class="overlay-topbar">
+        <div class="overlay-topbar-left">
+            <button class="overlay-back-btn" onclick="spaGoBack()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M19 12H5M5 12l7 7M5 12l7-7"/>
+                </svg>
+                <span id="spaBackLabel">Home</span>
+            </button>
+            <div class="overlay-page-title" id="spaPageTitle">Spa &amp; <em>Wellness</em></div>
+        </div>
+        <button class="overlay-close-btn" onclick="spaGoBack()" title="Close">✕</button>
+    </div>
+
+    <!-- Category screen -->
+    <div class="cat-screen-bg" id="spaCategoryScreen">
+        <div class="spa-cat-grid" id="spaCatGrid"></div>
+    </div>
+
+    <!-- Treatments screen -->
+    <div id="spaTreatmentsScreen">
+        <div class="spa-treatments-label" id="spaTreatmentsLabel">Treatments</div>
+        <div class="spa-treatments-scroll" id="spaTreatmentsScroll"></div>
+    </div>
+</div>
+
+<!-- Spa booking confirmation modal (z-index 200, above spaOverlay) -->
+<div class="spa-confirm-overlay" id="spaConfirmOverlay">
+    <div class="spa-confirm-modal">
+        <button class="overlay-close-btn"
+                style="position:absolute;top:16px;right:16px;"
+                onclick="closeSpaConfirm()" title="Close">✕</button>
+        <div class="spa-confirm-icon">🧖</div>
+        <div class="spa-confirm-title" id="spaConfirmName">Treatment</div>
+        <div class="spa-confirm-cat" id="spaConfirmCat">Category</div>
+        <div class="spa-confirm-details">
+            <div class="spa-confirm-row">
+                <span class="spa-confirm-row-label">Time Slot</span>
+                <span class="spa-confirm-row-val" id="spaConfirmSlot">—</span>
+            </div>
+            <div class="spa-confirm-row" id="spaConfirmPriceRow">
+                <span class="spa-confirm-row-label">Price</span>
+                <span class="spa-confirm-row-val" id="spaConfirmPrice" style="color:var(--gold-light);font-family:'Cormorant Garamond',serif;font-size:20px;">—</span>
+            </div>
+            <div class="spa-confirm-row">
+                <span class="spa-confirm-row-label">Room</span>
+                <span class="spa-confirm-row-val" id="spaConfirmRoom">—</span>
+            </div>
+        </div>
+        <div class="spa-confirm-sub" id="spaConfirmSub">Your treatment slot will be reserved</div>
+        <div class="spa-confirm-actions">
+            <button class="spa-cancel-btn" onclick="closeSpaConfirm()">Cancel</button>
+            <button class="spa-confirm-btn" id="spaBookBtn" onclick="confirmSpaBooking()">Confirm Booking</button>
+        </div>
+    </div>
+</div>
+<!-- Spa booking success toast (stays on treatments page) -->
+<div class="svc-toast" id="spaToast">✓ Treatment booked! See you soon.</div>
+
+
+<!-- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+     BAR MENU OVERLAY
+     All logic handled by common.js (openBarMenu, changeBarQty, placeBarOrder…)
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ -->
+<div class="overlay-base" id="barOverlay">
+    <div class="overlay-topbar">
+        <div class="overlay-topbar-left">
+            <button class="overlay-back-btn" onclick="barGoBack()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M19 12H5M5 12l7 7M5 12l7-7"/>
+                </svg>
+                <span id="barBackLabel">Home</span>
+            </button>
+            <div class="overlay-page-title" id="barPageTitle">Bar <em>Menu</em></div>
+        </div>
+        <button class="overlay-close-btn" onclick="barGoBack()" title="Close">✕</button>
+    </div>
+
+    <!-- Category screen -->
+    <div class="cat-screen-bg" id="barCategoryScreen">
+        <div class="bar-cat-grid" id="barCatGrid"></div>
+    </div>
+
+    <!-- Items + cart screen -->
+    <div id="barItemsScreen">
+        <div class="bar-items-main">
+            <div class="bar-items-cat-label" id="barItemsCatLabel">Drinks</div>
+            <div class="bar-items-scroll" id="barItemsScroll"></div>
+        </div>
+        <div class="cart-panel">
+            <div class="cart-panel-title">Your <em>Order</em></div>
+            <div class="cart-divider"></div>
+            <div class="cart-items-list" id="barCartList">
+                <div class="bar-cart-empty">No drinks yet</div>
+            </div>
+            <div class="cart-total-row">
+                <span class="cart-total-label">Total</span>
+                <span class="cart-total-amt"><small>₹</small><span id="barCartTotal">0</span></span>
+            </div>
+            <button class="cart-clear-btn" onclick="clearBarCart()">Clear Order</button>
+            <button class="cart-place-btn" id="barOrderBtn" onclick="placeBarOrder()" disabled>Place Order</button>
+        </div>
+    </div>
+</div>
+<!-- Bar order success toast (stays on page) -->
+<div class="svc-toast" id="barToast">✓ Drinks order placed! Cheers 🥂</div>
+
+
+<!-- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+     DINE-IN OVERLAY
+     All logic handled by common.js (openDineMenu, selectDineSlot, confirmDineBooking…)
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ -->
+<div class="overlay-base" id="dineOverlay">
+    <div class="overlay-topbar">
+        <div class="overlay-topbar-left">
+            <button class="overlay-back-btn" onclick="dineGoBack()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M19 12H5M5 12l7 7M5 12l7-7"/>
+                </svg>
+                <span id="dineBackLabel">Home</span>
+            </button>
+            <div class="overlay-page-title" id="dinePageTitle">Dine-In <em>Reservations</em></div>
+        </div>
+        <button class="overlay-close-btn" onclick="dineGoBack()" title="Close">✕</button>
+    </div>
+
+    <!-- Occasion category screen -->
+    <div class="cat-screen-bg" id="dineCategoryScreen">
+        <div class="dine-cat-grid" id="dineCatGrid"></div>
+    </div>
+
+    <!-- Packages screen -->
+    <div id="dinePackagesScreen">
+        <div class="dine-pkg-label" id="dinePkgLabel">Packages</div>
+        <div class="dine-pkg-scroll" id="dinePkgScroll"></div>
+    </div>
+</div>
+
+<!-- Dine-In booking confirmation modal -->
+<div class="dine-confirm-overlay" id="dineConfirmOverlay">
+    <div class="dine-confirm-modal">
+        <button class="overlay-close-btn"
+                style="position:absolute;top:16px;right:16px;"
+                onclick="closeDineConfirm()" title="Close">✕</button>
+        <div class="dine-confirm-icon">🕯️</div>
+        <div class="dine-confirm-title" id="dineConfirmName">Package</div>
+        <div class="dine-confirm-occ" id="dineConfirmOcc">Occasion</div>
+        <div class="dine-confirm-details">
+            <div class="dine-confirm-row">
+                <span class="dine-confirm-row-label">Time Slot</span>
+                <span class="dine-confirm-row-val" id="dineConfirmSlot">—</span>
+            </div>
+            <div class="dine-confirm-row">
+                <span class="dine-confirm-row-label">Price</span>
+                <span class="dine-confirm-row-val" id="dineConfirmPrice">—</span>
+            </div>
+            <div class="dine-confirm-row">
+                <span class="dine-confirm-row-label">Room</span>
+                <span class="dine-confirm-row-val" id="dineConfirmRoom">—</span>
+            </div>
+        </div>
+        <div class="dine-confirm-sub">Your table will be reserved — our team will confirm shortly</div>
+        <div class="dine-confirm-actions">
+            <button class="dine-cancel-btn" onclick="closeDineConfirm()">Cancel</button>
+            <button class="dine-confirm-btn" id="dineBookBtn" onclick="confirmDineBooking()">Confirm Reservation</button>
+        </div>
+    </div>
+</div>
+<div class="svc-toast" id="dineToast">✓ Table reserved! See you at dinner 🕯️</div>
+
+<!-- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+     ENTERTAINMENT OVERLAY
+     All logic handled by common.js (openEntMenu, selectEntSlot, confirmEntBooking…)
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ -->
+<div class="overlay-base" id="entOverlay">
+    <div class="overlay-topbar">
+        <div class="overlay-topbar-left">
+            <button class="overlay-back-btn" onclick="entGoBack()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M19 12H5M5 12l7 7M5 12l7-7"/>
+                </svg>
+                <span id="entBackLabel">Home</span>
+            </button>
+            <div class="overlay-page-title" id="entPageTitle">Entertainment</div>
+        </div>
+        <button class="overlay-close-btn" onclick="entGoBack()" title="Close">✕</button>
+    </div>
+
+    <!-- Category screen -->
+    <div class="cat-screen-bg" id="entCategoryScreen">
+        <div class="ent-cat-grid" id="entCatGrid"></div>
+    </div>
+
+    <!-- Activities screen -->
+    <div id="entActivitiesScreen">
+        <div class="ent-activities-label" id="entActivitiesLabel">Activities</div>
+        <div class="ent-activities-scroll" id="entActivitiesScroll"></div>
+    </div>
+</div>
+
+<!-- Entertainment booking confirmation modal (z-index 200, above entOverlay) -->
+<div class="ent-confirm-overlay" id="entConfirmOverlay">
+    <div class="ent-confirm-modal">
+        <button class="overlay-close-btn"
+                style="position:absolute;top:16px;right:16px;"
+                onclick="closeEntConfirm()" title="Close">✕</button>
+        <div class="ent-confirm-icon">🎮</div>
+        <div class="ent-confirm-title" id="entConfirmName">Activity</div>
+        <div class="ent-confirm-cat" id="entConfirmCat">Category</div>
+        <div class="ent-confirm-details">
+            <div class="ent-confirm-row">
+                <span class="ent-confirm-row-label">Time Slot</span>
+                <span class="ent-confirm-row-val" id="entConfirmSlot">—</span>
+            </div>
+            <div class="ent-confirm-row">
+                <span class="ent-confirm-row-label">Venue</span>
+                <span class="ent-confirm-row-val" id="entConfirmVenue">—</span>
+            </div>
+            <div class="ent-confirm-row">
+                <span class="ent-confirm-row-label">Price</span>
+                <span class="ent-confirm-row-val" id="entConfirmPrice">—</span>
+            </div>
+            <div class="ent-confirm-row">
+                <span class="ent-confirm-row-label">Room</span>
+                <span class="ent-confirm-row-val" id="entConfirmRoom">—</span>
+            </div>
+        </div>
+        <div class="ent-confirm-actions">
+            <button class="ent-cancel-btn" onclick="closeEntConfirm()">Cancel</button>
+            <button class="ent-confirm-btn" id="entBookBtn" onclick="confirmEntBooking()">Confirm Booking</button>
+        </div>
+    </div>
+</div>
+<!-- Entertainment booking success toast -->
+<div class="svc-toast" id="entToast">✓ Activity booked! Get ready for some fun 🎮</div>
+
+<!-- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+     ACTIVITY RESERVATION CONFIRM MODAL
+     Logic handled by common.js (openActConfirm, confirmActBooking…)
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ -->
+<div class="spa-confirm-overlay" id="actConfirmOverlay">
+    <div class="spa-confirm-modal">
+        <button class="overlay-close-btn"
+                style="position:absolute;top:16px;right:16px;"
+                onclick="closeActConfirm()" title="Close">✕</button>
+        <div class="spa-confirm-icon">🎪</div>
+        <div class="spa-confirm-title" id="actConfirmName">Activity</div>
+        <div class="spa-confirm-cat">Today's Experience</div>
+        <div class="spa-confirm-details">
+            <div class="spa-confirm-row">
+                <span class="spa-confirm-row-label">Time Slot</span>
+                <span class="spa-confirm-row-val" id="actConfirmSlot">—</span>
+            </div>
+            <div class="spa-confirm-row" id="spaConfirmPriceRow" style="display:none;">
+                <span class="spa-confirm-row-label">Price</span>
+                <span class="spa-confirm-row-val" id="spaConfirmPrice">—</span>
+            </div>
+            <div class="spa-confirm-row">
+                <span class="spa-confirm-row-label">Room</span>
+                <span class="spa-confirm-row-val" id="actConfirmRoom">—</span>
+            </div>
+        </div>
+        <div class="spa-confirm-sub">Our team will confirm your reservation shortly</div>
+        <div class="spa-confirm-actions">
+            <button class="spa-cancel-btn" onclick="closeActConfirm()">Cancel</button>
+            <button class="spa-confirm-btn" id="actBookBtn" onclick="confirmActBooking()">Confirm Reservation</button>
+        </div>
+    </div>
+</div>
+<!-- Activity booking success toast -->
+<div class="svc-toast" id="actToast">✓ Reserved! See you at the activity 🎉</div>
+
+<!-- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+     ROOM SERVICE OVERLAY
+     All logic handled by common.js (openRoomServiceMenu, openRsConfirm, confirmRsRequest…)
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ -->
+<div class="overlay-base" id="roomServiceOverlay">
+    <div class="overlay-topbar">
+        <div class="overlay-topbar-left">
+            <button class="overlay-back-btn" onclick="rsGoBack()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M19 12H5M5 12l7 7M5 12l7-7"/>
+                </svg>
+                <span>Home</span>
+            </button>
+            <div class="overlay-page-title">Room <em>Service</em></div>
+        </div>
+        <button class="overlay-close-btn" onclick="rsGoBack()" title="Close">✕</button>
+    </div>
+
+    <!-- Service cards grid -->
+    <div class="cat-screen-bg" style="overflow-y:auto;">
+        <div id="rsGrid"></div>
+    </div>
+</div>
+
+<!-- Room Service confirm modal -->
+<div class="rs-confirm-overlay" id="rsConfirmOverlay">
+    <div class="rs-confirm-modal">
+        <button class="overlay-close-btn"
+                style="position:absolute;top:16px;right:16px;"
+                onclick="closeRsConfirm()" title="Close">✕</button>
+        <!-- rsConfirmIcon is set dynamically by common.js openRsConfirm() -->
+        <div class="rs-confirm-icon" id="rsConfirmIcon">🛎️</div>
+        <div class="rs-confirm-title" id="rsConfirmTitle">Service</div>
+        <div class="rs-confirm-desc" id="rsConfirmDesc">Our team will be with you shortly.</div>
+        <div class="rs-confirm-details">
+            <div class="rs-confirm-row">
+                <span class="rs-confirm-row-label">Service</span>
+                <span class="rs-confirm-row-val" id="rsConfirmTitleDetail">—</span>
+            </div>
+            <div class="rs-confirm-row">
+                <span class="rs-confirm-row-label">Room</span>
+                <span class="rs-confirm-row-val" id="rsConfirmRoom">—</span>
+            </div>
+        </div>
+        <label class="rs-note-label">Additional Note <span style="opacity:.45;">(optional)</span></label>
+        <textarea class="rs-note-input" id="rsGuestNote" rows="2"
+                  placeholder="e.g. Please bring extra pillows…"></textarea>
+        <div class="rs-confirm-actions">
+            <button class="rs-cancel-btn" onclick="closeRsConfirm()">Cancel</button>
+            <button class="rs-send-btn" id="rsSendBtn" onclick="confirmRsRequest()">Send Request</button>
+        </div>
+    </div>
+</div>
+<!-- Room service success toast -->
+<div class="svc-toast" id="rsToast">✓ Request sent! Our team will be with you shortly 🛎️</div>
+
+
+<!-- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+     MY ORDERS OVERLAY
+     Logic handled by common.js (openMyOrders, closeMyOrders, loadMyOrders)
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ -->
+<div id="myOrdersOverlay">
+    <div class="mo-panel">
+        <div class="mo-header">
+            <div class="mo-title">My <em>Bookings</em></div>
+            <button class="overlay-close-btn" onclick="closeMyOrders()" title="Close">&#10005;</button>
+        </div>
+        <div id="myOrdersContent">
+            <p style="color:rgba(248,243,236,.3);text-align:center;padding:40px 0;font-style:italic;">Loading&#8230;</p>
+        </div>
+    </div>
+</div>
+
+<!-- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+     GALLERY OVERLAY
+     Logic handled by common.js (openGalleryMenu, openGalleryLightbox…)
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ -->
+<div class="overlay-base" id="galleryOverlay">
+    <div class="overlay-topbar">
+        <div class="overlay-topbar-left">
+            <button class="overlay-back-btn" onclick="galleryGoBack()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M19 12H5M5 12l7 7M5 12l7-7"/>
+                </svg>
+                <span>Home</span>
+            </button>
+            <div class="overlay-page-title">Resort <em>Gallery</em></div>
+        </div>
+        <button class="overlay-close-btn" onclick="galleryGoBack()" title="Close">✕</button>
+    </div>
+    <div class="cat-screen-bg" style="overflow-y:auto;">
+        <div id="galleryGrid"></div>
+    </div>
+</div>
+
+<!-- Gallery lightbox (full photo + description) -->
+<div id="galleryLightbox">
+    <button class="glb-close" onclick="closeGalleryLightbox()" title="Close">✕</button>
+    <div class="glb-inner">
+        <div class="glb-img-wrap">
+            <img src="" alt="" id="glbImg" />
+        </div>
+        <div class="glb-content">
+            <div class="glb-number" id="glbNumber">01 · Vibe Munnar</div>
+            <h2 class="glb-title" id="glbTitle"></h2>
+            <div class="glb-divider"></div>
+            <p class="glb-desc" id="glbDesc"></p>
+        </div>
+    </div>
+</div>
+<script>
+/* ── Services scroll arrows ─────────────────────────── */
+function scrollServices(dir) {
+    const row = document.getElementById('services-container');
+    row.scrollBy({ left: dir * 220, behavior: 'smooth' });
+}
+
+function updateSvcArrows() {
+    const row = document.getElementById('services-container');
+    const leftBtn  = document.getElementById('svcArrowLeft');
+    const rightBtn = document.getElementById('svcArrowRight');
+    if (!row || !leftBtn || !rightBtn) return;
+
+    const atStart = row.scrollLeft <= 4;
+    const atEnd   = row.scrollLeft + row.clientWidth >= row.scrollWidth - 4;
+
+    leftBtn.classList.toggle('hidden', atStart);
+    rightBtn.classList.toggle('hidden', atEnd);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const row = document.getElementById('services-container');
+    if (row) {
+        row.addEventListener('scroll', updateSvcArrows);
+        /* Re-check after common.js populates the cards */
+        setTimeout(updateSvcArrows, 800);
+        setTimeout(updateSvcArrows, 2000);
+    }
+});
+</script>
+<!-- ░░ SHARED: clock + room data + activities + services (auto-updates) ░░ -->
+<script src="/static/common.js"></script>
+
+<script>
+/* ══════════════════════════════════════════════════════════════
+   BLINK FIX — patches common.js behaviour AFTER it has loaded.
+
+   Root cause: common.js calls loadMyOrders() on init AND every
+   30 s regardless of whether the overlay is visible. Each call
+   sets innerHTML = "Loading…" which forces a full repaint of the
+   fixed overlay layer, causing the visible blink on the main screen.
+
+   Fix strategy:
+   1. Override window.loadMyOrders so it only runs when the overlay
+      is actually open (has class "active").
+   2. When the overlay IS open, skip the "Loading…" flash — fetch
+      silently and only swap innerHTML when real data arrives.
+   3. Cancel common.js's background interval and replace it with
+      our own that respects the visibility check.
+══════════════════════════════════════════════════════════════ */
+(function patchLoadMyOrders() {
+
+    /* Wait until common.js has finished defining window.loadMyOrders */
+    function applyPatch() {
+        var _origLoadMyOrders = window.loadMyOrders;
+        if (typeof _origLoadMyOrders !== 'function') {
+            /* common.js not ready yet — retry on next tick */
+            setTimeout(applyPatch, 50);
+            return;
+        }
+
+        /* Patched version: silent fetch, no "Loading…" flash,
+           only runs when overlay is visible.                    */
+        window.loadMyOrders = function loadMyOrdersPatched() {
+            var overlay = document.getElementById('myOrdersOverlay');
+            var container = document.getElementById('myOrdersContent');
+
+            /* If overlay is not open, do nothing — no DOM touching */
+            if (!overlay || !overlay.classList.contains('active')) return;
+            if (!container) return;
+
+            /* Fetch silently — do NOT touch innerHTML until data arrives */
+            if (!window.ROOM_NO) return;
+            fetch('/api/my-orders/' + window.ROOM_NO)
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    /* Only update if overlay is still open */
+                    if (!overlay.classList.contains('active')) return;
+                    /* Use the original renderer from common.js scope via a
+                       temporary iframe trick is overkill — we just call the
+                       original function now that overlay IS active so it will
+                       render normally (one paint, no blink).                */
+                    _origLoadMyOrders();
+                })
+                .catch(function() {
+                    /* silent fail — don't blink on error either */
+                });
+        };
+
+        /* Cancel the background interval common.js already started
+           and replace with ours that uses the patched function.    */
+        /* We can't access common.js's internal interval ID, so we
+           override setInterval temporarily to intercept the next
+           registration — but it already ran. Instead, we cancel
+           ALL numeric intervals in a safe range and restart.        */
+        var highId = setInterval(function(){}, 99999); /* get a high watermark */
+        clearInterval(highId);
+        /* Cancel every interval up to the current counter */
+        for (var i = 1; i <= highId; i++) { clearInterval(i); }
+
+        /* Re-register all the intervals common.js intended, but
+           now loadMyOrders is already patched so it's safe.    */
+        setInterval(window.loadMyOrders,   30000);  /* bookings  */
+        setInterval(window.loadServices,   30000);  /* services  */
+        setInterval(window.loadActivities, 10000);  /* activities*/
+        setInterval(window.loadRoomData,    5000);  /* room data */
+        /* clock is internal to common.js — tickClock runs on its own 10s interval */
+        /* Re-run a fresh tick so clock doesn't skip after interval reset */
+        var clockEl = document.getElementById('clockTime');
+        if (clockEl) {
+            var now = new Date();
+            clockEl.textContent = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+        }
+    }
+
+    /* Run patch after DOM + common.js are both ready */
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() { setTimeout(applyPatch, 0); });
+    } else {
+        setTimeout(applyPatch, 0);
+    }
+
+})();
+</script>
+
+<script>
+/* ── Smooth page load: fade body in once DOM + fonts are ready ── */
+(function() {
+    function showPage() {
+        document.body.classList.add('page-ready');
+    }
+    if (document.readyState === 'complete') {
+        showPage();
+    } else {
+        window.addEventListener('load', showPage);
+    }
+})();
+</script>
+<script>
+// Force hard refresh every 30 seconds to clear cache
+setTimeout(function() {
+    window.location.href = window.location.href.split('?')[0] 
+        + '?room_no=' + window.ROOM_NO 
+        + '&t=' + Date.now();
+}, 30000);
+</script>
+</body>
+</html>

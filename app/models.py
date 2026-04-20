@@ -1,6 +1,6 @@
+from sqlalchemy import Column, Integer, String, Date, Boolean, DateTime, ForeignKey
 from .database import Base
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, Date, Boolean, DateTime, ForeignKey
 
 
 # ─────────────────────────────────────────────
@@ -169,7 +169,6 @@ class SpaBooking(Base):
     booked_at  = Column(DateTime, default=datetime.now)
     group_id = Column(Integer, ForeignKey("group_bookings.id"), nullable=True)
 
-
 class EntertainmentBooking(Base):
     """
     Stores entertainment & activity slot bookings from the TV page.
@@ -190,7 +189,6 @@ class EntertainmentBooking(Base):
     booked_at  = Column(DateTime, default=datetime.now)
     group_id = Column(Integer, ForeignKey("group_bookings.id"), nullable=True)
 
-
 class ActivityBooking(Base):
     """
     Stores general activity/schedule reservations from the TV page.
@@ -207,7 +205,6 @@ class ActivityBooking(Base):
     booked_at   = Column(DateTime, default=datetime.now)
     group_id = Column(Integer, ForeignKey("group_bookings.id"), nullable=True)
 
-
 class DineBooking(Base):
     """
     Stores fine dining / special occasion reservations from the TV page.
@@ -221,6 +218,7 @@ class DineBooking(Base):
     item_title = Column(String, nullable=False)
     occasion   = Column(String, nullable=True)           # romantic / birthday / anniversary / etc.
     slot       = Column(String, nullable=False)
+    price      = Column(Integer, nullable=True)
     status     = Column(String, default="pending")
     booked_at  = Column(DateTime, default=datetime.now)
     group_id = Column(Integer, ForeignKey("group_bookings.id"), nullable=True)

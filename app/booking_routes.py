@@ -16,7 +16,8 @@ from fastapi import APIRouter, Request, Depends
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime, date, timedelta
-import httpx, json
+import httpx
+import json
 
 from sqlalchemy.orm import Session
 from .database import SessionLocal, get_db
@@ -24,17 +25,30 @@ from . import models
 
 router = APIRouter()
 
+
 # ─────────────────────────────────────────────────────────────────
-# HELPER — look up current guest name for a room
+# HELPER — resolve current guest for a room
+#   Primary:  guest whose check_in <= today <= check_out
+#   Fallback: most recent guest by check_in (covers checkout-day
+#             edge cases, off-by-one date issues, late checkouts)
 # ─────────────────────────────────────────────────────────────────
 
-def _guest_name(db, room_no: int) -> str:
+def _resolve_guest(db, room_no: int):
     today = date.today()
     guest = db.query(models.Guest).filter(
-        models.Guest.room_no == room_no,
+        models.Guest.room_no   == room_no,
         models.Guest.check_in  <= today,
         models.Guest.check_out >= today
     ).first()
+    if not guest:
+        guest = db.query(models.Guest).filter(
+            models.Guest.room_no == room_no
+        ).order_by(models.Guest.check_in.desc()).first()
+    return guest
+
+
+def _guest_name(db, room_no: int) -> str:
+    guest = _resolve_guest(db, room_no)
     return guest.guest_name if guest else "Guest"
 
 
@@ -69,15 +83,10 @@ async def _sync_bill_to_pms(room_no: int):
     db = SessionLocal()
     try:
         # ── Only bill orders placed during the CURRENT guest's stay ──
-        today = date.today()
-        current_guest = db.query(models.Guest).filter(
-            models.Guest.room_no == room_no,
-            models.Guest.check_in  <= today,
-            models.Guest.check_out >= today
-        ).first()
+        current_guest = _resolve_guest(db, room_no)
 
         if not current_guest:
-            return  # No active guest — nothing to sync
+            return  # No guest record at all — nothing to sync
 
         guest_name = current_guest.guest_name
         ci = current_guest.check_in
@@ -396,100 +405,178 @@ async def place_dine_booking(request: Request):
 def my_orders(room_no: int):
     db = SessionLocal()
     try:
-        today = date.today()
+        current_guest = _resolve_guest(db, room_no)
 
-        guest = db.query(models.Guest).filter(
-            models.Guest.room_no == room_no,
-            models.Guest.check_in <= today,
-            models.Guest.check_out >= today
-        ).first()
+        if current_guest:
+            # ── Normal path: scope to current guest's stay ──
+            guest_name = current_guest.guest_name
+            ci = current_guest.check_in
+            if not isinstance(ci, datetime):
+                ci = datetime.combine(ci, datetime.min.time())
+            stay_start = ci
 
-        meal_plan = guest.meal_plan if guest else None
+            orders = db.query(models.Order).filter(
+                models.Order.room_no == room_no,
+                models.Order.guest_name == guest_name,
+                models.Order.ordered_at >= stay_start
+            ).order_by(models.Order.ordered_at.desc()).all()
 
-        # Check group booking for meal plan if guest has none
+            spa = db.query(models.SpaBooking).filter(
+                models.SpaBooking.room_no == room_no,
+                models.SpaBooking.guest_name == guest_name,
+                models.SpaBooking.booked_at >= stay_start
+            ).order_by(models.SpaBooking.booked_at.desc()).all()
+
+            ent = db.query(models.EntertainmentBooking).filter(
+                models.EntertainmentBooking.room_no == room_no,
+                models.EntertainmentBooking.guest_name == guest_name,
+                models.EntertainmentBooking.booked_at >= stay_start
+            ).order_by(models.EntertainmentBooking.booked_at.desc()).all()
+
+            activities = db.query(models.ActivityBooking).filter(
+                models.ActivityBooking.room_no == room_no,
+                models.ActivityBooking.guest_name == guest_name,
+                models.ActivityBooking.booked_at >= stay_start
+            ).order_by(models.ActivityBooking.booked_at.desc()).all()
+
+            dine = db.query(models.DineBooking).filter(
+                models.DineBooking.room_no == room_no,
+                models.DineBooking.guest_name == guest_name,
+                models.DineBooking.booked_at >= stay_start
+            ).order_by(models.DineBooking.booked_at.desc()).all()
+
+        else:
+            # ── Fallback: no guest record matched (date mismatch etc.)
+            #    Query by room_no only so bookings are never invisible. ──
+            guest_name = "Guest"
+
+            orders = db.query(models.Order).filter(
+                models.Order.room_no == room_no
+            ).order_by(models.Order.ordered_at.desc()).all()
+
+            spa = db.query(models.SpaBooking).filter(
+                models.SpaBooking.room_no == room_no
+            ).order_by(models.SpaBooking.booked_at.desc()).all()
+
+            ent = db.query(models.EntertainmentBooking).filter(
+                models.EntertainmentBooking.room_no == room_no
+            ).order_by(models.EntertainmentBooking.booked_at.desc()).all()
+
+            activities = db.query(models.ActivityBooking).filter(
+                models.ActivityBooking.room_no == room_no
+            ).order_by(models.ActivityBooking.booked_at.desc()).all()
+
+            dine = db.query(models.DineBooking).filter(
+                models.DineBooking.room_no == room_no
+            ).order_by(models.DineBooking.booked_at.desc()).all()
+
+        # ── Resolve meal_plan from guest record, then group booking, else None ──
+        meal_plan = None
+        if current_guest:
+            meal_plan = getattr(current_guest, 'meal_plan', None)
         if not meal_plan:
-            import json as _json
+            today = date.today()
+            room_str = str(room_no)
             groups = db.query(models.GroupBooking).filter(
                 models.GroupBooking.is_active == 1,
                 models.GroupBooking.check_out >= str(today)
             ).all()
-            for group in groups:
-                rooms = _json.loads(group.room_numbers) if isinstance(group.room_numbers, str) else group.room_numbers
-                if str(room_no) in rooms:
-                    meal_plan = group.meal_plan
+            for grp in groups:
+                try:
+                    rooms = json.loads(grp.room_numbers) if isinstance(grp.room_numbers, str) else grp.room_numbers
+                except Exception:
+                    rooms = []
+                if room_str in rooms:
+                    meal_plan = getattr(grp, 'meal_plan', None)
                     break
 
-        orders = db.query(models.Order).filter(models.Order.room_no == room_no).all()
-        spa_bookings = db.query(models.SpaBooking).filter(models.SpaBooking.room_no == room_no).all()
-        entertainment_bookings = db.query(models.EntertainmentBooking).filter(models.EntertainmentBooking.room_no == room_no).all()
-        activity_bookings = db.query(models.ActivityBooking).filter(models.ActivityBooking.room_no == room_no).all()
-        dine_bookings = db.query(models.DineBooking).filter(models.DineBooking.room_no == room_no).all()
-
-        food_total = sum(o.total for o in orders if o.order_type == "food" and o.status != "cancelled")
-        bar_total = sum(o.total for o in orders if o.order_type == "bar" and o.status != "cancelled")
+        BILLABLE   = ["confirmed", "delivered", "completed"]
+        food_total = sum(o.total for o in orders if o.order_type == "food" and o.status in BILLABLE)
+        bar_total  = sum(o.total for o in orders if o.order_type == "bar"  and o.status in BILLABLE)
+        spa_total  = sum(b.price for b in spa if hasattr(b, 'price') and b.price and b.status in BILLABLE)
+        ent_total  = sum(b.price for b in ent if b.status in BILLABLE)
+        dine_total = sum(getattr(b, 'price', 0) or 0 for b in dine if b.status in BILLABLE)
+        grand_total = food_total + bar_total + spa_total + ent_total + dine_total
 
         return {
             "room_no": room_no,
-            "meal_plan": meal_plan,
             "totals": {
-                "food": food_total,
-                "bar": bar_total
+                "food":          food_total,
+                "bar":           bar_total,
+                "spa":           spa_total,
+                "entertainment": ent_total,
+                "dine":          dine_total,
+                "grand":         grand_total,
             },
             "orders": [
                 {
-                    "id": o.id,
-                    "type": o.order_type,
-                    "items": o.items,
-                    "total": o.total,
-                    "status": o.status,
-                    "ordered_at": o.ordered_at.strftime("%d %b %Y, %I:%M %p") if o.ordered_at else ""
-                } for o in orders
+                    "id":           o.id,
+                    "type":         o.order_type,
+                    "items":        o.items,
+                    "total":        o.total,
+                    "status":       o.status,
+                    "ordered_at":   (o.ordered_at.strftime("%d %b %Y, %I:%M %p") if o.ordered_at else "—"),
+                    "booked_epoch": int(o.ordered_at.timestamp() * 1000) if o.ordered_at else 0
+                }
+                for o in orders
             ],
             "spa_bookings": [
                 {
-                    "id": b.id,
-                    "title": b.item_title,
-                    "slot": b.slot,
-                    "price": b.price,
-                    "status": b.status,
-                    "booked_at": b.booked_at.strftime("%d %b %Y, %I:%M %p") if b.booked_at else ""
-                } for b in spa_bookings
+                    "id":           b.id,
+                    "title":        b.item_title,
+                    "category":     b.category,
+                    "price":        b.price if hasattr(b, 'price') and b.price else 0,
+                    "slot":         b.slot,
+                    "status":       b.status,
+                    "booked_at":    (b.booked_at.strftime("%d %b %Y, %I:%M %p") if b.booked_at else "—"),
+                    "booked_epoch": int(b.booked_at.timestamp() * 1000) if b.booked_at else 0
+                }
+                for b in spa
             ],
             "entertainment_bookings": [
                 {
-                    "id": b.id,
-                    "title": b.title,
-                    "slot": b.slot,
-                    "venue": b.venue,
-                    "price": b.price,
-                    "guests": b.guests,
-                    "status": b.status,
-                    "booked_at": b.booked_at.strftime("%d %b %Y, %I:%M %p") if b.booked_at else ""
-                } for b in entertainment_bookings
+                    "id":           b.id,
+                    "title":        b.item_title,
+                    "category":     b.category,
+                    "slot":         b.slot,
+                    "venue":        b.venue,
+                    "guests":       b.guests_count,
+                    "price":        b.price,
+                    "status":       b.status,
+                    "booked_at":    (b.booked_at.strftime("%d %b %Y, %I:%M %p") if b.booked_at else "—"),
+                    "booked_epoch": int(b.booked_at.timestamp() * 1000) if b.booked_at else 0
+                }
+                for b in ent
             ],
             "activity_bookings": [
                 {
-                    "id": b.id,
-                    "title": b.title,
-                    "time_slot": b.time_slot,
-                    "status": b.status,
-                    "booked_at": b.booked_at.strftime("%d %b %Y, %I:%M %p") if b.booked_at else ""
-                } for b in activity_bookings
+                    "id":           b.id,
+                    "title":        b.title,
+                    "time_slot":    b.time_slot,
+                    "status":       b.status,
+                    "booked_at":    (b.booked_at.strftime("%d %b %Y, %I:%M %p") if b.booked_at else "—"),
+                    "booked_epoch": int(b.booked_at.timestamp() * 1000) if b.booked_at else 0
+                }
+                for b in activities
             ],
             "dine_bookings": [
                 {
-                    "id": b.id,
-                    "title": b.title,
-                    "slot": b.slot,
-                    "price": b.price if hasattr(b, "price") else 0,
-                    "status": b.status,
-                    "booked_at": b.booked_at.strftime("%d %b %Y, %I:%M %p") if b.booked_at else ""
-                } for b in dine_bookings
-            ]
+                    "id":           b.id,
+                    "title":        b.item_title,
+                    "occasion":     b.occasion,
+                    "slot":         b.slot,
+                    "price":        getattr(b, 'price', 0) or 0,
+                    "status":       b.status,
+                    "booked_at":    (b.booked_at.strftime("%d %b %Y, %I:%M %p") if b.booked_at else "—"),
+                    "booked_epoch": int(b.booked_at.timestamp() * 1000) if b.booked_at else 0
+                }
+                for b in dine
+            ],
+            "meal_plan": meal_plan or None
         }
-
     finally:
         db.close()
+
 
 # ═══════════════════════════════════════════════════════════════════
 # 7.  ADMIN — ALL BOOKINGS  —  GET /api/admin/all-bookings
@@ -541,56 +628,56 @@ def admin_all_bookings(room_no: Optional[int] = None):
             ],
             "spa_bookings": [
                 {
-                    "id":        b.id,
-                    "room_no":   b.room_no,
+                    "id":         b.id,
+                    "room_no":    b.room_no,
                     "guest_name": b.guest_name,
-                    "title":     b.item_title,
-                    "category":  b.category,
-                    "slot":      b.slot,
-                    "price":     b.price if hasattr(b, 'price') and b.price else 0,
-                    "status":    b.status,
-                    "booked_at": (b.booked_at.strftime("%d %b %Y, %I:%M %p") if b.booked_at else "—")
+                    "title":      b.item_title,
+                    "category":   b.category,
+                    "slot":       b.slot,
+                    "price":      b.price if hasattr(b, 'price') and b.price else 0,
+                    "status":     b.status,
+                    "booked_at":  (b.booked_at.strftime("%d %b %Y, %I:%M %p") if b.booked_at else "—")
                 }
                 for b in spa
             ],
             "entertainment_bookings": [
                 {
-                    "id":        b.id,
-                    "room_no":   b.room_no,
+                    "id":         b.id,
+                    "room_no":    b.room_no,
                     "guest_name": b.guest_name,
-                    "title":     b.item_title,
-                    "category":  b.category,
-                    "slot":      b.slot,
-                    "venue":     b.venue,
-                    "guests":    b.guests_count,
-                    "price":     b.price,
-                    "status":    b.status,
-                    "booked_at": (b.booked_at.strftime("%d %b %Y, %I:%M %p") if b.booked_at else "—")
+                    "title":      b.item_title,
+                    "category":   b.category,
+                    "slot":       b.slot,
+                    "venue":      b.venue,
+                    "guests":     b.guests_count,
+                    "price":      b.price,
+                    "status":     b.status,
+                    "booked_at":  (b.booked_at.strftime("%d %b %Y, %I:%M %p") if b.booked_at else "—")
                 }
                 for b in ent
             ],
             "activity_bookings": [
                 {
-                    "id":        b.id,
-                    "room_no":   b.room_no,
+                    "id":         b.id,
+                    "room_no":    b.room_no,
                     "guest_name": b.guest_name,
-                    "title":     b.title,
-                    "time_slot": b.time_slot,
-                    "status":    b.status,
-                    "booked_at": (b.booked_at.strftime("%d %b %Y, %I:%M %p") if b.booked_at else "—")
+                    "title":      b.title,
+                    "time_slot":  b.time_slot,
+                    "status":     b.status,
+                    "booked_at":  (b.booked_at.strftime("%d %b %Y, %I:%M %p") if b.booked_at else "—")
                 }
                 for b in activities
             ],
             "dine_bookings": [
                 {
-                    "id":        b.id,
-                    "room_no":   b.room_no,
+                    "id":         b.id,
+                    "room_no":    b.room_no,
                     "guest_name": b.guest_name,
-                    "title":     b.item_title,
-                    "occasion":  b.occasion,
-                    "slot":      b.slot,
-                    "status":    b.status,
-                    "booked_at": (b.booked_at.strftime("%d %b %Y, %I:%M %p") if b.booked_at else "—")
+                    "title":      b.item_title,
+                    "occasion":   b.occasion,
+                    "slot":       b.slot,
+                    "status":     b.status,
+                    "booked_at":  (b.booked_at.strftime("%d %b %Y, %I:%M %p") if b.booked_at else "—")
                 }
                 for b in dine
             ]
@@ -782,10 +869,18 @@ def delete_guest(payload: DeleteGuestPayload, db: Session = Depends(get_db)):
     db.commit()
     return {"status": "success", "message": f"Guest in room {payload.room_no} deleted"}
 
+
+# ═══════════════════════════════════════════════════════════════════
+# 11b. UPDATE MEAL PLAN  —  POST /api/update-meal-plan
+#      Updates the meal_plan field on the active guest record for a
+#      given room. Falls back to the active group booking if no
+#      individual guest record is found.
+# ═══════════════════════════════════════════════════════════════════
+
 @router.post("/api/update-meal-plan")
 async def update_meal_plan(request: Request):
-    data = await request.json()
-    room_no = int(data.get("room_no", 0))
+    data      = await request.json()
+    room_no   = int(data.get("room_no", 0))
     meal_plan = data.get("meal_plan", "")
 
     db = SessionLocal()
@@ -793,8 +888,8 @@ async def update_meal_plan(request: Request):
         today = date.today()
 
         guest = db.query(models.Guest).filter(
-            models.Guest.room_no == room_no,
-            models.Guest.check_in <= today,
+            models.Guest.room_no   == room_no,
+            models.Guest.check_in  <= today,
             models.Guest.check_out >= today
         ).first()
 
@@ -804,13 +899,12 @@ async def update_meal_plan(request: Request):
             return {"status": "success", "meal_plan": meal_plan}
 
         # No individual guest — check group booking
-        import json as _json
         groups = db.query(models.GroupBooking).filter(
             models.GroupBooking.is_active == 1,
             models.GroupBooking.check_out >= str(today)
         ).all()
         for group in groups:
-            rooms = _json.loads(group.room_numbers) if isinstance(group.room_numbers, str) else group.room_numbers
+            rooms = json.loads(group.room_numbers) if isinstance(group.room_numbers, str) else group.room_numbers
             if str(room_no) in rooms:
                 group.meal_plan = meal_plan
                 db.commit()
@@ -824,6 +918,7 @@ async def update_meal_plan(request: Request):
 
     finally:
         db.close()
+
 
 # ═══════════════════════════════════════════════════════════════════
 # 12.  GROUP SUMMARY  —  GET /api/group-summary/{room_no}

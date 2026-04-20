@@ -57,7 +57,8 @@
     }
 
     window.onload = () => {
-        loadRoomData()
+    loadRoomData()
+    setInterval(loadRoomData, 5000)  // poll every 5 seconds
     }
 
 
@@ -2087,10 +2088,27 @@
         }
     }
 
-    window.guestCancel = async function(type, id, btn) {
-        if (!confirm('Cancel this booking?')) return
-        btn.disabled    = true
-        btn.textContent = 'Cancelling…'
+    window.guestCancel = function(type, id, btn) {
+        // Show custom in-page confirmation modal instead of browser confirm()
+        var overlay = document.getElementById('cancelConfirmOverlay')
+        if (!overlay) return
+
+        // Store pending cancel details on the overlay for use when confirmed
+        overlay._pendingType = type
+        overlay._pendingId   = id
+        overlay._pendingBtn  = btn
+        overlay.classList.add('active')
+    }
+
+    window._executeCancelBooking = async function() {
+        var overlay = document.getElementById('cancelConfirmOverlay')
+        if (!overlay) return
+        var type = overlay._pendingType
+        var id   = overlay._pendingId
+        var btn  = overlay._pendingBtn
+        overlay.classList.remove('active')
+
+        if (btn) { btn.disabled = true; btn.textContent = 'Cancelling…' }
         try {
             const res  = await fetch('/api/cancel/' + type + '/' + id, { method: 'POST' })
             const data = await res.json()
@@ -2099,14 +2117,17 @@
                 loadMyOrders()
             } else {
                 _showOrderAlert(data.message || 'Could not cancel.', '#e74c3c')
-                btn.disabled    = false
-                btn.textContent = '❌ Cancel'
+                if (btn) { btn.disabled = false; btn.textContent = '❌ Cancel' }
             }
         } catch(e) {
             _showOrderAlert('Network error. Try again.', '#e74c3c')
-            btn.disabled    = false
-            btn.textContent = '❌ Cancel'
+            if (btn) { btn.disabled = false; btn.textContent = '❌ Cancel' }
         }
+    }
+
+    window.closeCancelConfirm = function() {
+        var overlay = document.getElementById('cancelConfirmOverlay')
+        if (overlay) overlay.classList.remove('active')
     }
 
     window.loadMyOrders   = loadMyOrders

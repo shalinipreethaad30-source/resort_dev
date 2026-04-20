@@ -60,13 +60,13 @@
         .room-chip { background: var(--pink-dim); border: .5px solid var(--pink-light); color: var(--pink-light); font-size: 11px; letter-spacing: .18em; padding: 5px 14px; border-radius: 20px; }
         .room-divider { width: .5px; height: 14px; background: rgba(255,255,255,.15); }
         .tagline-text { font-size: 13px; font-weight: 300; color: rgba(248,243,236,.45); letter-spacing: .04em; }
-        .custom-msg { margin-top: 14px; font-family: 'Cormorant Garamond', serif; font-size: 20px; font-style: italic; font-weight: 300; color: var(--gold, #D4A843); }
+        .custom-msg { margin-top: 14px; font-family: 'Cormorant Garamond', serif; font-size: 20px; font-style: italic; font-weight: 300; color: var(--gold); }
 
         .clock { position: absolute; top: 44px; left: 50%; transform: translateX(-50%); text-align: center; animation: fadeUp .9s ease .2s both; }
         .clock-time { font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 300; color: rgba(248,243,236,.65); letter-spacing: .12em; }
         .clock-date { font-size: 10px; letter-spacing: .32em; text-transform: uppercase; color: rgba(212,168,67,.5); margin-top: 4px; }
 
-        .activities { position: absolute; top: 150px; right: 72px; width: 280px; animation: fadeUp .9s ease .3s both; }
+        .activities { position: absolute; top: 110px; right: 72px; width: 280px; animation: fadeUp .9s ease .3s both; }
         .panel-title { font-size: 9px; letter-spacing: .5em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; font-weight: 400; display: flex; align-items: center; gap: 8px; }
         .panel-title::after { content: ''; flex: 1; height: .5px; background: linear-gradient(90deg, rgba(212,168,67,.4), transparent); }
         .act-card { background: rgba(20,4,10,0.72); border: .5px solid rgba(192,24,90,.22); backdrop-filter: blur(12px); padding: 12px 14px; border-radius: 10px; margin-bottom: 9px; font-size: 13px; font-weight: 300; color: rgba(248,243,236,.82); transition: border-color .3s; }
@@ -76,7 +76,7 @@
         .reserve-pill { float: right; background: var(--pink-dim); border: .5px solid rgba(192,24,90,.45); color: #f080a8; font-size: 10px; padding: 3px 10px; border-radius: 20px; letter-spacing: .07em; }
         .ann-badge { font-size: 9px; letter-spacing: .3em; text-transform: uppercase; color: var(--pink-light); display: block; margin-bottom: 3px; }
 
-        .services-section { position: absolute; bottom: 101px; left: 52px; right: 52px; animation: fadeUp .9s ease .5s both; }
+        .services-section { position: absolute; bottom: 108px; left: 52px; right: 52px; animation: fadeUp .9s ease .5s both; }
         .services-heading { font-size: 20px; font-weight: 500; color: var(--cream); margin-bottom: 16px; letter-spacing: .01em; }
         .services-heading span { color: var(--gold); font-style: italic; font-family: 'Cormorant Garamond', serif; font-size: 24px; }
         .services-row { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 6px; scroll-snap-type: x mandatory; -ms-overflow-style: none; scrollbar-width: none; }
@@ -933,6 +933,192 @@
         /* ══════════════════════════════════════════
            MY ORDERS OVERLAY
         ══════════════════════════════════════════ */
+        /* ══════════════════════════════════════════
+           MEAL PLAN PICKER DIALOG
+        ══════════════════════════════════════════ */
+        #mealPlanDialog {
+            position: fixed; inset: 0; z-index: 300;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(0,0,0,.78);
+            backdrop-filter: blur(18px);
+            opacity: 0; visibility: hidden; pointer-events: none;
+            transition: opacity .35s ease, visibility .35s ease;
+        }
+        #mealPlanDialog.active {
+            opacity: 1; visibility: visible; pointer-events: all;
+        }
+        .mpd-modal {
+            width: min(660px, 94vw);
+            background: linear-gradient(160deg, rgba(18,4,12,0.99) 0%, rgba(8,2,5,0.99) 100%);
+            border: .5px solid rgba(192,24,90,.38);
+            border-radius: 22px;
+            padding: 36px 40px 32px;
+            position: relative;
+            overflow: hidden;
+        }
+        .mpd-modal::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--pink), var(--gold), transparent);
+        }
+        .mpd-close {
+            position: absolute; top: 16px; right: 18px;
+            background: none; border: none; color: rgba(248,243,236,.35);
+            font-size: 18px; cursor: pointer; line-height: 1;
+            transition: color .2s;
+        }
+        .mpd-close:hover { color: var(--cream); }
+        .mpd-eyebrow {
+            font-size: 9px; letter-spacing: .5em; text-transform: uppercase;
+            color: var(--gold); margin-bottom: 6px; font-weight: 400;
+        }
+        .mpd-heading {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 30px; font-weight: 300; color: var(--cream);
+            margin-bottom: 6px;
+        }
+        .mpd-heading em { color: var(--gold-light); font-style: italic; }
+        .mpd-sub {
+            font-size: 12px; color: rgba(248,243,236,.38); font-weight: 300;
+            margin-bottom: 24px; letter-spacing: .03em;
+        }
+        .mpd-current-row {
+            display: flex; align-items: center; gap: 10px;
+            background: rgba(192,24,90,.1); border: .5px solid rgba(192,24,90,.28);
+            border-radius: 10px; padding: 10px 16px; margin-bottom: 20px;
+        }
+        .mpd-current-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--pink-light); flex-shrink: 0;
+            box-shadow: 0 0 8px var(--pink);
+        }
+        .mpd-current-label {
+            font-size: 11px; letter-spacing: .2em; text-transform: uppercase;
+            color: rgba(248,243,236,.38);
+        }
+        .mpd-current-name {
+            font-size: 14px; font-weight: 500; color: var(--pink-light);
+        }
+        .mpd-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .mpd-option {
+            background: rgba(20,4,12,0.85);
+            border: .5px solid rgba(255,255,255,.1);
+            border-radius: 14px; padding: 16px 18px;
+            cursor: pointer;
+            transition: border-color .25s, background .25s, box-shadow .25s, transform .2s;
+            position: relative; overflow: hidden;
+        }
+        .mpd-option::after {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 1.5px;
+            background: linear-gradient(90deg, transparent, var(--pink), transparent);
+            transform: scaleX(0); transform-origin: left;
+            transition: transform .35s ease;
+        }
+        .mpd-option:hover { border-color: rgba(192,24,90,.45); background: rgba(192,24,90,.08); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.4); }
+        .mpd-option:hover::after { transform: scaleX(1); }
+        .mpd-option.selected {
+            border-color: var(--pink); background: rgba(192,24,90,.18);
+            box-shadow: 0 0 0 1px rgba(192,24,90,.3), 0 8px 28px rgba(192,24,90,.15);
+        }
+        .mpd-option.selected::after { transform: scaleX(1); }
+        .mpd-opt-code {
+            font-size: 9px; letter-spacing: .45em; text-transform: uppercase;
+            color: var(--gold); margin-bottom: 5px; font-weight: 400;
+        }
+        .mpd-opt-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 20px; font-weight: 300; color: var(--cream); margin-bottom: 4px;
+        }
+        .mpd-opt-tag {
+            font-size: 11px; color: rgba(248,243,236,.48); font-weight: 300;
+            font-style: italic; margin-bottom: 8px;
+        }
+        .mpd-opt-pills {
+            display: flex; gap: 5px; flex-wrap: wrap;
+        }
+        .mpd-pill {
+            font-size: 9px; letter-spacing: .1em;
+            background: rgba(255,255,255,.07); border: .5px solid rgba(255,255,255,.12);
+            border-radius: 20px; padding: 2px 8px; color: rgba(248,243,236,.55);
+        }
+        .mpd-option.selected .mpd-pill {
+            background: rgba(192,24,90,.18); border-color: rgba(192,24,90,.4);
+            color: #f080a8;
+        }
+        .mpd-check {
+            position: absolute; top: 12px; right: 12px;
+            width: 20px; height: 20px; border-radius: 50%;
+            background: var(--pink); display: flex; align-items: center; justify-content: center;
+            font-size: 11px; color: #fff;
+            opacity: 0; transform: scale(0.5);
+            transition: opacity .2s, transform .2s;
+        }
+        .mpd-option.selected .mpd-check { opacity: 1; transform: scale(1); }
+        .mpd-actions { display: flex; gap: 12px; }
+        .mpd-cancel-btn {
+            flex: 1; padding: 13px;
+            background: rgba(255,255,255,.06); border: .5px solid rgba(255,255,255,.14);
+            color: rgba(248,243,236,.5); border-radius: 10px;
+            font-family: 'Jost', sans-serif; font-size: 12px;
+            letter-spacing: .22em; text-transform: uppercase; cursor: pointer;
+            transition: all .2s;
+        }
+        .mpd-cancel-btn:hover { background: rgba(255,255,255,.11); color: var(--cream); }
+        .mpd-confirm-btn {
+            flex: 2; padding: 13px;
+            background: linear-gradient(135deg, var(--pink), var(--pink-light));
+            border: none; color: #fff; border-radius: 10px;
+            font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 600;
+            letter-spacing: .22em; text-transform: uppercase; cursor: pointer;
+            transition: opacity .25s, box-shadow .25s;
+        }
+        .mpd-confirm-btn:hover { opacity: .88; box-shadow: 0 0 24px rgba(192,24,90,.45); }
+        .mpd-confirm-btn:disabled { opacity: .3; cursor: default; box-shadow: none; }
+
+        /* ── My Bookings scroll arrows (up & down) ───────────── */
+        .mo-scroll-arrow {
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 200;
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            background: rgba(20,4,10,0.82);
+            border: .5px solid rgba(212,168,67,.45);
+            color: var(--gold-light);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            transition: background .25s, border-color .25s, box-shadow .25s, opacity .3s;
+            opacity: 1;
+            pointer-events: all;
+        }
+        .mo-scroll-arrow svg {
+            width: 18px; height: 18px;
+            stroke: currentColor; stroke-width: 2;
+            fill: none; stroke-linecap: round; stroke-linejoin: round;
+            transition: transform .2s;
+        }
+        .mo-scroll-arrow:hover {
+            background: rgba(192,24,90,.35);
+            border-color: var(--pink-light);
+            color: #fff;
+            box-shadow: 0 0 18px rgba(192,24,90,.35);
+        }
+        .mo-scroll-arrow:hover svg { transform: scale(1.15); }
+        .mo-scroll-arrow.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        #moScrollUp   { top: 24px; }
+        #moScrollDown { bottom: 24px; }
+
         #myOrdersOverlay {
             position: fixed; inset: 0; z-index: 100;
             display: flex; flex-direction: column;
@@ -971,6 +1157,89 @@
         .mo-title em { color: var(--gold-light); font-style: italic; }
 
 
+        /* ══════════════════════════════════════════
+           GROUP SUMMARY CARD (My Bookings overlay)
+        ══════════════════════════════════════════ */
+        .grp-summary-card {
+            background: linear-gradient(135deg, rgba(18,4,10,0.95) 0%, rgba(30,8,18,0.95) 100%);
+            border: .5px solid rgba(192,24,90,.38);
+            border-radius: 14px;
+            padding: 20px 22px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        .grp-summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--pink), var(--gold), transparent);
+        }
+        .grp-header {
+            display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+        }
+        .grp-icon { font-size: 26px; flex-shrink: 0; }
+        .grp-header-text h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 20px; font-weight: 300; color: var(--cream); margin: 0 0 2px;
+        }
+        .grp-header-text p {
+            font-size: 11px; letter-spacing: .25em; text-transform: uppercase;
+            color: rgba(212,168,67,.55); margin: 0;
+        }
+        .grp-rooms-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+        .grp-room-row {
+            display: flex; align-items: center;
+            background: rgba(255,255,255,.04);
+            border: .5px solid rgba(255,255,255,.07);
+            border-radius: 9px; padding: 9px 12px;
+            gap: 10px;
+        }
+        .grp-room-row.is-my-room {
+            background: rgba(192,24,90,.14);
+            border-color: rgba(192,24,90,.32);
+        }
+        .grp-room-label {
+            display: flex; flex-direction: column; flex: 1; min-width: 0;
+        }
+        .grp-room-label .rno {
+            font-size: 13px; font-weight: 500; color: var(--cream);
+        }
+        .grp-room-label .gname {
+            font-size: 11px; color: rgba(248,243,236,.38); margin-top: 1px;
+        }
+        .grp-you-badge {
+            font-size: 9px; letter-spacing: .18em; text-transform: uppercase;
+            color: var(--pink-light); font-weight: 600;
+            background: rgba(192,24,90,.18); border: .5px solid rgba(192,24,90,.4);
+            padding: 1px 7px; border-radius: 20px; flex-shrink: 0;
+        }
+        .grp-room-chips {
+            display: flex; gap: 5px; flex-wrap: wrap; flex-shrink: 0;
+        }
+        .grp-chip {
+            background: rgba(255,255,255,.07); border: .5px solid rgba(255,255,255,.1);
+            border-radius: 20px; padding: 2px 8px;
+            font-size: 10px; color: rgba(248,243,236,.45); white-space: nowrap;
+        }
+        .grp-room-total {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 18px; color: var(--gold-light);
+            flex-shrink: 0; white-space: nowrap;
+        }
+        .grp-grand-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding-top: 12px; border-top: .5px solid rgba(192,24,90,.22);
+        }
+        .grp-grand-label {
+            font-size: 11px; letter-spacing: .3em; text-transform: uppercase;
+            color: rgba(248,243,236,.45);
+        }
+        .grp-grand-amt {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 28px; font-weight: 300; color: var(--gold-light);
+        }
+
         /* ── Services Scroll Arrows ──────────────────────────── */
 .services-wrapper {
     position: relative;
@@ -1002,64 +1271,6 @@
 }
 .svc-arrow-left  { left: -22px; }
 .svc-arrow-right { right: -22px; }
-    </style>
-</head>
-<body>
-
-<!-- ░░ BACKGROUND ░░ -->
-<div class="bg-base"></div>
-<div class="bg-mountains">
-    <svg viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-        <ellipse cx="960" cy="1080" rx="900" ry="400" fill="rgba(130,10,50,0.18)"/>
-        <path d="M0,560 Q150,400 320,445 Q480,490 580,370 Q680,250 820,320 Q960,390 1060,290 Q1160,190 1290,255 Q1420,320 1530,240 Q1660,160 1800,210 Q1880,240 1920,195 L1920,1080 L0,1080 Z" fill="#1a0410" opacity="0.75"/>
-        <path d="M0,660 Q90,590 200,618 Q330,645 430,520 Q530,395 680,478 Q820,555 940,455 Q1060,355 1190,425 Q1320,495 1450,400 Q1580,305 1720,385 Q1840,445 1920,410 L1920,1080 L0,1080 Z" fill="#140310" opacity="0.85"/>
-        <path d="M0,790 Q110,730 220,755 Q370,778 470,688 Q570,598 700,665 Q840,740 960,665 Q1080,590 1210,648 Q1340,706 1470,655 Q1600,604 1740,682 Q1860,742 1920,718 L1920,1080 L0,1080 Z" fill="#0e0608" opacity="0.95"/>
-        <g opacity="0.06" stroke="#d4a843" stroke-width="0.7">
-            <path d="M380,595 Q500,588 620,595 Q740,602 860,595"/>
-            <path d="M360,612 Q490,605 620,612 Q750,619 880,612"/>
-            <path d="M340,629 Q480,622 620,629 Q760,636 900,629"/>
-        </g>
-    </svg>
-</div>
-<div class="bg-texture"></div>
-<div class="bg-glow"></div>
-<div class="mist"></div><div class="mist"></div><div class="mist"></div>
-<div class="vignette"></div>
-
-<!-- ░░ MAIN SCREEN ░░ -->
-<div class="screen">
-    <div class="corner c-tl"></div>
-    <div class="corner c-tr"></div>
-    <div class="corner c-bl"></div>
-    <div class="corner c-br"></div>
-
-    <div class="header">
-        <div class="brand-eyebrow">
-            <div class="vibe-logo">
-                <div class="logo-diamond"></div>
-                Vibe Munnar
-            </div>
-            <span>&#9679;</span>
-            Resort &amp; Spa
-        </div>
-        <div class="guest-name" id="guestName">Welcome, <em>Guest</em></div>
-        <div class="room-info">
-            <div class="room-chip" id="roomNo">Room 101</div>
-            <div class="room-divider"></div>
-            <div class="tagline-text">The Ultimate Luxury that touches mountains to sky.</div>
-        </div>
-        <div class="custom-msg" id="customMessage">{{ custom_message or "Have a beautiful stay." }}</div>
-    </div>
-
-    <div class="clock">
-        <div class="clock-time" id="clockTime">--:--</div>
-        <div class="clock-date" id="clockDate">---</div>
-    </div>
-
-<!-- ══════════════════════════════════════════════════════════════
-     WiFi Widget Styles
-═══════════════════════════════════════════════════════════════ -->
-<style id="INSERT_1_INSIDE_STYLE">
 
 /* ── WiFi Widget ─────────────────────────────────────────── */
 .wifi-widget {
@@ -1205,7 +1416,60 @@
     color: rgba(248,243,236,.3);
     font-style: italic; line-height: 1.6;
 }
-</style>
+    </style>
+</head>
+<body>
+
+<!-- ░░ BACKGROUND ░░ -->
+<div class="bg-base"></div>
+<div class="bg-mountains">
+    <svg viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <ellipse cx="960" cy="1080" rx="900" ry="400" fill="rgba(130,10,50,0.18)"/>
+        <path d="M0,560 Q150,400 320,445 Q480,490 580,370 Q680,250 820,320 Q960,390 1060,290 Q1160,190 1290,255 Q1420,320 1530,240 Q1660,160 1800,210 Q1880,240 1920,195 L1920,1080 L0,1080 Z" fill="#1a0410" opacity="0.75"/>
+        <path d="M0,660 Q90,590 200,618 Q330,645 430,520 Q530,395 680,478 Q820,555 940,455 Q1060,355 1190,425 Q1320,495 1450,400 Q1580,305 1720,385 Q1840,445 1920,410 L1920,1080 L0,1080 Z" fill="#140310" opacity="0.85"/>
+        <path d="M0,790 Q110,730 220,755 Q370,778 470,688 Q570,598 700,665 Q840,740 960,665 Q1080,590 1210,648 Q1340,706 1470,655 Q1600,604 1740,682 Q1860,742 1920,718 L1920,1080 L0,1080 Z" fill="#0e0608" opacity="0.95"/>
+        <g opacity="0.06" stroke="#d4a843" stroke-width="0.7">
+            <path d="M380,595 Q500,588 620,595 Q740,602 860,595"/>
+            <path d="M360,612 Q490,605 620,612 Q750,619 880,612"/>
+            <path d="M340,629 Q480,622 620,629 Q760,636 900,629"/>
+        </g>
+    </svg>
+</div>
+<div class="bg-texture"></div>
+<div class="bg-glow"></div>
+<div class="mist"></div><div class="mist"></div><div class="mist"></div>
+<div class="vignette"></div>
+
+<!-- ░░ MAIN SCREEN ░░ -->
+<div class="screen">
+    <div class="corner c-tl"></div>
+    <div class="corner c-tr"></div>
+    <div class="corner c-bl"></div>
+    <div class="corner c-br"></div>
+
+    <div class="header">
+        <div class="brand-eyebrow">
+            <div class="vibe-logo">
+                <div class="logo-diamond"></div>
+                Vibe Munnar
+            </div>
+            <span>&#9679;</span>
+            Resort &amp; Spa
+        </div>
+        <div class="guest-name" id="guestName">Welcome, <em>Guest</em></div>
+        <div class="room-info">
+            <div class="room-chip" id="roomNo">Room 101</div>
+            <div class="room-divider"></div>
+            <div class="tagline-text">The Ultimate Luxury that touches mountains to sky.</div>
+        </div>
+        <div class="custom-msg" id="customMessage">Have a beautiful stay.</div>
+    </div>
+
+    <div class="clock">
+        <div class="clock-time" id="clockTime">--:--</div>
+        <div class="clock-date" id="clockDate">---</div>
+    </div>
+
 
 
 <!-- ══════════════════════════════════════════════════════════════
@@ -1754,15 +2018,25 @@ function wifiCopy(elementId, btn) {
      Logic handled by common.js (openMyOrders, closeMyOrders, loadMyOrders)
 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ -->
 <div id="myOrdersOverlay">
-    <div class="mo-panel">
+    <div class="mo-panel" id="moPanel">
         <div class="mo-header">
             <div class="mo-title">My <em>Bookings</em></div>
             <button class="overlay-close-btn" onclick="closeMyOrders()" title="Close">&#10005;</button>
         </div>
+        <!-- Group Summary card — shown only when room belongs to a group booking -->
+        <div id="grpSummarySection"></div>
+
         <div id="myOrdersContent">
-            <p style="color:rgba(248,243,236,.3);text-align:center;padding:40px 0;font-style:italic;">Loading&#8230;</p>
+            <!-- content injected silently by JS — no static Loading text -->
         </div>
     </div>
+    <!-- Scroll arrows — same style as services › arrow -->
+    <button id="moScrollUp" class="mo-scroll-arrow hidden" onclick="moScrollStep(-1)" title="Scroll up">
+        <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+    </button>
+    <button id="moScrollDown" class="mo-scroll-arrow hidden" onclick="moScrollStep(1)" title="Scroll down">
+        <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
 </div>
 
 <!-- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
@@ -1836,22 +2110,184 @@ document.addEventListener('DOMContentLoaded', function() {
 <script src="/static/common.js"></script>
 
 <script>
-/* ══════════════════════════════════════════════════════════════
-   BLINK FIX — patches common.js behaviour AFTER it has loaded.
+/* ── One-time guest name + custom message fetch ──────────────────────────
+   Fetches room data ONCE on page load and populates the header fields.
+   Then patches loadRoomData so it never overwrites these fields again,
+   eliminating the refresh flicker entirely.
+──────────────────────────────────────────────────────────────────────── */
+(function() {
+    var _locked = false;
+    var _cache  = {};
 
-   Root cause: common.js calls loadMyOrders() on init AND every
-   30 s regardless of whether the overlay is visible. Each call
-   sets innerHTML = "Loading…" which forces a full repaint of the
-   fixed overlay layer, causing the visible blink on the main screen.
+    function applyRoomData(data) {
+        var guestEl = document.getElementById('guestName');
+        var roomEl  = document.getElementById('roomNo');
+        var msgEl   = document.getElementById('customMessage');
 
-   Fix strategy:
-   1. Override window.loadMyOrders so it only runs when the overlay
-      is actually open (has class "active").
-   2. When the overlay IS open, skip the "Loading…" flash — fetch
-      silently and only swap innerHTML when real data arrives.
-   3. Cancel common.js's background interval and replace it with
-      our own that respects the visibility check.
-══════════════════════════════════════════════════════════════ */
+        if (guestEl && data.guest_name) {
+            guestEl.innerHTML = 'Welcome, <em>' + data.guest_name + '</em>';
+            _cache.guestHTML  = guestEl.innerHTML;
+        }
+        if (roomEl && data.room_no) {
+            roomEl.textContent = 'Room ' + data.room_no;
+            _cache.roomText    = roomEl.textContent;
+        }
+        if (msgEl && data.custom_message) {
+            msgEl.textContent = data.custom_message;
+            _cache.msgText    = msgEl.textContent;
+        }
+        _locked = true;
+    }
+
+    /* Restore cached values after each loadRoomData call */
+    function restoreLocked() {
+        if (!_locked) return;
+        requestAnimationFrame(function() {
+            var guestEl = document.getElementById('guestName');
+            var roomEl  = document.getElementById('roomNo');
+            var msgEl   = document.getElementById('customMessage');
+            if (guestEl && _cache.guestHTML) guestEl.innerHTML   = _cache.guestHTML;
+            if (roomEl  && _cache.roomText)  roomEl.textContent  = _cache.roomText;
+            if (msgEl   && _cache.msgText)   msgEl.textContent   = _cache.msgText;
+        });
+    }
+
+    /* Fetch once, waiting until ROOM_NO is available from common.js */
+    function fetchOnce() {
+        var attempts = 0;
+        (function tryFetch() {
+            if (!window.ROOM_NO) {
+                if (++attempts < 30) setTimeout(tryFetch, 100);
+                return;
+            }
+            fetch('/api/room-data/' + window.ROOM_NO)
+                .then(function(r) { return r.json(); })
+                .then(function(d) { applyRoomData(d); })
+                .catch(function() {});
+        })();
+    }
+
+    /* Patch loadRoomData so it never overwrites the header */
+    function patchLoadRoomData() {
+        var _orig = window.loadRoomData;
+        if (typeof _orig !== 'function') { setTimeout(patchLoadRoomData, 50); return; }
+        window.loadRoomData = function() {
+            _orig();
+            restoreLocked();
+        };
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchOnce();
+        patchLoadRoomData();
+    });
+})();
+</script>
+
+<!-- Blink fix removed — loadMyOrders in common.js is now silent by design -->
+
+<script>
+/* ══════════════════════════════════════════════════════
+   GROUP SUMMARY — fetches /api/group-summary/{room_no}
+   and renders a Group Total card at the top of My Bookings.
+   Called by openMyOrders (patched below) and on every 15 s poll.
+══════════════════════════════════════════════════════ */
+async function loadGroupSummary() {
+    if (!window.ROOM_NO) return;
+    const container = document.getElementById('grpSummarySection');
+    if (!container) return;
+
+    /* Only run when the overlay is open */
+    const overlay = document.getElementById('myOrdersOverlay');
+    if (!overlay || !overlay.classList.contains('active')) return;
+
+    try {
+        const data = await fetch('/api/group-summary/' + window.ROOM_NO).then(r => r.json());
+        if (!data.is_group) { container.innerHTML = ''; return; }
+
+        const fmt = n => '₹' + Number(n || 0).toLocaleString('en-IN');
+
+        const rows = (data.per_room || []).map(r => {
+            const isMe = r.room_no == window.ROOM_NO;
+            const chips = [
+                r.food || r.bar ? `<span class="grp-chip">Food ${fmt((r.food||0)+(r.bar||0))}</span>` : '',
+                r.spa  ? `<span class="grp-chip">Spa ${fmt(r.spa)}</span>` : '',
+                r.entertainment ? `<span class="grp-chip">Ent ${fmt(r.entertainment)}</span>` : '',
+                r.dine ? `<span class="grp-chip">Dine ${fmt(r.dine)}</span>` : ''
+            ].filter(Boolean).join('');
+
+            return `<div class="grp-room-row${isMe ? ' is-my-room' : ''}">
+                <div class="grp-room-label">
+                    <span class="rno">Room ${r.room_no}</span>
+                    <span class="gname">${r.guest_name || ''}</span>
+                </div>
+                ${isMe ? '<span class="grp-you-badge">You</span>' : ''}
+                <div class="grp-room-chips">${chips || '<span class="grp-chip">No charges</span>'}</div>
+                <div class="grp-room-total">${fmt(r.total)}</div>
+            </div>`;
+        }).join('');
+
+        container.innerHTML = `
+        <div class="grp-summary-card">
+            <div class="grp-header">
+                <div class="grp-icon">🏘️</div>
+                <div class="grp-header-text">
+                    <h3>${data.group_name || 'Group Booking'}</h3>
+                    <p>${data.total_rooms} rooms · Group charges</p>
+                </div>
+            </div>
+            <div class="grp-rooms-list">${rows}</div>
+            <div class="grp-grand-row">
+                <span class="grp-grand-label">Group Grand Total</span>
+                <span class="grp-grand-amt">${fmt(data.group_grand_total)}</span>
+            </div>
+        </div>`;
+    } catch (e) {
+        container.innerHTML = '';
+    }
+}
+
+/* Patch openMyOrders to also trigger group summary */
+(function () {
+    const _origOpen = window.openMyOrders;
+    if (!_origOpen) return; /* common.js not yet loaded — DOMContentLoaded will retry */
+    window.openMyOrders = function () {
+        _origOpen();
+        loadGroupSummary();
+    };
+})();
+
+/* Retry patch after common.js initialises (it's loaded after this block) */
+document.addEventListener('DOMContentLoaded', function () {
+    const _origOpen = window.openMyOrders;
+    if (_origOpen && !_origOpen._grpPatched) {
+        window.openMyOrders = function () { _origOpen(); loadGroupSummary(); };
+        window.openMyOrders._grpPatched = true;
+    }
+
+    /* Also hook into the 15 s poll — common.js exposes loadMyOrders globally */
+    const _origLoad = window.loadMyOrders;
+    if (_origLoad) {
+        window.loadMyOrders = function () { _origLoad(); loadGroupSummary(); };
+    }
+});
+</script>
+
+<script>
+(function() {
+    function showPage() {
+        document.body.classList.add('page-ready');
+    }
+    if (document.readyState === 'complete') {
+        showPage();
+    } else {
+        window.addEventListener('load', showPage);
+    }
+})();
+</script>
+
+<script>
+
 (function patchLoadMyOrders() {
 
     /* Wait until common.js has finished defining window.loadMyOrders */
@@ -1880,10 +2316,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(function(data) {
                     /* Only update if overlay is still open */
                     if (!overlay.classList.contains('active')) return;
-                    /* Use the original renderer from common.js scope via a
-                       temporary iframe trick is overkill — we just call the
-                       original function now that overlay IS active so it will
-                       render normally (one paint, no blink).                */
                     _origLoadMyOrders();
                 })
                 .catch(function() {
@@ -1893,10 +2325,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         /* Cancel the background interval common.js already started
            and replace with ours that uses the patched function.    */
-        /* We can't access common.js's internal interval ID, so we
-           override setInterval temporarily to intercept the next
-           registration — but it already ran. Instead, we cancel
-           ALL numeric intervals in a safe range and restart.        */
         var highId = setInterval(function(){}, 99999); /* get a high watermark */
         clearInterval(highId);
         /* Cancel every interval up to the current counter */
@@ -1927,26 +2355,397 @@ document.addEventListener('DOMContentLoaded', function() {
 })();
 </script>
 
+<!-- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+     MEAL PLAN PICKER DIALOG
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ -->
+<div id="mealPlanDialog">
+    <div class="mpd-modal">
+        <button class="mpd-close" onclick="closeMealPlanDialog()">&#10005;</button>
+        <div class="mpd-eyebrow">Meal Plan</div>
+        <div class="mpd-heading">Choose Your <em>Plan</em></div>
+        <div class="mpd-sub">Select a dining arrangement for your stay</div>
+
+        <div class="mpd-current-row">
+            <div class="mpd-current-dot"></div>
+            <span class="mpd-current-label">Current plan &nbsp;·&nbsp;</span>
+            <span class="mpd-current-name" id="mpdCurrentName">—</span>
+        </div>
+
+        <div class="mpd-grid">
+            <div class="mpd-option" data-code="AI" onclick="selectMealPlan(this)">
+                <div class="mpd-check">✓</div>
+                <div class="mpd-opt-code">AI</div>
+                <div class="mpd-opt-name">All Inclusive</div>
+                <div class="mpd-opt-tag">Everything covered</div>
+                <div class="mpd-opt-pills">
+                    <span class="mpd-pill">Breakfast</span>
+                    <span class="mpd-pill">Lunch</span>
+                    <span class="mpd-pill">Dinner</span>
+                    <span class="mpd-pill">Bar</span>
+                </div>
+            </div>
+            <div class="mpd-option" data-code="AP" onclick="selectMealPlan(this)">
+                <div class="mpd-check">✓</div>
+                <div class="mpd-opt-code">AP</div>
+                <div class="mpd-opt-name">Full Board</div>
+                <div class="mpd-opt-tag">Three meals daily</div>
+                <div class="mpd-opt-pills">
+                    <span class="mpd-pill">Breakfast</span>
+                    <span class="mpd-pill">Lunch</span>
+                    <span class="mpd-pill">Dinner</span>
+                </div>
+            </div>
+            <div class="mpd-option" data-code="MAP" onclick="selectMealPlan(this)">
+                <div class="mpd-check">✓</div>
+                <div class="mpd-opt-code">MAP</div>
+                <div class="mpd-opt-name">Half Board</div>
+                <div class="mpd-opt-tag">Room &amp; two meals</div>
+                <div class="mpd-opt-pills">
+                    <span class="mpd-pill">Breakfast</span>
+                    <span class="mpd-pill">Dinner</span>
+                </div>
+            </div>
+            <div class="mpd-option" data-code="CP" onclick="selectMealPlan(this)">
+                <div class="mpd-check">✓</div>
+                <div class="mpd-opt-code">CP</div>
+                <div class="mpd-opt-name">Breakfast Only</div>
+                <div class="mpd-opt-tag">Morning meal included</div>
+                <div class="mpd-opt-pills">
+                    <span class="mpd-pill">Breakfast</span>
+                </div>
+            </div>
+            <div class="mpd-option" data-code="EP" onclick="selectMealPlan(this)" style="grid-column: 1 / -1;">
+                <div class="mpd-check">✓</div>
+                <div class="mpd-opt-code">EP</div>
+                <div class="mpd-opt-name">Room Only</div>
+                <div class="mpd-opt-tag">No meals included</div>
+                <div class="mpd-opt-pills">
+                    <span class="mpd-pill">Pay per meal</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="mpd-actions">
+            <button class="mpd-cancel-btn" onclick="closeMealPlanDialog()">Cancel</button>
+            <button class="mpd-confirm-btn" id="mpdConfirmBtn" disabled onclick="confirmMealPlan()">Confirm Plan</button>
+        </div>
+    </div>
+</div>
+
 <script>
-/* ── Smooth page load: fade body in once DOM + fonts are ready ── */
+/* ── Meal Plan Dialog ─────────────────────────────── */
 (function() {
-    function showPage() {
-        document.body.classList.add('page-ready');
+    var _selectedCode = null;
+    var _originalCode = null;
+
+    var PLAN_LABELS = {
+        'AI':  '🍽️ All Inclusive',
+        'AP':  '🍳 Full Board',
+        'MAP': '🥗 Half Board',
+        'CP':  '☕ Breakfast Only',
+        'EP':  '🛏️ Room Only'
+    };
+
+    window.openMealPlanDialog = function(currentCode, currentLabel) {
+        _originalCode = currentCode || null;
+        _selectedCode = null;
+
+        var displayLabel = currentLabel || PLAN_LABELS[currentCode] || '—';
+        var cur = document.getElementById('mpdCurrentName');
+        if (cur) cur.textContent = displayLabel;
+
+        document.querySelectorAll('.mpd-option').forEach(function(el) {
+            el.classList.toggle('selected', el.dataset.code === _originalCode);
+        });
+        var confirmBtn = document.getElementById('mpdConfirmBtn');
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = 'Confirm Plan';
+
+        document.getElementById('mealPlanDialog').classList.add('active');
+    };
+
+    window.closeMealPlanDialog = function() {
+        document.getElementById('mealPlanDialog').classList.remove('active');
+    };
+
+    window.selectMealPlan = function(el) {
+        document.querySelectorAll('.mpd-option').forEach(function(o) { o.classList.remove('selected'); });
+        el.classList.add('selected');
+        _selectedCode = el.dataset.code;
+        document.getElementById('mpdConfirmBtn').disabled = (_selectedCode === _originalCode);
+    };
+
+    window.confirmMealPlan = function() {
+        if (!_selectedCode || _selectedCode === _originalCode) return;
+        var btn = document.getElementById('mpdConfirmBtn');
+        btn.disabled = true;
+        btn.textContent = 'Updating…';
+
+        /* Exact same API call as common.js changeMealPlan */
+        fetch('/api/update-meal-plan', {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({ room_no: window.ROOM_NO, meal_plan: _selectedCode })
+        })
+        .then(function(r) {
+            if (r.ok) {
+                closeMealPlanDialog();
+                var toast = document.getElementById('actToast');
+                if (toast) {
+                    toast.textContent = '✓ Meal plan updated!';
+                    toast.classList.add('show');
+                    setTimeout(function() {
+                        toast.classList.remove('show');
+                        toast.textContent = '✓ Reserved! See you at the activity 🎉';
+                    }, 3000);
+                }
+                if (typeof window.loadMyOrders === 'function') window.loadMyOrders();
+            } else {
+                btn.disabled = false;
+                btn.textContent = 'Confirm Plan';
+            }
+        })
+        .catch(function() {
+            btn.disabled = false;
+            btn.textContent = 'Confirm Plan';
+        });
+    };
+
+    /* ── Intercept the <select onchange="changeMealPlan(this.value)"> that
+          common.js injects into #myOrdersContent.
+          Strategy:
+            1. MutationObserver spots the <select> every time common.js re-renders
+            2. Hide the <select> and insert a styled "Change Plan" button
+            3. Button click reads the currently-selected plan from the <select>
+               and opens our dialog
+          We do NOT need to patch window.changeMealPlan because the <select>
+          is hidden — it can never fire its onchange.                        ── */
+
+    function interceptMealPlanSelect() {
+        var content = document.getElementById('myOrdersContent');
+        if (!content) return;
+
+        var sel = content.querySelector('select[onchange*="changeMealPlan"]');
+        if (!sel || sel._mpdPatched) return;
+        sel._mpdPatched = true;
+
+        /* Derive current plan code: look for the option that is pre-selected
+           (common.js sets `selected` on the matching option in the HTML string) */
+        var currentCode = '';
+        for (var i = 0; i < sel.options.length; i++) {
+            if (sel.options[i].value && sel.options[i].defaultSelected) {
+                currentCode = sel.options[i].value;
+                break;
+            }
+        }
+        if (!currentCode) {
+            /* fallback: scan text of the label div above the select */
+            var box = sel.closest('div');
+            if (box) {
+                var labelDiv = box.previousElementSibling;
+                if (labelDiv) {
+                    var txt = labelDiv.textContent || '';
+                    var codes = ['AI','AP','MAP','CP','EP'];
+                    for (var c = 0; c < codes.length; c++) {
+                        if (txt.indexOf(codes[c]) !== -1) { currentCode = codes[c]; break; }
+                    }
+                }
+            }
+        }
+
+        /* Hide native select */
+        sel.style.display = 'none';
+
+        /* Build trigger button */
+        var trigBtn = document.createElement('button');
+        trigBtn.style.cssText = 'background:rgba(192,24,90,.14);border:.5px solid rgba(192,24,90,.45);color:#f080a8;font-family:Jost,sans-serif;font-size:12px;letter-spacing:.18em;text-transform:uppercase;padding:8px 18px;border-radius:20px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:background .25s,box-shadow .25s;';
+        trigBtn.innerHTML = '<span>Change Plan</span> <span style="font-size:10px;opacity:.6;">&#9679;</span>';
+        trigBtn.onmouseenter = function() { this.style.background='rgba(192,24,90,.28)'; this.style.boxShadow='0 0 14px rgba(192,24,90,.25)'; };
+        trigBtn.onmouseleave = function() { this.style.background='rgba(192,24,90,.14)'; this.style.boxShadow='none'; };
+        trigBtn.onclick = function(e) {
+            e.stopPropagation();
+            /* Re-read current code each time in case the panel re-rendered */
+            var freshSel = document.querySelector('#myOrdersContent select[onchange*="changeMealPlan"]');
+            var code = currentCode;
+            if (freshSel) {
+                for (var j = 0; j < freshSel.options.length; j++) {
+                    if (freshSel.options[j].defaultSelected && freshSel.options[j].value) {
+                        code = freshSel.options[j].value; break;
+                    }
+                }
+            }
+            openMealPlanDialog(code, PLAN_LABELS[code] || code);
+        };
+
+        sel.parentNode.insertBefore(trigBtn, sel.nextSibling);
     }
-    if (document.readyState === 'complete') {
-        showPage();
-    } else {
-        window.addEventListener('load', showPage);
-    }
+
+    /* Watch #myOrdersContent — common.js re-renders on every poll cycle */
+    var observer = new MutationObserver(function() {
+        interceptMealPlanSelect();
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        var content = document.getElementById('myOrdersContent');
+        if (content) observer.observe(content, { childList: true, subtree: true });
+        interceptMealPlanSelect();
+    });
 })();
 </script>
+
 <script>
-// Force hard refresh every 30 seconds to clear cache
-setTimeout(function() {
-    window.location.href = window.location.href.split('?')[0] 
-        + '?room_no=' + window.ROOM_NO 
-        + '&t=' + Date.now();
-}, 30000);
+// Soft background refresh — reloads data via existing poll functions
+// without navigating away, so open dropdowns / overlays are never interrupted.
+(function startSoftRefresh() {
+    var INTERVAL_MS = 30000; // every 30 s — same cadence as before
+
+    function softRefresh() {
+        try { if (typeof window.loadRoomData   === 'function') window.loadRoomData();   } catch(e){}
+        try { if (typeof window.loadMyOrders   === 'function') window.loadMyOrders();   } catch(e){}
+        try { if (typeof window.loadServices   === 'function') window.loadServices();   } catch(e){}
+        try { if (typeof window.loadActivities === 'function') window.loadActivities(); } catch(e){}
+    }
+
+    setInterval(softRefresh, INTERVAL_MS);
+})();
+/* ── My Bookings scroll arrows (up & down) ── */
+(function() {
+    var panel, btnUp, btnDown;
+
+    function init() {
+        panel   = document.getElementById('moPanel');
+        btnUp   = document.getElementById('moScrollUp');
+        btnDown = document.getElementById('moScrollDown');
+        if (!panel || !btnUp || !btnDown) return;
+        panel.addEventListener('scroll', updateArrows, { passive: true });
+        updateArrows();
+    }
+
+    function updateArrows() {
+        if (!panel || !btnUp || !btnDown) return;
+        var scrollTop  = panel.scrollTop;
+        var atTop      = scrollTop <= 4;
+        var atBottom   = scrollTop + panel.clientHeight >= panel.scrollHeight - 8;
+        atTop    ? btnUp.classList.add('hidden')    : btnUp.classList.remove('hidden');
+        atBottom ? btnDown.classList.add('hidden')  : btnDown.classList.remove('hidden');
+    }
+
+    window.moScrollStep = function(dir) {
+        if (!panel) return;
+        panel.scrollBy({ top: dir * 220, behavior: 'smooth' });
+    };
+
+    /* Show/hide when overlay opens or closes */
+    var overlay = document.getElementById('myOrdersOverlay');
+    if (overlay) {
+        new MutationObserver(function() {
+            if (overlay.classList.contains('active')) {
+                setTimeout(updateArrows, 120);
+            } else {
+                if (btnUp)   btnUp.classList.add('hidden');
+                if (btnDown) btnDown.classList.add('hidden');
+            }
+        }).observe(overlay, { attributes: true, attributeFilter: ['class'] });
+    }
+
+    /* Re-check after dynamic content is injected */
+    var content = document.getElementById('myOrdersContent');
+    if (content) {
+        new MutationObserver(function() { setTimeout(updateArrows, 80); })
+            .observe(content, { childList: true, subtree: true });
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+    window.addEventListener('load', init);
+})();
 </script>
+
+<!-- ══════════════════════════════════════════
+     CANCEL BOOKING CONFIRMATION MODAL
+══════════════════════════════════════════ -->
+<style>
+    #cancelConfirmOverlay {
+        position: fixed; inset: 0; z-index: 9999;
+        display: flex; align-items: center; justify-content: center;
+        background: rgba(0,0,0,.78); backdrop-filter: blur(14px);
+        opacity: 0; visibility: hidden; pointer-events: none;
+        transition: opacity .3s ease, visibility .3s ease;
+    }
+    #cancelConfirmOverlay.active {
+        opacity: 1; visibility: visible; pointer-events: all;
+    }
+    .cancel-modal {
+        background: linear-gradient(160deg, rgba(22,4,13,0.98), rgba(8,2,5,0.98));
+        border: .5px solid rgba(192,24,90,.4);
+        border-radius: 22px;
+        padding: 44px 48px 38px;
+        max-width: 420px; width: 90%;
+        text-align: center; position: relative;
+        box-shadow: 0 24px 80px rgba(0,0,0,.75), 0 0 0 .5px rgba(212,168,67,.08);
+        animation: cancelModalIn .28s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    @keyframes cancelModalIn {
+        from { transform: scale(.88) translateY(14px); opacity: 0; }
+        to   { transform: scale(1)   translateY(0);    opacity: 1; }
+    }
+    .cancel-modal-icon {
+        font-size: 48px; line-height: 1; margin-bottom: 14px;
+    }
+    .cancel-modal-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 28px; font-weight: 300; color: var(--cream);
+        margin-bottom: 8px;
+    }
+    .cancel-modal-desc {
+        font-size: 13px; color: rgba(248,243,236,.45);
+        font-style: italic; line-height: 1.65; margin-bottom: 30px;
+    }
+    .cancel-modal-actions {
+        display: flex; gap: 12px;
+    }
+    .cancel-modal-keep {
+        flex: 1; padding: 13px 16px;
+        background: rgba(255,255,255,.07);
+        border: .5px solid rgba(255,255,255,.18);
+        color: rgba(248,243,236,.65);
+        border-radius: 12px;
+        font-family: 'Jost', sans-serif; font-size: 12px;
+        letter-spacing: .22em; text-transform: uppercase;
+        cursor: pointer; transition: all .22s;
+    }
+    .cancel-modal-keep:hover {
+        background: rgba(255,255,255,.13); color: var(--cream);
+    }
+    .cancel-modal-confirm {
+        flex: 1.4; padding: 13px 16px;
+        background: linear-gradient(135deg, #8b0000, #c0185a);
+        border: none; color: #fff;
+        border-radius: 12px;
+        font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 600;
+        letter-spacing: .22em; text-transform: uppercase;
+        cursor: pointer; transition: opacity .22s, box-shadow .22s;
+    }
+    .cancel-modal-confirm:hover {
+        opacity: .88; box-shadow: 0 0 22px rgba(192,24,90,.5);
+    }
+    .cancel-modal-divider {
+        width: 48px; height: .5px;
+        background: linear-gradient(90deg, transparent, rgba(212,168,67,.3), transparent);
+        margin: 0 auto 24px;
+    }
+</style>
+
+<div id="cancelConfirmOverlay">
+    <div class="cancel-modal">
+        <div class="cancel-modal-icon">🗑️</div>
+        <div class="cancel-modal-title">Cancel Booking?</div>
+        <div class="cancel-modal-divider"></div>
+        <div class="cancel-modal-desc">This action cannot be undone.<br>Are you sure you want to cancel this booking?</div>
+        <div class="cancel-modal-actions">
+            <button class="cancel-modal-keep" onclick="closeCancelConfirm()">Keep It</button>
+            <button class="cancel-modal-confirm" onclick="_executeCancelBooking()">Yes, Cancel</button>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

@@ -20,7 +20,8 @@ from .models import Template, Service, FoodItem, SpaItem, BarItem, DineItem, Ent
 from .booking_routes import router as booking_router   # NEW: booking/order endpoints
 import httpx 
 from .models import GroupBooking  
-from fastapi.responses import JSONResponse                                         # NEW: used by booking_routes for PMS sync
+from fastapi.responses import JSONResponse   
+from app.dashboard import router as dashboard_router                                      # NEW: used by booking_routes for PMS sync
 
 
 models.Base.metadata.create_all(bind=engine)
@@ -41,7 +42,8 @@ with engine.connect() as _conn:
 
 
 app = FastAPI()
-app.include_router(booking_router)   # NEW: registers all /api/order, /api/spa-booking etc.
+app.include_router(booking_router)  
+app.include_router(dashboard_router) # NEW: registers all /api/order, /api/spa-booking etc.
 
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -576,6 +578,7 @@ def discard_theme(theme_id: int):
 
 @app.get("/api/room-data/{room_no}")
 async def get_room_data(room_no: int):
+    custom_message = room_messages.get(room_no, "Have a beautiful stay.")
     try:
         async with httpx.AsyncClient(timeout=5.0) as client:
             response = await client.get(
@@ -584,11 +587,11 @@ async def get_room_data(room_no: int):
             data = response.json()
             return {
                 "name": data.get("name", "Guest"),
-                "message": room_messages.get(room_no, "Have a beautiful stay.")  # ← this was removed!
+                "message": custom_message
             }
     except Exception as e:
         print("ERROR:", e)
-        return {"name": "Guest", "message": "Have a beautiful stay."}
+        return {"name": "Guest", "message": custom_message}  # ← always use room_messages
 
 
 # =========================
@@ -2058,6 +2061,11 @@ def admin_group_bookings(request: Request):
         "upcoming_groups": upcoming_groups,
     })
 
+
+# =========================
+# SEND GROUP MESSAGE
+# =========================
+
 @app.post("/send-group-message")
 def send_group_message(
     group_id: int = Form(...),
@@ -2073,3 +2081,26 @@ def send_group_message(
         except:
             pass
     return RedirectResponse("/admin/groups", status_code=303)
+
+@app.get("/api/guests/current")
+def api_current_guests():
+    db = SessionLocal()
+    today = date.today()
+    all_guests = db.query(models.Guest).all()
+
+    current_guests = []
+    for g in all_guests:
+        ci = g.check_in  if isinstance(g.check_in,  date) else date.fromisoformat(str(g.check_in))
+        co = g.check_out if isinstance(g.check_out, date) else date.fromisoformat(str(g.check_out))
+        if ci <= today <= co:
+            days_left = (co - today).days
+            current_guests.append({
+                "room_no":    g.room_no,
+                "guest_name": g.guest_name,
+                "check_in":   str(g.check_in),
+                "check_out":  str(g.check_out),
+                "days_left":  days_left
+            })
+
+    db.close()
+    return current_guests

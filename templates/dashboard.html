@@ -8,6 +8,7 @@
     <!-- Time Picker -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -181,6 +182,12 @@
             letter-spacing: -0.4px;
         }
 
+        /* ── AVATAR DROPDOWN ── */
+        .avatar-wrap {
+            position: relative;
+            display: inline-block;
+        }
+
         .avatar {
             width: 38px; height: 38px;
             background: linear-gradient(135deg, var(--accent), #c41f62);
@@ -188,6 +195,97 @@
             display: flex; align-items: center; justify-content: center;
             font-weight: 700; font-size: 14px; color: #fff;
             box-shadow: 0 2px 10px rgba(164,23,79,0.35);
+            cursor: pointer;
+            transition: box-shadow 0.2s, transform 0.15s;
+            user-select: none;
+        }
+
+        .avatar:hover {
+            box-shadow: 0 4px 16px rgba(164,23,79,0.5);
+            transform: scale(1.07);
+        }
+
+        .avatar-dropdown {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: 0 12px 40px rgba(61,8,32,0.18), 0 2px 8px rgba(61,8,32,0.08);
+            min-width: 200px;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(-8px) scale(0.97);
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            z-index: 500;
+        }
+
+        .avatar-dropdown.open {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        .avatar-dropdown-header {
+            padding: 16px 18px 12px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar-dropdown-icon {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, var(--accent), #c41f62);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 15px; color: #fff;
+            flex-shrink: 0;
+            box-shadow: 0 3px 10px rgba(164,23,79,0.3);
+        }
+
+        .avatar-dropdown-info strong {
+            display: block;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .avatar-dropdown-info span {
+            font-size: 11px;
+            color: var(--muted);
+            letter-spacing: 0.5px;
+        }
+
+        .avatar-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #c0392b;
+            cursor: pointer;
+            transition: background 0.13s;
+            border: none;
+            background: none;
+            width: 100%;
+            font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+            text-align: left;
+        }
+
+        .avatar-dropdown-item:hover {
+            background: rgba(231,76,60,0.07);
+        }
+
+        .avatar-dropdown-item .item-icon {
+            width: 28px; height: 28px;
+            background: rgba(231,76,60,0.09);
+            border-radius: 7px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px;
         }
 
         /* ── STAT CARDS ── */
@@ -369,6 +467,7 @@
             border-radius: 12px;
             padding: 16px 18px;
             box-shadow: 0 2px 8px rgba(122,16,64,0.05);
+            min-width: 0;
         }
 
         .input-group { display: flex; flex-direction: column; gap: 5px; }
@@ -482,7 +581,33 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
-
+        
+        /* ── FILE UPLOAD ZONE ── */
+        .file-upload-zone {
+            position: relative; display: flex; flex-direction: row;
+            align-items: center; gap: 10px; min-width: 0; height: 44px;
+            border: 2px dashed var(--border); border-radius: 8px;
+            background: var(--surface2); cursor: pointer;
+            transition: all 0.2s ease; padding: 0 14px; overflow: hidden;
+            width: 100%;
+        }
+        .file-upload-zone:hover, .file-upload-zone.drag-over {
+            border-color: var(--accent); background: rgba(168,23,79,0.05);
+            box-shadow: 0 0 0 3px rgba(168,23,79,0.08);
+        }
+        .file-upload-zone input[type="file"] {
+            position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+        }
+        .file-upload-icon { font-size: 17px; line-height: 1; pointer-events: none; flex-shrink: 0; }
+        .file-upload-texts { display: flex; flex-direction: column; gap: 1px; pointer-events: none; overflow: hidden; }
+        .file-upload-text { font-size: 12px; font-weight: 600; color: var(--accent); white-space: nowrap; }
+        .file-upload-hint { font-size: 10px; color: var(--muted); white-space: nowrap; }
+        .file-upload-zone.has-file { border-style: solid; border-color: var(--success); background: rgba(26,188,156,0.05); }
+        .file-upload-chosen { font-size: 11px; font-weight: 600; color: var(--text); max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; pointer-events: none; display: none; }
+        .file-upload-zone.has-file .file-upload-chosen { display: block; }
+        .file-upload-zone.has-file .file-upload-hint { display: none; }
+        .file-upload-zone.has-file .file-upload-text { color: var(--success); font-size: 11px; }
+        
         /* ── CATEGORY COVER IMAGE CARDS ── */
         .cat-cover-grid {
             display: grid;
@@ -652,9 +777,384 @@
     from { transform: translateX(100%); opacity: 0; }
     to   { transform: translateX(0);    opacity: 1; }
 }   
+.period-btn {
+    padding: 7px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+}
+.period-btn.active, .period-btn:hover {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+/* ── LOGIN OVERLAY ── */
+#login-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: linear-gradient(135deg, #3d0820 0%, #7a1040 50%, #5c0c30 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: loginFadeIn 0.4s ease;
+}
+
+@keyframes loginFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.login-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 44px 40px 36px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.35);
+    animation: loginSlideUp 0.45s cubic-bezier(0.22,1,0.36,1);
+    position: relative;
+    overflow: hidden;
+}
+
+.login-card::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: rgba(122,16,64,0.06);
+    pointer-events: none;
+}
+
+@keyframes loginSlideUp {
+    from { opacity: 0; transform: translateY(32px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+.login-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+}
+
+.login-logo-icon {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, #7a1040, #c41f62);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 6px 18px rgba(122,16,64,0.35);
+}
+
+.login-logo-text span {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #2d0e1c;
+    display: block;
+}
+
+.login-logo-text small {
+    font-size: 11px;
+    color: #9a6478;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+}
+
+.login-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #2d0e1c;
+    margin-bottom: 6px;
+}
+
+.login-subtitle {
+    font-size: 13px;
+    color: #9a6478;
+    margin-bottom: 28px;
+}
+
+.login-field {
+    margin-bottom: 16px;
+}
+
+.login-field label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.9px;
+    color: #9a6478;
+    margin-bottom: 6px;
+}
+
+.login-field input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid #f0d6e4;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+    color: #2d0e1c;
+    background: #fdf5f8;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    box-sizing: border-box;
+}
+
+.login-field input:focus {
+    border-color: #a8174f;
+    box-shadow: 0 0 0 3px rgba(164,23,79,0.1);
+    background: #fff;
+}
+
+.login-error {
+    background: rgba(231,76,60,0.08);
+    border: 1px solid rgba(231,76,60,0.25);
+    color: #c0392b;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: none;
+}
+
+.login-error.show { display: block; }
+
+.login-btn {
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(135deg, #a8174f, #c41f62);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+    box-shadow: 0 4px 16px rgba(164,23,79,0.35);
+    transition: all 0.15s;
+    margin-top: 4px;
+}
+
+.login-btn:hover {
+    background: linear-gradient(135deg, #921450, #a8174f);
+    box-shadow: 0 6px 22px rgba(164,23,79,0.45);
+    transform: translateY(-1px);
+}
+
+.login-btn:active { transform: translateY(0); }
+
+/* ── FORGOT PASSWORD ── */
+.forgot-link {
+    display: block;
+    text-align: right;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    cursor: pointer;
+    margin-top: -8px;
+    margin-bottom: 4px;
+    text-decoration: none;
+    transition: color 0.15s;
+    background: none;
+    border: none;
+    font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+    padding: 0;
+}
+.forgot-link:hover { color: #c41f62; text-decoration: underline; }
+
+.fp-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+    padding: 0;
+    margin-bottom: 20px;
+    transition: color 0.15s;
+}
+.fp-back:hover { color: var(--accent); }
+
+.fp-success {
+    background: rgba(26,188,156,0.09);
+    border: 1px solid rgba(26,188,156,0.3);
+    color: #0e9c7e;
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.6;
+    display: none;
+    margin-bottom: 16px;
+}
+.fp-success.show { display: block; }
+
+.login-card-inner {
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.login-card-inner.hidden {
+    opacity: 0;
+    transform: translateX(-16px);
+    pointer-events: none;
+    position: absolute;
+}
+.login-card-inner.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* ── LOGOUT BUTTON ── */
+.logout-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: rgba(231,76,60,0.08);
+    border: 1px solid rgba(231,76,60,0.2);
+    color: #c0392b;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+    transition: all 0.15s;
+    text-decoration: none;
+}
+
+.logout-btn:hover {
+    background: rgba(231,76,60,0.16);
+    border-color: rgba(231,76,60,0.35);
+    transform: translateY(-1px);
+}
+
+/* ── LOGOUT SUCCESS TOAST ── */
+#logout-toast {
+    position: fixed;
+    top: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-80px);
+    background: #ffffff;
+    border: 1px solid rgba(26,188,156,0.35);
+    border-left: 4px solid #1abc9c;
+    border-radius: 12px;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #0e9c7e;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    z-index: 99999;
+    transition: transform 0.4s cubic-bezier(0.22,1,0.36,1), opacity 0.4s ease;
+    opacity: 0;
+    white-space: nowrap;
+}
+#logout-toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+#logout-toast .toast-icon {
+    font-size: 20px;
+}
     </style>
 </head>
 <body>
+
+<!-- ── LOGOUT TOAST ── -->
+<div id="logout-toast">
+    <span class="toast-icon">✅</span>
+    Logged out successfully
+</div>
+
+<!-- ── LOGIN OVERLAY ── -->
+<div id="login-overlay">
+    <div class="login-card" style="position:relative;min-height:360px;">
+
+        <!-- ── SIGN IN PANEL ── -->
+        <div class="login-card-inner visible" id="panel-signin">
+            <div class="login-logo">
+                <div class="login-logo-icon">🌊</div>
+                <div class="login-logo-text">
+                    <span>Admin Panel</span>
+                    <small>Hotel Management</small>
+                </div>
+            </div>
+            <div class="login-title">Welcome back</div>
+            <div class="login-subtitle">Sign in to access the admin console</div>
+            <div class="login-error" id="login-error">⚠️ Incorrect username or password.</div>
+            <div class="login-field">
+                <label>Username</label>
+                <input type="text" id="login-username" placeholder="Enter username" autocomplete="username">
+            </div>
+            <div class="login-field">
+                <label>Password</label>
+                <input type="password" id="login-password" placeholder="Enter password" autocomplete="current-password">
+            </div>
+            <button class="forgot-link" onclick="showForgotPassword()">Forgot password?</button>
+            <button class="login-btn" onclick="doLogin()">Sign In →</button>
+        </div>
+
+        <!-- ── FORGOT PASSWORD PANEL ── -->
+        <div class="login-card-inner hidden" id="panel-forgot" style="position:absolute;inset:0;padding:44px 40px 36px;overflow-y:auto;">
+            <button class="fp-back" onclick="showSignIn()">← Back to sign in</button>
+            <div class="login-title">Reset Password</div>
+            <div class="login-subtitle" style="margin-bottom:20px;">Verify your username, then set a new password.</div>
+
+            <!-- Step 1: verify username -->
+            <div id="fp-step1">
+                <div class="login-error" id="fp-error" style="display:none;"></div>
+                <div class="login-field">
+                    <label>Username</label>
+                    <input type="text" id="fp-username" placeholder="Enter your admin username">
+                </div>
+                <button class="login-btn" onclick="doVerifyUser()">Verify Username →</button>
+            </div>
+
+            <!-- Step 2: set new password (hidden until verified) -->
+            <div id="fp-step2" style="display:none;">
+                <div class="fp-success show" style="margin-bottom:18px;">✅ Username verified! Now create your new password.</div>
+                <div class="login-error" id="fp-pw-error" style="display:none;"></div>
+                <div class="login-field">
+                    <label>New Password</label>
+                    <input type="password" id="fp-newpass" placeholder="Enter new password">
+                </div>
+                <div class="login-field">
+                    <label>Confirm New Password</label>
+                    <input type="password" id="fp-confirmpass" placeholder="Confirm new password">
+                </div>
+                <button class="login-btn" onclick="doUpdatePassword()">Update Password →</button>
+            </div>
+
+            <!-- Step 3: success -->
+            <div id="fp-step3" style="display:none;text-align:center;padding-top:10px;">
+                <div style="font-size:44px;margin-bottom:14px;">🎉</div>
+                <div class="login-title" style="margin-bottom:8px;">Password Updated!</div>
+                <div class="login-subtitle" style="margin-bottom:24px;">Your password has been changed successfully.</div>
+                <button class="login-btn" onclick="showSignIn()">Back to Sign In →</button>
+            </div>
+        </div>
+
+    </div>
+</div>
 
     <!-- ── AUTO REFRESH (no blink) ── -->
 <script>
@@ -685,6 +1185,12 @@
             return;
         }
 
+        // ── Guests page: use dedicated API so typed messages are NOT wiped ──
+        if (document.getElementById('guests-tbody')) {
+            refreshGuestTable();
+            return;
+        }
+
         // ── All other pages: skip if user has started typing/uploading anything ──
         if (userIsTyping()) return;
 
@@ -706,8 +1212,519 @@
             });
     }
 
-    setInterval(silentRefresh, 15000);
+    function refreshGuestTable() {
+        fetch('/api/guests/current', { cache: 'no-store' })
+            .then(function(r) { return r.json(); })
+            .then(function(guests) {
+                var tbody   = document.getElementById('guests-tbody');
+                var countEl = document.getElementById('guests-count');
+                if (!tbody) return;
+
+                // Preserve any messages the admin is currently typing
+                var typedMessages = {};
+                tbody.querySelectorAll('tr').forEach(function(row) {
+                    var roomInput = row.querySelector('input[name="room_no"]');
+                    var msgInput  = row.querySelector('input[name="message"]');
+                    if (roomInput && msgInput && msgInput.value.trim() !== '') {
+                        typedMessages[roomInput.value] = msgInput.value;
+                    }
+                });
+
+                if (countEl) {
+                    countEl.textContent = '🟢 ' + guests.length + ' Currently In';
+                }
+
+                if (guests.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:30px;">No guests currently checked in.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = guests.map(function(g) {
+                    var saved = typedMessages[String(g.room_no)] || '';
+                    return '<tr>' +
+                        '<td><strong>#' + g.room_no + '</strong></td>' +
+                        '<td>' + g.guest_name + '</td>' +
+                        '<td>' + g.check_in + '</td>' +
+                        '<td>' + g.check_out + '</td>' +
+                        '<td><span style="background:rgba(52,152,219,0.1);color:#2176ae;font-size:12px;font-weight:600;padding:3px 10px;border-radius:12px;">' +
+                            g.days_left + ' day' + (g.days_left !== 1 ? 's' : '') +
+                        '</span></td>' +
+                        '<td><form action="/send-message" method="post" class="msg-form">' +
+                            '<input type="hidden" name="room_no" value="' + g.room_no + '">' +
+                            '<input type="text" name="message" placeholder="Type message…" required value="' + saved + '">' +
+                            '<button type="submit" class="btn btn-primary btn-sm">Send</button>' +
+                        '</form></td>' +
+                        '<td><button type="button" onclick="deleteGuest(\'' + g.room_no + '\')" class="btn btn-danger">Delete</button></td>' +
+                    '</tr>';
+                }).join('');
+            })
+            .catch(function() {});
+    }
+
+    setInterval(silentRefresh, 5000);
 })();
+
+// ── Dashboard Analytics ──────────────────────────────
+if (document.getElementById('stat-active')) {
+    let dashPeriod = 'today';
+
+    function setPeriod(period, btn) {
+        dashPeriod = period;
+        document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        loadDashStats();
+    }
+
+    async function loadDashStats() {
+        let url = `/api/dashboard/stats?period=${dashPeriod}`;
+        if (dashPeriod === 'custom') {
+            const from = document.getElementById('dash-from').value;
+            const to   = document.getElementById('dash-to').value;
+            if (!from || !to) { alert('Select both dates.'); return; }
+            url += `&date_from=${from}&date_to=${to}`;
+        }
+        try {
+            const res  = await fetch(url);
+            const d    = await res.json();
+
+            // Top cards
+            document.getElementById('stat-active').textContent    = d.active_guests;
+            document.getElementById('stat-checkins').textContent  = d.checkins;
+            document.getElementById('stat-checkouts').textContent = d.checkouts;
+            document.getElementById('stat-theme').textContent     = d.theme.name;
+            document.getElementById('stat-theme-sub').textContent = d.theme.sub;
+            document.getElementById('stat-tvs').textContent       = d.tv.online;
+            document.getElementById('dash-date-label').textContent = '📅 ' + d.date_from + ' → ' + d.date_to;
+
+            // TV Status panel
+            document.getElementById('tv-online').textContent = d.tv.online;
+            document.getElementById('tv-bound').textContent  = d.tv.bound;
+            document.getElementById('tv-total').textContent  = d.tv.total;
+            document.getElementById('tv-status-msg').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
+
+            // PMS Bookings
+            document.getElementById('pms-food').textContent = d.pms_bookings.food;
+            document.getElementById('pms-spa').textContent  = d.pms_bookings.spa;
+            document.getElementById('pms-dine').textContent = d.pms_bookings.dine;
+            document.getElementById('pms-ent').textContent  = d.pms_bookings.entertainment;
+
+            // PMS Activity
+            document.getElementById('act-checkins').textContent   = d.pms_activity.checkins;
+            document.getElementById('act-checkouts').textContent  = d.pms_activity.checkouts;
+            document.getElementById('act-activities').textContent = d.pms_activity.activities;
+            document.getElementById('act-total').textContent      = d.pms_activity.total;
+
+            // Room Occupancy donut
+            const pct = d.occupancy.total_rooms > 0
+                ? Math.round((d.occupancy.occupied / d.occupancy.total_rooms) * 100)
+                : 0;
+            document.getElementById('occ-pct').textContent      = pct + '%';
+            document.getElementById('occ-occupied').textContent  = d.occupancy.occupied;
+            document.getElementById('occ-available').textContent = d.occupancy.available;
+            document.getElementById('occ-total').textContent     = d.occupancy.total_rooms;
+            document.getElementById('occ-ring').setAttribute('stroke-dasharray', pct + ' ' + (100 - pct));
+
+            // Service Demand bars
+            const services = [
+                { label: '🍽️ Food / Bar', val: d.pms_bookings.food },
+                { label: '🧖 Spa',         val: d.pms_bookings.spa },
+                { label: '🎮 Entertainment', val: d.pms_bookings.entertainment },
+                { label: '🕯️ Dining',      val: d.pms_bookings.dine },
+            ];
+            const maxVal = Math.max(...services.map(s => s.val), 1);
+            document.getElementById('demand-bars').innerHTML = services.map(s => `
+                <div style="margin-bottom:10px;">
+                    <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;">
+                        <span>${s.label}</span><strong style="color:var(--accent);">${s.val}</strong>
+                    </div>
+                    <div style="background:var(--surface2);border-radius:20px;height:8px;overflow:hidden;">
+                        <div style="height:100%;border-radius:20px;background:linear-gradient(90deg,var(--accent),#c41f62);
+                             width:${Math.round((s.val/maxVal)*100)}%;transition:width 0.5s ease;"></div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Load chart data
+            loadDashCharts();
+
+        } catch(e) {
+            console.error('Dashboard fetch error:', e);
+        }
+    }
+
+    loadDashStats();
+    setInterval(loadDashStats, 15000); // refresh every 15s
+
+    // ── Chart instance (kept so we can destroy/redraw on period change) ──
+    let _trendChart = null;
+
+    async function loadDashCharts() {
+        let url = `/api/dashboard/charts?period=${dashPeriod}`;
+        if (dashPeriod === 'custom') {
+            const from = document.getElementById('dash-from').value;
+            const to   = document.getElementById('dash-to').value;
+            if (from && to) url += `&date_from=${from}&date_to=${to}`;
+        }
+        try {
+            const res = await fetch(url);
+            const c   = await res.json();
+
+            // ── Booking Trend Line Chart ──────────────────────────
+            const ctx = document.getElementById('trend-chart');
+            if (ctx) {
+                if (_trendChart) { _trendChart.destroy(); }
+                _trendChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: c.trend.labels,
+                        datasets: [
+                            {
+                                label: 'Check-ins',
+                                data: c.trend.checkins,
+                                borderColor: '#a8174f',
+                                backgroundColor: 'rgba(168,23,79,0.08)',
+                                tension: 0.4,
+                                fill: true,
+                                pointRadius: 4,
+                                pointBackgroundColor: '#a8174f',
+                            },
+                            {
+                                label: 'Bookings',
+                                data: c.trend.bookings,
+                                borderColor: '#3498db',
+                                backgroundColor: 'rgba(52,152,219,0.07)',
+                                tension: 0.4,
+                                fill: true,
+                                pointRadius: 4,
+                                pointBackgroundColor: '#3498db',
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: {
+                                grid: { color: 'rgba(240,214,228,0.5)' },
+                                ticks: { font: { size: 11 }, color: '#9a6478' }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: 'rgba(240,214,228,0.5)' },
+                                ticks: { font: { size: 11 }, color: '#9a6478', stepSize: 1 }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // ── Today's Activity ──────────────────────────────────
+            const actList = document.getElementById('todays-activity-list');
+            if (actList) {
+                if (!c.recent_activity || c.recent_activity.length === 0) {
+                    actList.innerHTML = `
+                        <div style="text-align:center;padding:40px 20px;color:var(--muted);">
+                            <div style="font-size:32px;margin-bottom:8px;">📬</div>
+                            <div style="font-size:13px;">No activity for this period</div>
+                        </div>`;
+                } else {
+                    actList.innerHTML = c.recent_activity.map(a => `
+                        <div style="display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);">
+                            <span style="font-size:18px;flex-shrink:0;">${a.icon}</span>
+                            <div style="flex:1;min-width:0;">
+                                <div style="font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${a.label}</div>
+                                <div style="font-size:11px;color:var(--muted);">Room ${a.room} · ${a.time}</div>
+                            </div>
+                            <span style="font-size:11px;font-weight:600;color:var(--accent);flex-shrink:0;">${a.type}</span>
+                        </div>`).join('');
+                }
+            }
+
+            // ── Top Performers ────────────────────────────────────
+            const perfList = document.getElementById('top-performers-list');
+            if (perfList) {
+                const medals = ['🥇','🥈','🥉','4️⃣'];
+                const cats = [
+                    { label: 'Food/Bar',     icon: '🍽️', val: c.top_performers.food },
+                    { label: 'Spa',          icon: '🧖',  val: c.top_performers.spa },
+                    { label: 'Entertain',    icon: '🎮',  val: c.top_performers.entertainment },
+                    { label: 'Dining',       icon: '🕯️', val: c.top_performers.dine },
+                ].sort((a,b) => b.val - a.val);
+                const maxP = Math.max(...cats.map(x => x.val), 1);
+                perfList.innerHTML = cats.map((cat, i) => `
+                    <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);">
+                        <span style="font-size:18px;width:24px;text-align:center;">${medals[i]||'▪️'}</span>
+                        <span style="font-size:16px;">${cat.icon}</span>
+                        <span style="flex:1;font-size:14px;font-weight:500;">${cat.label}</span>
+                        <div style="width:120px;background:var(--surface2);border-radius:20px;height:7px;overflow:hidden;">
+                            <div style="height:100%;border-radius:20px;background:linear-gradient(90deg,var(--accent),#c41f62);
+                                 width:${Math.round((cat.val/maxP)*100)}%;transition:width 0.5s;"></div>
+                        </div>
+                        <strong style="font-size:14px;color:var(--accent);min-width:22px;text-align:right;">${cat.val}</strong>
+                    </div>`).join('');
+            }
+
+            // ── Most Active Room + Total Orders ───────────────────
+            const marEl = document.getElementById('most-active-room');
+            const topEl = document.getElementById('total-orders-period');
+            if (marEl) marEl.textContent = c.most_active_room ? `Room ${c.most_active_room}` : '—';
+            if (topEl) topEl.textContent = c.total_orders_count ?? 0;
+
+        } catch(e) {
+            console.error('Chart fetch error:', e);
+        }
+    }
+}
+// ── Dashboard Analytics ──────────────────────────────
+var dashPeriod = 'today';
+
+function setPeriod(period, btn) {
+    dashPeriod = period;
+    document.querySelectorAll('.period-btn').forEach(function(b) {
+        b.classList.remove('active');
+    });
+    if (btn) btn.classList.add('active');
+    loadDashStats();
+}
+
+async function loadDashStats() {
+    if (!document.getElementById('stat-active')) return;
+
+    var url = '/api/dashboard/stats?period=' + dashPeriod;
+    if (dashPeriod === 'custom') {
+        var from = document.getElementById('dash-from').value;
+        var to   = document.getElementById('dash-to').value;
+        if (!from || !to) { alert('Select both dates.'); return; }
+        url += '&date_from=' + from + '&date_to=' + to;
+    }
+
+    try {
+        var res = await fetch(url);
+        var d   = await res.json();
+
+        // Top cards
+        document.getElementById('stat-active').textContent    = d.active_guests;
+        document.getElementById('stat-checkins').textContent  = d.checkins;
+        document.getElementById('stat-checkouts').textContent = d.checkouts;
+        document.getElementById('stat-theme').textContent     = d.theme.name;
+        document.getElementById('stat-theme-sub').textContent = d.theme.sub;
+        document.getElementById('stat-tvs').textContent       = d.tv.online;
+        document.getElementById('dash-date-label').textContent = '📅 ' + d.date_from + ' → ' + d.date_to;
+
+        // TV Status
+        document.getElementById('tv-online').textContent = d.tv.online;
+        document.getElementById('tv-bound').textContent  = d.tv.bound;
+        document.getElementById('tv-total').textContent  = d.tv.total;
+        document.getElementById('tv-status-msg').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
+
+        // PMS Bookings
+        document.getElementById('pms-food').textContent = d.pms_bookings.food;
+        document.getElementById('pms-spa').textContent  = d.pms_bookings.spa;
+        document.getElementById('pms-dine').textContent = d.pms_bookings.dine;
+        document.getElementById('pms-ent').textContent  = d.pms_bookings.entertainment;
+
+        // PMS Activity
+        document.getElementById('act-checkins').textContent   = d.pms_activity.checkins;
+        document.getElementById('act-checkouts').textContent  = d.pms_activity.checkouts;
+        document.getElementById('act-activities').textContent = d.pms_activity.activities;
+        document.getElementById('act-total').textContent      = d.pms_activity.total;
+
+        // Room Occupancy donut
+        var pct = d.occupancy.total_rooms > 0
+            ? Math.round((d.occupancy.occupied / d.occupancy.total_rooms) * 100)
+            : 0;
+        document.getElementById('occ-pct').textContent       = pct + '%';
+        document.getElementById('occ-occupied').textContent  = d.occupancy.occupied;
+        document.getElementById('occ-available').textContent = d.occupancy.available;
+        document.getElementById('occ-total').textContent     = d.occupancy.total_rooms;
+        document.getElementById('occ-ring').setAttribute('stroke-dasharray', pct + ' ' + (100 - pct));
+
+        // Service Demand bars
+        var services = [
+            { label: '🍽️ Food / Bar',     val: d.pms_bookings.food },
+            { label: '🧖 Spa',             val: d.pms_bookings.spa },
+            { label: '🎮 Entertainment',   val: d.pms_bookings.entertainment },
+            { label: '🕯️ Dining',         val: d.pms_bookings.dine },
+        ];
+        var maxVal = Math.max.apply(null, services.map(function(s){ return s.val; }).concat([1]));
+        document.getElementById('demand-bars').innerHTML = services.map(function(s) {
+            var w = Math.round((s.val / maxVal) * 100);
+            return '<div style="margin-bottom:10px;">' +
+                '<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;">' +
+                    '<span>' + s.label + '</span>' +
+                    '<strong style="color:var(--accent);">' + s.val + '</strong>' +
+                '</div>' +
+                '<div style="background:var(--surface2);border-radius:20px;height:8px;overflow:hidden;">' +
+                    '<div style="height:100%;border-radius:20px;background:linear-gradient(90deg,var(--accent),#c41f62);' +
+                         'width:' + w + '%;transition:width 0.5s ease;"></div>' +
+                '</div></div>';
+        }).join('');
+
+    } catch(e) {
+        console.error('Dashboard fetch error:', e);
+    }
+}
+
+// Run after DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    loadDashStats();
+    setInterval(loadDashStats, 15000);
+});
+</script>
+
+<script>
+// ── LOGIN / LOGOUT ──────────────────────────────────────
+// Credentials (plain-HTML version — change these as needed)
+var ADMIN_USER = 'admin';
+var ADMIN_PASS = localStorage.getItem('adminPass') || 'admin123';
+
+function showForgotPassword() {
+    document.getElementById('panel-signin').classList.remove('visible');
+    document.getElementById('panel-signin').classList.add('hidden');
+    setTimeout(function() {
+        document.getElementById('panel-forgot').classList.remove('hidden');
+        document.getElementById('panel-forgot').classList.add('visible');
+        document.getElementById('fp-username').focus();
+    }, 180);
+    // reset all steps
+    document.getElementById('fp-step1').style.display = 'block';
+    document.getElementById('fp-step2').style.display = 'none';
+    document.getElementById('fp-step3').style.display = 'none';
+    document.getElementById('fp-error').style.display = 'none';
+    document.getElementById('fp-username').value = '';
+    if (document.getElementById('fp-newpass')) document.getElementById('fp-newpass').value = '';
+    if (document.getElementById('fp-confirmpass')) document.getElementById('fp-confirmpass').value = '';
+    if (document.getElementById('fp-pw-error')) document.getElementById('fp-pw-error').style.display = 'none';
+}
+
+function showSignIn() {
+    document.getElementById('panel-forgot').classList.remove('visible');
+    document.getElementById('panel-forgot').classList.add('hidden');
+    setTimeout(function() {
+        document.getElementById('panel-signin').classList.remove('hidden');
+        document.getElementById('panel-signin').classList.add('visible');
+        document.getElementById('login-username').focus();
+    }, 180);
+    document.getElementById('login-error').classList.remove('show');
+}
+
+function doVerifyUser() {
+    var user = document.getElementById('fp-username').value.trim();
+    var errEl = document.getElementById('fp-error');
+    if (!user) {
+        errEl.style.display = 'block'; errEl.textContent = '⚠️ Please enter your username.'; return;
+    }
+    if (user !== ADMIN_USER) {
+        errEl.style.display = 'block'; errEl.textContent = '⚠️ Username not recognised.'; return;
+    }
+    errEl.style.display = 'none';
+    document.getElementById('fp-step1').style.display = 'none';
+    document.getElementById('fp-step2').style.display = 'block';
+    document.getElementById('fp-newpass').focus();
+}
+
+function doUpdatePassword() {
+    var np  = document.getElementById('fp-newpass').value;
+    var cp  = document.getElementById('fp-confirmpass').value;
+    var err = document.getElementById('fp-pw-error');
+    if (!np) {
+        err.style.display = 'block'; err.textContent = '⚠️ Please enter a new password.'; return;
+    }
+    if (np.length < 6) {
+        err.style.display = 'block'; err.textContent = '⚠️ Password must be at least 6 characters.'; return;
+    }
+    if (np !== cp) {
+        err.style.display = 'block'; err.textContent = '⚠️ Passwords do not match.'; return;
+    }
+    err.style.display = 'none';
+    ADMIN_PASS = np;
+    localStorage.setItem('adminPass', np);
+    document.getElementById('fp-step2').style.display = 'none';
+    document.getElementById('fp-step3').style.display = 'block';
+}
+
+function doForgotPassword() { doVerifyUser(); }
+
+function doLogin() {
+    var user = document.getElementById('login-username').value.trim();
+    var pass = document.getElementById('login-password').value;
+    var errEl = document.getElementById('login-error');
+
+    if (user === ADMIN_USER && pass === ADMIN_PASS) {
+        errEl.classList.remove('show');
+        sessionStorage.setItem('adminLoggedIn', '1');
+        var overlay = document.getElementById('login-overlay');
+        overlay.style.transition = 'opacity 0.35s ease';
+        overlay.style.opacity = '0';
+        setTimeout(function() { overlay.style.display = 'none'; }, 350);
+    } else {
+        errEl.classList.add('show');
+        document.getElementById('login-password').value = '';
+        document.getElementById('login-password').focus();
+    }
+}
+
+function toggleAvatarMenu(e) {
+    e.stopPropagation();
+    var dd = document.getElementById('avatar-dropdown');
+    if (dd) dd.classList.toggle('open');
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function() {
+    var dd = document.getElementById('avatar-dropdown');
+    if (dd) dd.classList.remove('open');
+});
+
+function doLogout() {
+    sessionStorage.removeItem('adminLoggedIn');
+
+    // Close avatar dropdown
+    var dd = document.getElementById('avatar-dropdown');
+    if (dd) dd.classList.remove('open');
+
+    // Show logout toast
+    var toast = document.getElementById('logout-toast');
+    if (toast) {
+        toast.classList.add('show');
+        setTimeout(function() { toast.classList.remove('show'); }, 2800);
+    }
+
+    // Show login overlay after short delay so toast is visible first
+    setTimeout(function() {
+        var overlay = document.getElementById('login-overlay');
+        overlay.style.display = 'flex';
+        overlay.style.opacity = '0';
+        overlay.style.transition = 'opacity 0.35s ease';
+        document.getElementById('login-username').value = '';
+        document.getElementById('login-password').value = '';
+        document.getElementById('login-error').classList.remove('show');
+        // Reset forgot password steps
+        document.getElementById('fp-step1').style.display = 'block';
+        document.getElementById('fp-step2').style.display = 'none';
+        document.getElementById('fp-step3').style.display = 'none';
+        document.getElementById('fp-username').value = '';
+        document.getElementById('fp-error').style.display = 'none';
+        setTimeout(function() { overlay.style.opacity = '1'; }, 20);
+    }, 900);
+}
+
+// Allow Enter key to submit login
+document.addEventListener('DOMContentLoaded', function() {
+    ['login-username','login-password'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') doLogin();
+        });
+    });
+
+    // Auto-restore session so page refresh doesn't log out
+    if (sessionStorage.getItem('adminLoggedIn') === '1') {
+        var overlay = document.getElementById('login-overlay');
+        if (overlay) overlay.style.display = 'none';
+    }
+});
 </script>
 
 <!-- ══════════════════════════════════════════
@@ -789,7 +1806,22 @@
                 {% endif %}
             </h1>
         </div>
-        <div class="avatar">A</div>
+        <div class="avatar-wrap">
+            <div class="avatar" onclick="toggleAvatarMenu(event)" title="Account">A</div>
+            <div class="avatar-dropdown" id="avatar-dropdown">
+                <div class="avatar-dropdown-header">
+                    <div class="avatar-dropdown-icon">A</div>
+                    <div class="avatar-dropdown-info">
+                        <strong>Administrator</strong>
+                        <span>Admin Console</span>
+                    </div>
+                </div>
+                <button class="avatar-dropdown-item" onclick="doLogout()">
+                    <span class="item-icon">🚪</span>
+                    Logout
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- ══════════════════════════════════════════
@@ -797,42 +1829,211 @@
          ══════════════════════════════════════════ -->
     {% if page == "dashboard" %}
 
+    <!-- ── DATE FILTER BAR ── -->
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px;flex-wrap:wrap;">
+        <button class="period-btn active" onclick="setPeriod('today',this)">Today</button>
+        <button class="period-btn" onclick="setPeriod('week',this)">This Week</button>
+        <button class="period-btn" onclick="setPeriod('month',this)">This Month</button>
+        <input type="date" id="dash-from" style="padding:7px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--surface);color:var(--text);">
+        <span style="color:var(--muted);font-size:13px;">to</span>
+        <input type="date" id="dash-to" style="padding:7px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--surface);color:var(--text);">
+        <button class="btn btn-primary btn-sm" onclick="setPeriod('custom',null)">Go</button>
+        <span style="margin-left:auto;font-size:12px;color:var(--muted);" id="dash-date-label">📅 Today</span>
+    </div>
+
+    <!-- ── TOP STAT CARDS ── -->
     <div class="stats-row">
         <div class="stat-card c-info">
             <div class="stat-icon">🧳</div>
             <div class="stat-label">Active Guests</div>
-            <div class="stat-value">{{ total_active }}</div>
+            <div class="stat-value" id="stat-active">—</div>
             <div class="stat-sub">Currently checked in</div>
+        </div>
+        <div class="stat-card c-success">
+            <div class="stat-icon">✅</div>
+            <div class="stat-label">Check-ins</div>
+            <div class="stat-value" id="stat-checkins">—</div>
+            <div class="stat-sub">for selected period</div>
+        </div>
+        <div class="stat-card c-warn">
+            <div class="stat-icon">🚪</div>
+            <div class="stat-label">Check-outs</div>
+            <div class="stat-value" id="stat-checkouts">—</div>
+            <div class="stat-sub">for selected period</div>
+        </div>
+        <div class="stat-card c-primary">
+            <div class="stat-icon">🎨</div>
+            <div class="stat-label">Active Theme</div>
+            <div class="stat-value" id="stat-theme" style="font-size:20px;">—</div>
+            <div class="stat-sub" id="stat-theme-sub">Loading...</div>
         </div>
         <div class="stat-card c-success">
             <div class="stat-icon">📺</div>
             <div class="stat-label">TVs Online</div>
-            <div class="stat-value">—</div>
-            <div class="stat-sub">Live devices</div>
+            <div class="stat-value" id="stat-tvs">—</div>
+            <div class="stat-sub">live devices</div>
         </div>
-        <div class="stat-card c-warn">
-            <div class="stat-icon">🔗</div>
-            <div class="stat-label">Bound Rooms</div>
-            <div class="stat-value">—</div>
-            <div class="stat-sub">Active bindings</div>
-        </div>
-        <div class="stat-card c-purple">
-    <div class="stat-icon">🎨</div>
-    <div class="stat-label">Active Theme</div>
-
-        {% if active_theme_name %}
-            <div class="stat-value" style="font-size: 20px;">{{ active_theme_name }}</div>
-            <div class="stat-sub">
-                {{ active_theme_start.strftime('%d %b %Y') if active_theme_start else '-' }}
-                to
-                {{ active_theme_end.strftime('%d %b %Y') if active_theme_end else '-' }}
-            </div>
-        {% else %}
-            <div class="stat-value" style="font-size: 20px;">No Theme</div>
-            <div class="stat-sub">No active theme applied</div>
-        {% endif %}
     </div>
-</div>
+
+    <!-- ── ANALYTICS PANELS ROW 1 ── -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:18px;">
+
+        <!-- Guest TV Status -->
+        <div class="stat-card" style="padding:20px;">
+            <div class="stat-label" style="margin-bottom:14px;">📺 GUEST TV STATUS</div>
+            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+                <span style="font-size:14px;">🟢 Online TVs</span>
+                <strong id="tv-online">—</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+                <span style="font-size:14px;">🔗 Bound Rooms</span>
+                <strong id="tv-bound">—</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:8px 0;">
+                <span style="font-size:14px;">📺 Total TVs</span>
+                <strong id="tv-total">—</strong>
+            </div>
+            <div id="tv-status-msg" style="font-size:11px;color:var(--muted);margin-top:10px;">Fetching live data...</div>
+        </div>
+
+        <!-- PMS Bookings Summary -->
+        <div class="stat-card" style="padding:20px;">
+            <div class="stat-label" style="margin-bottom:14px;">📋 PMS — BOOKINGS SUMMARY</div>
+            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+                <span style="font-size:14px;">🍽️ Food Orders</span>
+                <strong id="pms-food" style="color:var(--accent);">—</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+                <span style="font-size:14px;">🧖 Spa Bookings</span>
+                <strong id="pms-spa" style="color:var(--accent);">—</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+                <span style="font-size:14px;">🕯️ Dine Bookings</span>
+                <strong id="pms-dine" style="color:var(--accent);">—</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:8px 0;">
+                <span style="font-size:14px;">🎮 Entertainment</span>
+                <strong id="pms-ent" style="color:var(--accent);">—</strong>
+            </div>
+        </div>
+
+        <!-- PMS Guest Activity -->
+        <div class="stat-card" style="padding:20px;">
+            <div class="stat-label" style="margin-bottom:14px;">📊 PMS — GUEST ACTIVITY</div>
+            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+                <span style="font-size:14px;">✅ Total Check-ins</span>
+                <strong id="act-checkins" style="color:var(--success);">—</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+                <span style="font-size:14px;">🚪 Total Check-outs</span>
+                <strong id="act-checkouts" style="color:var(--accent);">—</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+                <span style="font-size:14px;">🎯 Activities</span>
+                <strong id="act-activities" style="color:var(--warn);">—</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:8px 0;">
+                <strong style="font-size:14px;">All Orders Total</strong>
+                <strong id="act-total" style="color:var(--accent);">—</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── ANALYTICS PANELS ROW 2 ── -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;">
+
+        <!-- Room Occupancy -->
+        <div class="stat-card" style="padding:20px;">
+            <div class="stat-label" style="margin-bottom:14px;">🏨 ROOM OCCUPANCY</div>
+            <div style="display:flex;align-items:center;gap:28px;">
+                <div style="position:relative;width:110px;height:110px;flex-shrink:0;">
+                    <svg viewBox="0 0 36 36" style="width:110px;height:110px;transform:rotate(-90deg);">
+                        <circle cx="18" cy="18" r="15.9" fill="none" stroke="#f0d6e4" stroke-width="3.5"/>
+                        <circle id="occ-ring" cx="18" cy="18" r="15.9" fill="none"
+                            stroke="var(--accent)" stroke-width="3.5"
+                            stroke-dasharray="0 100" stroke-linecap="round"
+                            style="transition:stroke-dasharray 0.6s ease;"/>
+                    </svg>
+                    <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                        <span id="occ-pct" style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--accent);">—%</span>
+                        <span style="font-size:9px;color:var(--muted);font-weight:600;letter-spacing:0.5px;">OCCUPIED</span>
+                    </div>
+                </div>
+                <div style="flex:1;">
+                    <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);">
+                        <span style="font-size:13px;">🔴 Occupied</span><strong id="occ-occupied">—</strong>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);">
+                        <span style="font-size:13px;">🟢 Available</span><strong id="occ-available">—</strong>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;padding:7px 0;">
+                        <span style="font-size:13px;">🔵 Total Rooms</span><strong id="occ-total">—</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Service Booking Demand -->
+        <div class="stat-card" style="padding:20px;">
+            <div class="stat-label" style="margin-bottom:14px;">📈 SERVICE BOOKING DEMAND</div>
+            <div id="demand-bars"></div>
+        </div>
+    </div>
+
+    <!-- ── ANALYTICS PANELS ROW 3: Booking Trend + Today's Activity ── -->
+    <div style="display:grid;grid-template-columns:3fr 2fr;gap:18px;margin-bottom:18px;">
+
+        <!-- Booking Trend Line Chart -->
+        <div class="stat-card" style="padding:20px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+                <div class="stat-label" style="margin:0;">📊 BOOKING TREND</div>
+                <div style="display:flex;gap:14px;font-size:12px;color:var(--muted);">
+                    <span style="display:flex;align-items:center;gap:5px;">
+                        <span style="width:22px;height:2px;background:#a8174f;display:inline-block;border-radius:2px;"></span> Check-ins
+                    </span>
+                    <span style="display:flex;align-items:center;gap:5px;">
+                        <span style="width:22px;height:2px;background:#3498db;display:inline-block;border-radius:2px;"></span> Bookings
+                    </span>
+                </div>
+            </div>
+            <div style="position:relative;height:180px;">
+                <canvas id="trend-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Today's Activity -->
+        <div class="stat-card" style="padding:20px;">
+            <div class="stat-label" style="margin-bottom:16px;">⏰ TODAY'S ACTIVITY</div>
+            <div id="todays-activity-list">
+                <div style="text-align:center;padding:40px 20px;color:var(--muted);">
+                    <div style="font-size:32px;margin-bottom:8px;">📬</div>
+                    <div style="font-size:13px;">No activity for this period</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── ANALYTICS PANELS ROW 4: Top Performers + Most Active Room ── -->
+    <div style="display:grid;grid-template-columns:3fr 2fr;gap:18px;margin-bottom:18px;">
+
+        <!-- Top Performers -->
+        <div class="stat-card" style="padding:20px;">
+            <div class="stat-label" style="margin-bottom:16px;">🏆 TOP PERFORMERS</div>
+            <div id="top-performers-list"></div>
+        </div>
+
+        <!-- Most Active Room + Total Orders -->
+        <div class="stat-card" style="padding:20px;display:flex;flex-direction:column;gap:24px;">
+            <div>
+                <div class="stat-label" style="margin-bottom:8px;">MOST ACTIVE ROOM</div>
+                <div id="most-active-room" style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--accent);">—</div>
+            </div>
+            <div style="border-top:1px solid var(--border);padding-top:20px;">
+                <div class="stat-label" style="margin-bottom:8px;">TOTAL ORDERS (PERIOD)</div>
+                <div id="total-orders-period" style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--text);">0</div>
+            </div>
+        </div>
+    </div>
 
     <!-- ══════════════════════════════════════════
          GUESTS
@@ -843,7 +2044,7 @@
     <!-- Topbar: active count + history button -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
         <div style="display:flex;align-items:center;gap:10px;">
-            <span style="background:rgba(26,188,156,0.12);border:1px solid rgba(26,188,156,0.3);
+            <span id="guests-count" style="background:rgba(26,188,156,0.12);border:1px solid rgba(26,188,156,0.3);
                          color:#0e9c7e;font-size:12px;font-weight:700;padding:5px 14px;
                          border-radius:20px;">
                 🟢 {{ current_guests|length }} Currently In
@@ -870,7 +2071,7 @@
         <th>Action</th>
     </tr>
 </thead>
-<tbody>
+<tbody id="guests-tbody">
     {% for guest in current_guests %}
     <tr>
         <td><strong>#{{ guest.room_no }}</strong></td>
@@ -1160,61 +2361,55 @@
 <!-- ══════════════════════════════════════════
          ACTIVITIES
          ══════════════════════════════════════════ -->
-    <!-- ══════════════════════════════════════════
-         ACTIVITIES
-         ══════════════════════════════════════════ -->
     {% elif page == "activities" %}
 
     <form action="/admin/activities/add" method="post" id="activity-form">
-        <div class="input-row" style="flex-direction:column;align-items:stretch;gap:16px;">
-            <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
-                <div class="input-group" style="flex:1;min-width:200px;">
-                    <label>Title</label>
-                    <input type="text" name="title" placeholder="e.g. Campfire Night" required>
-                </div>
-                <div class="input-group" style="justify-content:flex-end;">
-                    <label style="display:flex;align-items:center;gap:7px;cursor:pointer;
-                                background:var(--surface2);border:1px solid var(--border);
-                                border-radius:8px;padding:9px 14px;font-size:13px;font-weight:600;
-                                color:var(--muted);">
-                        <input type="checkbox" name="is_announcement" id="is_announcement_check"
-                            style="width:15px;height:15px;accent-color:var(--accent);"
-                            onchange="toggleTimeSlot()">
-                        📢 Announcement
-                    </label>
-                </div>
-                <button type="submit" class="btn btn-primary">＋ Add</button>
+        <div class="input-row" style="align-items:flex-end;gap:12px;flex-wrap:nowrap;">
+            <div class="input-group" style="flex:2;min-width:0;">
+                <label>🎯 Title</label>
+                <input type="text" name="title" placeholder="e.g. Campfire Night" required>
             </div>
 
-            <div id="timeslot-group" style="display:flex;flex-direction:column;gap:8px;">
-                <div style="display:flex;align-items:center;gap:8px;">
-                    <span style="font-size:11px;font-weight:600;text-transform:uppercase;
-                                 letter-spacing:0.8px;color:var(--muted);">Slot Timing</span>
-                    <span style="font-size:11px;color:var(--muted);">(start – end)</span>
-                </div>
-                <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
-                <div style="display:flex;gap:10px;align-items:center;
+            <div id="timeslot-group" class="input-group" style="flex:2;min-width:0;">
+                <label>⏰ Slot Timing <span style="font-weight:400;color:var(--muted);font-size:10px;">(start – end)</span></label>
+                <div style="display:flex;gap:8px;align-items:center;
                             background:var(--surface2);border:1px solid var(--border);
-                            border-radius:8px;padding:7px 12px;">
-                    <span style="font-size:12px;font-weight:600;color:var(--accent);">
-                        Slot 1 *
-                    </span>
+                            border-radius:8px;padding:0 12px;height:44px;">
+                    <span style="font-size:11px;font-weight:700;color:var(--accent);white-space:nowrap;">Slot 1 *</span>
                     <input type="text" name="slot1" class="timepicker act-slot-start"
                         data-slot="1" id="act-start-time" placeholder="Start"
-                        style="width:90px;background:transparent;border:none;outline:none;color:var(--text);font-size:13px;">
+                        style="width:76px;background:transparent;border:none;outline:none;color:var(--text);font-size:13px;">
                     <select class="act-slot-duration" data-slot="1"
-                            style="background:transparent;border:none;color:var(--text);font-size:13px;cursor:pointer;outline:none;">
+                            style="background:transparent;border:none;color:var(--muted);font-size:12px;cursor:pointer;outline:none;">
                         <option value="30">30m</option>
                         <option value="45">45m</option>
                         <option value="60" selected>60m</option>
                         <option value="90">90m</option>
                         <option value="120">120m</option>
                     </select>
+                    <span style="color:var(--muted);font-size:12px;">→</span>
                     <input type="text" name="slot1_end" class="act-slot-end"
                         data-slot="1" placeholder="End" readonly
-                        style="width:90px;background:transparent;border:none;outline:none;color:var(--text);font-size:13px;opacity:0.7;">
+                        style="width:76px;background:transparent;border:none;outline:none;color:var(--muted);font-size:13px;">
                 </div>
-                </div>
+            </div>
+
+            <div class="input-group" style="flex-shrink:0;">
+                <label style="visibility:hidden;font-size:11px;">_</label>
+                <label style="display:flex;align-items:center;gap:7px;cursor:pointer;
+                            background:var(--surface2);border:1px solid var(--border);
+                            border-radius:8px;padding:0 14px;height:44px;font-size:13px;font-weight:600;
+                            color:var(--muted);white-space:nowrap;">
+                    <input type="checkbox" name="is_announcement" id="is_announcement_check"
+                        style="width:15px;height:15px;accent-color:var(--accent);"
+                        onchange="toggleTimeSlot()">
+                    📢 Announcement
+                </label>
+            </div>
+
+            <div class="input-group" style="flex-shrink:0;">
+                <label style="visibility:hidden;font-size:11px;">_</label>
+                <button type="submit" class="btn btn-primary" style="height:44px;white-space:nowrap;">✨ Add</button>
             </div>
         </div>
     </form>
@@ -1261,32 +2456,39 @@
     {% elif page == "services" %}
 
     <form action="/admin/services/add" method="post" enctype="multipart/form-data" id="service-form">
-        <div class="input-row" style="flex-direction:column;align-items:stretch;gap:16px;">
-            <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
-                <div class="input-group" style="flex:1;min-width:200px;">
-                    <label>Service Name</label>
-                    <input type="text" name="title" placeholder="e.g. Room Service" required>
-                </div>
-                <div class="input-group" style="flex:2;min-width:280px;">
-                    <label>Image</label>
-                    <input type="file" name="image" accept="image/*" required
-                           onchange="previewFile(event)">
-                </div>
-                <button type="submit" class="btn btn-primary">＋ Add</button>
+        <div class="input-row" style="align-items:flex-end;gap:10px;flex-wrap:nowrap;">
+            <div class="input-group" style="flex:2;min-width:0;">
+                <label>🛎️ Service Name</label>
+                <input type="text" name="title" placeholder="e.g. Room Service" required>
             </div>
+            <div class="input-group" style="flex:3;min-width:0;">
+                <label>🖼️ Service Image</label>
+                <label class="file-upload-zone" id="svc-upload-zone"
+                    ondragover="this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')">
+                    <span class="file-upload-icon">📂</span>
+                    <div class="file-upload-texts">
+                        <span class="file-upload-text">Choose or Drop Image</span>
+                        <span class="file-upload-hint">PNG, JPG, WEBP</span>
+                        <span class="file-upload-chosen" id="svc-filename"></span>
+                    </div>
+                    <input type="file" name="image" accept="image/*" required
+                        onchange="previewFile(event); markUpload('svc-upload-zone','svc-filename',this)">
+                </label>
+            </div>
+            <button type="submit" class="btn btn-primary" style="flex-shrink:0;white-space:nowrap;">✨ Add Service</button>
+        </div>
 
-            <div id="service-preview" style="display:none;margin-top:4px;">
-                <label style="font-size:11px;font-weight:600;text-transform:uppercase;
-                            letter-spacing:0.8px;color:var(--muted);">Preview</label>
-                <div id="preview-card" style="
-                    width:180px;height:110px;border-radius:12px;overflow:hidden;
-                    position:relative;background-size:cover;background-position:center;
-                    border:2px solid var(--accent);margin-top:6px;">
-                    <span id="preview-label" style="
-                        position:absolute;bottom:8px;left:8px;font-size:14px;font-weight:bold;
-                        background:rgba(0,0,0,0.55);padding:3px 8px;border-radius:5px;
-                        color:white;"></span>
-                </div>
+        <div id="service-preview" style="display:none;margin-top:4px;padding:0 18px 14px;">
+            <label style="font-size:11px;font-weight:600;text-transform:uppercase;
+                        letter-spacing:0.8px;color:var(--muted);">Preview</label>
+            <div id="preview-card" style="
+                width:180px;height:110px;border-radius:12px;overflow:hidden;
+                position:relative;background-size:cover;background-position:center;
+                border:2px solid var(--accent);margin-top:6px;">
+                <span id="preview-label" style="
+                    position:absolute;bottom:8px;left:8px;font-size:14px;font-weight:bold;
+                    background:rgba(0,0,0,0.55);padding:3px 8px;border-radius:5px;
+                    color:white;"></span>
             </div>
         </div>
     </form>
@@ -1344,38 +2546,44 @@
     {% elif page == "food" %}
 
     <form action="/admin/food/add" method="post" enctype="multipart/form-data" id="food-form">
-        <div class="input-row" style="flex-direction:column;gap:16px;">
-            <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
-                <div class="input-group" style="flex:2;min-width:180px;">
-                    <label>Item Name</label>
-                    <input type="text" name="title" placeholder="e.g. Idli" required>
-                </div>
-                <div class="input-group" style="min-width:150px;">
-                    <label>Category</label>
-                    <select name="category" required
-                            style="background:var(--surface2);border:1px solid var(--border);
-                                   border-radius:8px;color:var(--text);
-                                   font-family:'Plus Jakarta Sans',sans-serif;
-                                   font-size:14px;padding:9px 13px;outline:none;">
-                        <option value="breakfast">Breakfast</option>
-                        <option value="lunch">Lunch</option>
-                        <option value="dinner">Dinner</option>
-                        <option value="snacks">Snacks</option>
-                        <option value="desserts">Desserts</option>
-                        <option value="drinks">Drinks</option>
-                    </select>
-                </div>
-                <div class="input-group" style="min-width:110px;">
-                    <label>Price (₹)</label>
-                    <input type="number" name="price" placeholder="e.g. 90" min="0" required
-                           style="width:110px;">
-                </div>
-                <div class="input-group" style="flex:2;min-width:220px;">
-                    <label>Image</label>
-                    <input type="file" name="image" accept="image/*" required>
-                </div>
-                <button type="submit" class="btn btn-primary">＋ Add Item</button>
+        <div class="input-row" style="align-items:flex-end;gap:10px;flex-wrap:nowrap;">
+            <div class="input-group" style="flex:1.8;min-width:0;">
+                <label>🍽️ Item Name</label>
+                <input type="text" name="title" placeholder="e.g. Idli" required>
             </div>
+            <div class="input-group" style="flex:1.2;min-width:0;">
+                <label>🗂️ Category</label>
+                <select name="category" required style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);width:100%;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;padding:9px 10px;outline:none;">
+                    <option value="breakfast">Breakfast</option>
+                    <option value="lunch">Lunch</option>
+                    <option value="dinner">Dinner</option>
+                    <option value="snacks">Snacks</option>
+                    <option value="desserts">Desserts</option>
+                    <option value="drinks">Drinks</option>
+                </select>
+            </div>
+            <div class="input-group" style="width:105px;flex-shrink:0;">
+                <label>🏷️ Price (₹)</label>
+                <input type="number" name="price" placeholder="e.g. 90" min="0" required
+                       style="width:105px;padding:9px 12px;border:2px solid rgba(26,188,156,0.3);border-radius:8px;background:var(--surface2);color:var(--text);font-size:14px;font-weight:600;outline:none;transition:all 0.2s ease;"
+                       onfocus="this.style.borderColor='var(--accent)';this.style.boxShadow='0 0 0 3px rgba(26,188,156,0.1)'"
+                       onblur="this.style.borderColor='rgba(26,188,156,0.3)';this.style.boxShadow='none'">
+            </div>
+            <div class="input-group" style="flex:2;min-width:0;">
+                <label>🖼️ Image</label>
+                <label class="file-upload-zone" id="food-upload-zone"
+                       ondragover="this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')">
+                    <span class="file-upload-icon">🍽️</span>
+                    <div class="file-upload-texts">
+                        <span class="file-upload-text">Choose or Drop Image</span>
+                        <span class="file-upload-hint">PNG, JPG, WEBP</span>
+                        <span class="file-upload-chosen" id="food-filename"></span>
+                    </div>
+                    <input type="file" name="image" accept="image/*" required
+                           onchange="markUpload('food-upload-zone','food-filename',this)">
+                </label>
+            </div>
+            <button type="submit" class="btn btn-primary" style="flex-shrink:0;white-space:nowrap;">＋ Add Item</button>
         </div>
     </form>
 
@@ -1465,16 +2673,16 @@
     {% elif page == "spa" %}
 
     <form action="/admin/spa/add" method="post" enctype="multipart/form-data" id="spa-form">
-        <div class="input-row" style="flex-direction:column;gap:16px;">
-            <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
-                <div class="input-group" style="flex:2;min-width:180px;">
+        <div class="input-row" style="flex-direction:column;gap:14px;">
+            <div style="display:grid;grid-template-columns:2fr 1fr 100px 2fr auto;gap:12px;align-items:flex-end;width:100%;">
+                <div class="input-group">
                     <label>Treatment Name</label>
-                    <input type="text" name="title" placeholder="e.g. Hot Stone Massage" required>
+                    <input type="text" name="title" placeholder="e.g. Hot Stone Massage" required style="width:100%;">
                 </div>
-                <div class="input-group" style="min-width:150px;">
+                <div class="input-group">
                     <label>Category</label>
                     <select name="category" required
-                            style="background:var(--surface2);border:1px solid var(--border);
+                            style="width:100%;background:var(--surface2);border:1px solid var(--border);
                                    border-radius:8px;color:var(--text);
                                    font-family:'Plus Jakarta Sans',sans-serif;
                                    font-size:14px;padding:9px 13px;outline:none;">
@@ -1483,45 +2691,53 @@
                         {% endfor %}
                     </select>
                 </div>
-                <div class="input-group" style="min-width:110px;">
+                <div class="input-group">
                     <label>Price (₹)</label>
-                    <input type="number" name="price" placeholder="e.g. 1500" min="0" value="0"
-                           style="width:110px;">
+                    <input type="number" name="price" placeholder="e.g. 1500" min="0" value="0" style="width:100%;">
                 </div>
-                <div class="input-group" style="flex:2;min-width:220px;">
-                    <label>Image</label>
-                    <input type="file" name="image" accept="image/*" required id="spa-img-input"
-                           onchange="previewSpaFile(event)">
+                <div class="input-group">
+                    <label>🖼️ Image</label>
+                    <label class="file-upload-zone" id="spa-upload-zone" style="width:100%;min-width:0;"
+                           ondragover="this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')">
+                        <span class="file-upload-icon">🧖</span>
+                        <div class="file-upload-texts">
+                            <span class="file-upload-text">Choose or Drop Image</span>
+                            <span class="file-upload-hint">PNG, JPG, WEBP</span>
+                            <span class="file-upload-chosen" id="spa-filename"></span>
+                        </div>
+                        <input type="file" name="image" accept="image/*" required id="spa-img-input"
+                               onchange="previewSpaFile(event); markUpload('spa-upload-zone','spa-filename',this)">
+                    </label>
                 </div>
-                <button type="submit" class="btn btn-primary">＋ Add Treatment</button>
+                <div class="input-group" style="justify-content:flex-end;">
+                    <label style="visibility:hidden;">Add</label>
+                    <button type="submit" class="btn btn-primary" style="white-space:nowrap;">＋ Add Treatment</button>
+                </div>
             </div>
 
-            <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
-                <div style="display:flex;align-items:center;gap:8px;">
-                    <span style="font-size:11px;font-weight:600;text-transform:uppercase;
-                                 letter-spacing:0.8px;color:var(--muted);">Slot Timings</span>
-                    <span style="font-size:11px;color:var(--muted);">(start – end)</span>
-                </div>
+            <div style="display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:10px;align-items:center;width:100%;">
+                <span style="font-size:11px;font-weight:600;text-transform:uppercase;
+                             letter-spacing:0.8px;color:var(--muted);white-space:nowrap;">Slot Timings&nbsp;<span style="font-weight:400;">(start – end)</span></span>
                {% for n in [1,2,3] %}
-                <div style="display:flex;gap:10px;align-items:center;
+                <div style="display:grid;grid-template-columns:auto 1fr auto 1fr;gap:6px;align-items:center;
                             background:var(--surface2);border:1px solid var(--border);
-                            border-radius:8px;padding:7px 12px;">
-                    <span style="font-size:12px;font-weight:600;color:var(--accent);">
+                            border-radius:8px;padding:8px 12px;">
+                    <span style="font-size:12px;font-weight:600;color:var(--accent);white-space:nowrap;">
                         Slot {{ n }}{% if n == 1 %} *{% endif %}
                     </span>
                     <input type="text" name="slot{{ n }}" class="timepicker slot-start"
                         data-slot="{{ n }}" placeholder="Start"
                         {% if n == 1 %}required{% endif %}
-                        style="width:90px;background:transparent;border:none;outline:none;color:var(--text);">
+                        style="background:transparent;border:none;outline:none;color:var(--text);font-size:13px;width:100%;min-width:0;">
                     <select class="slot-duration" data-slot="{{ n }}"
-                            style="background:transparent;border:none;color:var(--text);">
+                            style="background:transparent;border:none;color:var(--muted);font-size:12px;outline:none;cursor:pointer;white-space:nowrap;">
                         <option value="30">30m</option>
                         <option value="45">45m</option>
                         <option value="60" selected>60m</option>
                     </select>
                     <input type="text" name="slot{{ n }}_end" class="timepicker slot-end"
                         data-slot="{{ n }}" placeholder="End" readonly
-                        style="width:90px;background:transparent;border:none;outline:none;color:var(--text);">
+                        style="background:transparent;border:none;outline:none;color:var(--text);font-size:13px;width:100%;min-width:0;">
                 </div>
                 {% endfor %}
             </div>
@@ -1631,48 +2847,46 @@
     {% elif page == "bar" %}
 
     <form action="/admin/bar/add" method="post" enctype="multipart/form-data" id="bar-form">
-        <div class="input-row" style="flex-direction:column;gap:16px;">
-            <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
-                <div class="input-group" style="flex:2;min-width:180px;">
-                    <label>Drink Name</label>
-                    <input type="text" name="title" placeholder="e.g. Mojito" required>
-                </div>
-                <div class="input-group" style="min-width:180px;">
-                    <label>Category</label>
-                    <select name="category" required
-                            style="background:var(--surface2);border:1px solid var(--border);
-                                   border-radius:8px;color:var(--text);
-                                   font-family:'Plus Jakarta Sans',sans-serif;
-                                   font-size:14px;padding:9px 13px;outline:none;">
-                        <option value="alcoholic">🍸 Alcoholic</option>
-                        <option value="non-alcoholic">🥤 Non-Alcoholic</option>
-                    </select>
-                </div>
-                <div class="input-group" style="min-width:110px;">
-                    <label>Price (₹)</label>
-                    <input type="number" name="price" placeholder="e.g. 350" min="0" required
-                           style="width:110px;">
-                </div>
-                <div class="input-group" style="flex:2;min-width:220px;">
-                    <label>Image</label>
-                    <input type="file" name="image" accept="image/*" required
-                           onchange="previewBarFile(event)">
-                </div>
-                <button type="submit" class="btn btn-primary">＋ Add Drink</button>
+        <div class="input-row" style="align-items:flex-end;gap:10px;flex-wrap:nowrap;">
+            <div class="input-group" style="flex:1.8;min-width:0;">
+                <label>🍹 Drink Name</label>
+                <input type="text" name="title" placeholder="e.g. Mojito" required>
             </div>
+            <div class="input-group" style="flex:1.2;min-width:0;">
+                <label>🍸 Category</label>
+                <select name="category" required style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);width:100%;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;padding:9px 10px;outline:none;">
+                    <option value="alcoholic">🍸 Alcoholic</option>
+                    <option value="non-alcoholic">🥤 Non-Alcoholic</option>
+                </select>
+            </div>
+            <div class="input-group" style="width:105px;flex-shrink:0;">
+                <label>🏷️ Price (₹)</label>
+                <input type="number" name="price" placeholder="e.g. 350" min="0" required
+                       style="width:105px;padding:9px 12px;border:2px solid rgba(26,188,156,0.3);border-radius:8px;background:var(--surface2);color:var(--text);font-size:14px;font-weight:600;outline:none;transition:all 0.2s ease;"
+                       onfocus="this.style.borderColor='var(--accent)';this.style.boxShadow='0 0 0 3px rgba(26,188,156,0.1)'"
+                       onblur="this.style.borderColor='rgba(26,188,156,0.3)';this.style.boxShadow='none'">
+            </div>
+            <div class="input-group" style="flex:2;min-width:0;">
+                <label>🖼️ Drink Image</label>
+                <label class="file-upload-zone" id="bar-upload-zone"
+                       ondragover="this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')">
+                    <span class="file-upload-icon">🍹</span>
+                    <div class="file-upload-texts">
+                        <span class="file-upload-text">Choose or Drop Image</span>
+                        <span class="file-upload-hint">PNG, JPG, WEBP</span>
+                        <span class="file-upload-chosen" id="bar-filename"></span>
+                    </div>
+                    <input type="file" name="image" accept="image/*" required
+                           onchange="previewBarFile(event); markUpload('bar-upload-zone','bar-filename',this)">
+                </label>
+            </div>
+            <button type="submit" class="btn btn-primary" style="flex-shrink:0;white-space:nowrap;">✨ Add Drink</button>
+        </div>
 
-            <div id="bar-preview" style="display:none;margin-top:4px;">
-                <label style="font-size:11px;font-weight:600;text-transform:uppercase;
-                              letter-spacing:0.8px;color:var(--muted);">Preview</label>
-                <div id="bar-preview-card" style="
-                    width:180px;height:110px;border-radius:12px;overflow:hidden;
-                    position:relative;background-size:cover;background-position:center;
-                    border:2px solid var(--accent);margin-top:6px;">
-                    <span id="bar-preview-label" style="
-                        position:absolute;bottom:8px;left:8px;font-size:14px;font-weight:bold;
-                        background:rgba(0,0,0,0.55);padding:3px 8px;border-radius:5px;
-                        color:white;"></span>
-                </div>
+        <div id="bar-preview" style="display:none;margin-top:4px;padding:0 18px 14px;">
+            <label style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;color:var(--muted);">Preview</label>
+            <div id="bar-preview-card" style="width:180px;height:110px;border-radius:12px;overflow:hidden;position:relative;background-size:cover;background-position:center;border:2px solid var(--accent);margin-top:6px;">
+                <span id="bar-preview-label" style="position:absolute;bottom:8px;left:8px;font-size:14px;font-weight:bold;background:rgba(0,0,0,0.55);padding:3px 8px;border-radius:5px;color:white;"></span>
             </div>
         </div>
     </form>
@@ -1743,7 +2957,7 @@
                             <span class="badge badge-online">🥤 Non-Alcoholic</span>
                         {% endif %}
                     </td>
-                    <td>₹{{ item.price }}</td>
+                    <td><span style="display:inline-flex;align-items:center;gap:6px;border:2px solid rgba(26,188,156,0.3);border-radius:8px;padding:8px 14px;background:rgba(26,188,156,0.12);font-size:14px;font-weight:700;color:#117a6b;letter-spacing:-0.2px;">🏷️ ₹{{ item.price }}</span></td>
                     <td>
                         <div class="btn-row">
                             <button class="btn btn-info btn-sm"
@@ -1775,16 +2989,16 @@
 
     <form action="/admin/dine/add" method="post" enctype="multipart/form-data" id="dine-form">
         <input type="hidden" name="price" value="0">
-        <div class="input-row" style="flex-direction:column;gap:16px;">
-            <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
-                <div class="input-group" style="flex:2;min-width:180px;">
+        <div class="input-row" style="flex-direction:column;gap:14px;">
+            <div style="display:grid;grid-template-columns:2fr 1fr 2fr 2fr auto;gap:12px;align-items:flex-end;width:100%;">
+                <div class="input-group">
                     <label>Package Name</label>
-                    <input type="text" name="title" placeholder="e.g. Candle-light Dinner for Two" required>
+                    <input type="text" name="title" placeholder="e.g. Candle-light Dinner for Two" required style="width:100%;">
                 </div>
-                <div class="input-group" style="min-width:160px;">
+                <div class="input-group">
                     <label>Occasion</label>
                     <select name="occasion" required
-                            style="background:var(--surface2);border:1px solid var(--border);
+                            style="width:100%;background:var(--surface2);border:1px solid var(--border);
                                    border-radius:8px;color:var(--text);
                                    font-family:'Plus Jakarta Sans',sans-serif;
                                    font-size:14px;padding:9px 13px;outline:none;">
@@ -1793,31 +3007,43 @@
                         {% endfor %}
                     </select>
                 </div>
-                <div class="input-group" style="flex:2;min-width:200px;">
+                <div class="input-group">
                     <label>Short Description</label>
-                    <input type="text" name="description" placeholder="e.g. Rooftop view, live music">
+                    <input type="text" name="description" placeholder="e.g. Rooftop view, live music" style="width:100%;">
                 </div>
-                <div class="input-group" style="flex:2;min-width:220px;">
-                    <label>Image</label>
-                    <input type="file" name="image" accept="image/*" required
-                           onchange="previewDineFile(event)">
+                <div class="input-group">
+                    <label>🖼️ Image</label>
+                    <label class="file-upload-zone" id="dine-upload-zone" style="width:100%;min-width:0;"
+                           ondragover="this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')">
+                        <span class="file-upload-icon">🕯️</span>
+                        <div class="file-upload-texts">
+                            <span class="file-upload-text">Choose or Drop Image</span>
+                            <span class="file-upload-hint">PNG, JPG, WEBP</span>
+                            <span class="file-upload-chosen" id="dine-filename"></span>
+                        </div>
+                        <input type="file" name="image" accept="image/*" required
+                               onchange="previewDineFile(event); markUpload('dine-upload-zone','dine-filename',this)">
+                    </label>
                 </div>
-                <button type="submit" class="btn btn-primary">＋ Add Package</button>
+                <div class="input-group" style="justify-content:flex-end;">
+                    <label style="visibility:hidden;">Add</label>
+                    <button type="submit" class="btn btn-primary" style="white-space:nowrap;">＋ Add Package</button>
+                </div>
             </div>
 
-            <div style="display:flex;gap:8px;align-items:center;flex-wrap:nowrap;">
+            <div style="display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:10px;align-items:center;width:100%;">
                 <span style="font-size:11px;font-weight:600;text-transform:uppercase;
                              letter-spacing:0.8px;color:var(--muted);white-space:nowrap;">Booking Slots</span>
                 {% for n in [1,2,3] %}
-                <div style="display:flex;gap:6px;align-items:center;
+                <div style="display:grid;grid-template-columns:auto 1fr auto 1fr;gap:6px;align-items:center;
                             background:var(--surface2);border:1px solid var(--border);
-                            border-radius:8px;padding:6px 10px;flex:1;">
+                            border-radius:8px;padding:8px 12px;">
                     <span style="font-size:12px;font-weight:600;color:var(--accent);white-space:nowrap;">Slot {{ n }}</span>
                     <input type="text" name="slot{{ n }}" class="dine-timepicker dine-slot-start"
                            data-slot="{{ n }}" placeholder="Start"
-                           style="width:80px;background:transparent;border:none;outline:none;color:var(--text);font-size:13px;">
+                           style="background:transparent;border:none;outline:none;color:var(--text);font-size:13px;width:100%;min-width:0;">
                     <select class="dine-slot-duration" data-slot="{{ n }}"
-                            style="background:transparent;border:none;color:var(--text);font-size:13px;">
+                            style="background:transparent;border:none;color:var(--muted);font-size:12px;outline:none;cursor:pointer;white-space:nowrap;">
                         <option value="60">60m</option>
                         <option value="90" selected>90m</option>
                         <option value="120">120m</option>
@@ -1825,7 +3051,7 @@
                     </select>
                     <input type="text" class="dine-timepicker dine-slot-end"
                            data-slot="{{ n }}" placeholder="End"
-                           style="width:80px;background:transparent;border:none;outline:none;color:var(--text);font-size:13px;"
+                           style="background:transparent;border:none;outline:none;color:var(--text);font-size:13px;width:100%;min-width:0;"
                            readonly>
                 </div>
                 {% endfor %}
@@ -1950,16 +3176,16 @@
     {% elif page == "entertainment" %}
 
     <form action="/admin/entertainment/add" method="post" enctype="multipart/form-data" id="ent-form">
-        <div class="input-row" style="flex-direction:column;gap:16px;">
-            <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
-                <div class="input-group" style="flex:2;min-width:180px;">
+        <div class="input-row" style="flex-direction:column;gap:14px;">
+            <div style="display:grid;grid-template-columns:2fr 1fr 90px 1.5fr 2fr auto;gap:12px;align-items:flex-end;width:100%;">
+                <div class="input-group">
                     <label>Activity Name</label>
-                    <input type="text" name="title" placeholder="e.g. Indoor Tennis" required>
+                    <input type="text" name="title" placeholder="e.g. Indoor Tennis" required style="width:100%;">
                 </div>
-                <div class="input-group" style="min-width:150px;">
+                <div class="input-group">
                     <label>Category</label>
                     <select name="category" required
-                            style="background:var(--surface2);border:1px solid var(--border);
+                            style="width:100%;background:var(--surface2);border:1px solid var(--border);
                                    border-radius:8px;color:var(--text);
                                    font-family:'Plus Jakarta Sans',sans-serif;
                                    font-size:14px;padding:9px 13px;outline:none;">
@@ -1968,38 +3194,50 @@
                         {% endfor %}
                     </select>
                 </div>
-                <div class="input-group" style="min-width:120px;">
+                <div class="input-group">
                     <label>Price (₹)</label>
                     <input type="number" name="price" value="0" min="0" style="width:100%;">
                 </div>
-                <div class="input-group" style="flex:2;min-width:180px;">
+                <div class="input-group">
                     <label>Venue / Location</label>
-                    <input type="text" name="venue" placeholder="e.g. Pool Deck · Level 3">
+                    <input type="text" name="venue" placeholder="e.g. Pool Deck · Level 3" style="width:100%;">
                 </div>
-                <div class="input-group" style="flex:2;min-width:220px;">
-                    <label>Image</label>
-                    <input type="file" name="image" accept="image/*" required id="ent-img-input"
-                           onchange="previewEntFile(event)">
+                <div class="input-group">
+                    <label>🖼️ Image</label>
+                    <label class="file-upload-zone" id="ent-upload-zone" style="width:100%;min-width:0;"
+                           ondragover="this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')">
+                        <span class="file-upload-icon">🎮</span>
+                        <div class="file-upload-texts">
+                            <span class="file-upload-text">Choose or Drop Image</span>
+                            <span class="file-upload-hint">PNG, JPG, WEBP</span>
+                            <span class="file-upload-chosen" id="ent-filename"></span>
+                        </div>
+                        <input type="file" name="image" accept="image/*" required id="ent-img-input"
+                               onchange="previewEntFile(event); markUpload('ent-upload-zone','ent-filename',this)">
+                    </label>
                 </div>
-                <button type="submit" class="btn btn-primary">＋ Add Item</button>
+                <div class="input-group" style="justify-content:flex-end;">
+                    <label style="visibility:hidden;">Add</label>
+                    <button type="submit" class="btn btn-primary" style="white-space:nowrap;">＋ Add Item</button>
+                </div>
             </div>
 
-            <div style="display:flex;gap:8px;align-items:center;flex-wrap:nowrap;">
+            <div style="display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:10px;align-items:center;width:100%;">
                 <span style="font-size:11px;font-weight:600;text-transform:uppercase;
                              letter-spacing:0.8px;color:var(--muted);white-space:nowrap;">Booking Slots</span>
                 {% for n in [1,2,3] %}
-                <div style="display:flex;gap:6px;align-items:center;
+                <div style="display:grid;grid-template-columns:auto 1fr auto 1fr;gap:6px;align-items:center;
                             background:var(--surface2);border:1px solid var(--border);
-                            border-radius:8px;padding:6px 10px;flex:1;">
+                            border-radius:8px;padding:8px 12px;">
                     <span style="font-size:12px;font-weight:600;color:var(--accent);white-space:nowrap;">
                         Slot {{ n }}{% if n == 1 %} *{% endif %}
                     </span>
                     <input type="text" name="slot{{ n }}" class="ent-timepicker ent-slot-start"
                            data-slot="{{ n }}" placeholder="Start"
                            {% if n == 1 %}required{% endif %}
-                           style="width:80px;background:transparent;border:none;outline:none;color:var(--text);font-size:13px;">
+                           style="background:transparent;border:none;outline:none;color:var(--text);font-size:13px;width:100%;min-width:0;">
                     <select class="ent-slot-duration" data-slot="{{ n }}"
-                            style="background:transparent;border:none;color:var(--text);font-size:13px;">
+                            style="background:transparent;border:none;color:var(--muted);font-size:12px;outline:none;cursor:pointer;white-space:nowrap;">
                         <option value="30">30m</option>
                         <option value="45">45m</option>
                         <option value="60" selected>60m</option>
@@ -2008,7 +3246,7 @@
                     </select>
                     <input type="text" class="ent-timepicker ent-slot-end"
                            data-slot="{{ n }}" placeholder="End"
-                           style="width:80px;background:transparent;border:none;outline:none;color:var(--text);font-size:13px;"
+                           style="background:transparent;border:none;outline:none;color:var(--text);font-size:13px;width:100%;min-width:0;"
                            readonly>
                 </div>
                 {% endfor %}
@@ -2136,26 +3374,35 @@
     <!-- ── Add New Gallery Item ── -->
     <form action="/admin/gallery/add" method="post" enctype="multipart/form-data" id="gallery-form">
         <div class="input-row" style="flex-direction:column;gap:16px;">
-            <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
+            <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:nowrap;width:100%;">
 
-                <div class="input-group" style="flex:1;min-width:180px;">
+                <div class="input-group" style="flex:1.2;min-width:0;">
                     <label>Amenity / Area Name</label>
-                    <input type="text" name="title" placeholder="e.g. Swimming Pool" required>
+                    <input type="text" name="title" placeholder="e.g. Swimming Pool" required style="width:100%;">
                 </div>
 
-                <div class="input-group" style="flex:2;min-width:260px;">
+                <div class="input-group" style="flex:2;min-width:0;">
                     <label>Description</label>
                     <input type="text" name="description"
-                           placeholder="e.g. Our rooftop infinity pool with panoramic Munnar views">
+                           placeholder="e.g. Our rooftop infinity pool with panoramic Munnar views" style="width:100%;">
                 </div>
 
-                <div class="input-group" style="flex:2;min-width:220px;">
-                    <label>Image</label>
-                    <input type="file" name="image" accept="image/*" required
-                           onchange="previewGalleryFile(event)">
+                <div class="input-group" style="flex:1.5;min-width:0;">
+                    <label>🖼️ Image</label>
+                    <label class="file-upload-zone" id="gallery-upload-zone" style="min-width:0;"
+                           ondragover="this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')">
+                        <span class="file-upload-icon">🏨</span>
+                        <div class="file-upload-texts">
+                            <span class="file-upload-text">Choose or Drop Image</span>
+                            <span class="file-upload-hint">PNG, JPG, WEBP</span>
+                            <span class="file-upload-chosen" id="gallery-filename"></span>
+                        </div>
+                        <input type="file" name="image" accept="image/*" required
+                               onchange="previewGalleryFile(event); markUpload('gallery-upload-zone','gallery-filename',this)">
+                    </label>
                 </div>
 
-                <button type="submit" class="btn btn-primary">＋ Add Photo</button>
+                <button type="submit" class="btn btn-primary" style="flex-shrink:0;white-space:nowrap;align-self:flex-end;">＋ Add Photo</button>
             </div>
 
             <div id="gallery-preview" style="display:none;margin-top:2px;">
@@ -2228,10 +3475,10 @@
     <!-- ── Add New Service Item ── -->
     <form action="/admin/room-services/add" method="post" enctype="multipart/form-data" id="rs-form">
         <div class="input-row" style="flex-direction:column;gap:16px;">
-            <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
+            <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:nowrap;width:100%;">
 
                 <!-- Icon picker -->
-                <div class="input-group" style="min-width:90px;">
+                <div class="input-group" style="flex-shrink:0;">
                     <label>Icon</label>
                     <div style="position:relative;">
                         <button type="button" id="icon-picker-btn"
@@ -2264,23 +3511,32 @@
                     </div>
                 </div>
 
-                <div class="input-group" style="flex:2;min-width:180px;">
+                <div class="input-group" style="flex:2;min-width:0;">
                     <label>Service Name</label>
-                    <input type="text" name="title" placeholder="e.g. Room Cleaning" required>
+                    <input type="text" name="title" placeholder="e.g. Room Cleaning" required style="width:100%;">
                 </div>
 
-                <div class="input-group" style="flex:3;min-width:220px;">
+                <div class="input-group" style="flex:3;min-width:0;">
                     <label>Short Description <span style="color:var(--muted);font-weight:400;">(optional)</span></label>
-                    <input type="text" name="description" placeholder="e.g. Full room sweep and mop">
+                    <input type="text" name="description" placeholder="e.g. Full room sweep and mop" style="width:100%;">
                 </div>
 
-                <div class="input-group" style="flex:2;min-width:200px;">
-                    <label>Image <span style="color:var(--muted);font-weight:400;">(optional)</span></label>
-                    <input type="file" name="image" accept="image/*"
-                           onchange="previewRSFile(event)">
+                <div class="input-group" style="flex:2;min-width:0;">
+                    <label>🖼️ Image <span style="color:var(--muted);font-weight:400;">(optional)</span></label>
+                    <label class="file-upload-zone" id="rs-upload-zone" style="min-width:0;"
+                           ondragover="this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')">
+                        <span class="file-upload-icon">🛎️</span>
+                        <div class="file-upload-texts">
+                            <span class="file-upload-text">Choose or Drop Image</span>
+                            <span class="file-upload-hint">PNG, JPG, WEBP</span>
+                            <span class="file-upload-chosen" id="rs-filename"></span>
+                        </div>
+                        <input type="file" name="image" accept="image/*"
+                               onchange="previewRSFile(event); markUpload('rs-upload-zone','rs-filename',this)">
+                    </label>
                 </div>
 
-                <button type="submit" class="btn btn-primary">＋ Add Service</button>
+                <button type="submit" class="btn btn-primary" style="flex-shrink:0;white-space:nowrap;align-self:flex-end;">＋ Add Service</button>
             </div>
 
             <!-- Image preview -->
@@ -5033,6 +6289,18 @@ document.getElementById('history-modal')?.addEventListener('click', function(e) 
     if (e.target === this) closeHistory();
 });
 
+function markUpload(zoneId, nameId, input) {
+    const zone = document.getElementById(zoneId);
+    const nameEl = document.getElementById(nameId);
+    if (!zone || !input.files || !input.files[0]) return;
+    const file = input.files[0];
+    zone.classList.add('has-file');
+    const iconEl = zone.querySelector('.file-upload-icon');
+    if (iconEl) iconEl.textContent = '✅';
+    const textEl = zone.querySelector('.file-upload-text');
+    if (textEl) textEl.textContent = 'File selected!';
+    if (nameEl) nameEl.textContent = file.name;
+}
 
 </script>
 </body>

@@ -2330,31 +2330,46 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="theme-img-overlay"></div>
                 <div class="theme-img-label">{{ theme.name }}</div>
             </div>
-            <div class="theme-card-body">
-                <h3>{{ theme.name }}</h3>
-                <form action="/schedule_theme/{{ theme.id }}" method="post">
-                    <div class="date-row">
-                        <div>
-                            <label>From</label>
-                            <input type="date" name="start_date" required>
-                        </div>
-                        <div>
-                            <label>To</label>
-                            <input type="date" name="end_date" required>
-                        </div>
-                    </div>
-                    <div class="theme-card-actions">
-                        <button type="submit" class="btn btn-success" style="width:100%">✓ Apply</button>
-                    </div>
-                </form>
-                <form action="/discard_theme/{{ theme.id }}" method="post" style="margin-top:8px;">
-                    <div class="theme-card-actions">
-                        <button type="submit" class="btn btn-danger" style="width:100%">✕ Discard</button>
-                    </div>
-                </form>
-            </div>
+          <div class="theme-card-body">
+    <h3>{{ theme.name }}</h3>
+        {% if theme.start_date and theme.end_date %}
+<div style="font-size:11px;color:var(--muted);font-weight:500;
+            margin-bottom:10px;margin-top:-6px;
+            background:var(--surface2);border:1px solid var(--border);
+            border-radius:6px;padding:5px 10px;display:inline-block;">
+    📅 {{ theme.start_date.strftime('%d %b %Y') }} → {{ theme.end_date.strftime('%d %b %Y') }}
+</div>
+<form action="/discard_theme/{{ theme.id }}" method="post" style="margin-top:8px;">
+    <div class="theme-card-actions">
+        <button type="submit" class="btn btn-danger" style="width:100%">✕ Discard & Reset</button>
+    </div>
+</form>
+{% else %}
+<form action="/schedule_theme/{{ theme.id }}" method="post">
+    <div class="date-row">
+        <div>
+            <label>From</label>
+            <input type="date" name="start_date" required>
         </div>
-        {% endif %}
+        <div>
+            <label>To</label>
+            <input type="date" name="end_date" required>
+        </div>
+    </div>
+    <div class="theme-card-actions">
+        <button type="submit" class="btn btn-success" style="width:100%">✓ Apply</button>
+    </div>
+</form>
+<form action="/discard_theme/{{ theme.id }}" method="post" style="margin-top:8px;">
+    <div class="theme-card-actions">
+        <button type="submit" class="btn btn-danger" style="width:100%">✕ Discard</button>
+    </div>
+</form>
+{% endif %}
+    
+</div> 
+</div>
+    {% endif %}
     {% endfor %}
     </div>
 

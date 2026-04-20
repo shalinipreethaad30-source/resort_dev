@@ -564,13 +564,13 @@ def tv_page(request: Request, room_no: int):
 @app.post("/discard_theme/{theme_id}")
 def discard_theme(theme_id: int):
     db = SessionLocal()
-
     db.execute(text("""
         UPDATE templates
-        SET status='inactive'
+        SET status='inactive',
+            start_date=NULL,
+            end_date=NULL
         WHERE id=:theme_id
     """), {"theme_id": theme_id})
-
     db.commit()
     db.close()
     return RedirectResponse("/themes", status_code=303)

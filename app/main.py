@@ -129,7 +129,15 @@ def admin_dashboard(request: Request):
 
     total_active = len(active_guests)
 
-    active_theme = db.query(Template).filter(Template.status == "active").first()
+    # Auto-deactivate expired themes first
+    db.execute(text("UPDATE templates SET status='inactive' WHERE end_date < :today"), {"today": today})
+    db.commit()
+
+    active_theme = db.query(Template).filter(
+        Template.status == "active",
+        Template.start_date <= today,
+        Template.end_date >= today
+    ).first()
 
     db.close()
 
@@ -564,13 +572,13 @@ def tv_page(request: Request, room_no: int):
 @app.post("/discard_theme/{theme_id}")
 def discard_theme(theme_id: int):
     db = SessionLocal()
-
     db.execute(text("""
         UPDATE templates
-        SET status='inactive'
+        SET status='inactive',
+            start_date=NULL,
+            end_date=NULL
         WHERE id=:theme_id
     """), {"theme_id": theme_id})
-
     db.commit()
     db.close()
     return RedirectResponse("/themes", status_code=303)

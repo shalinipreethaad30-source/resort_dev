@@ -262,3 +262,8 @@ class GroupBooking(Base):
     is_active       = Column(Integer)
     created_at      = Column(String(30))
     meal_plan       = Column(String(20), nullable=True)
+
+class HotelConfig(Base):
+    __tablename__ = "hotel_config"
+    key   = Column(String, primary_key=True)
+    value = Column(String)

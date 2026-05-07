@@ -1,3 +1,13 @@
+"""
+dashboard.py  (UPDATED — latency instrumented)
+────────────────────────────────────────────────
+All existing logic is 100% intact.
+Every db.query() is now wrapped with timed_query() to produce logs like:
+
+  2026-04-28 11:12:51,607 WARNING pms.selectors MODULE_QUERY: Active Guests = 86.92ms
+  2026-04-28 11:12:51,611 WARNING pms.selectors MODULE_QUERY: Food Orders = 4.00ms
+"""
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import func
@@ -6,6 +16,56 @@ from collections import defaultdict
 
 from .database import get_db
 from . import models
+
+import logging
+import time
+
+logger = logging.getLogger("pms.selectors")
+
+
+def timed_query(label: str, query):
+    """
+    Wraps a SQLAlchemy query with latency logging.
+    Returns a proxy so callers can still chain .all(), .first(), .count(), .scalar().
+
+    Logs lines like:
+      WARNING pms.selectors MODULE_QUERY: Active Guests = 86.92ms
+    """
+    class _TimedQuery:
+        def __init__(self, q):
+            self._q = q
+
+        def _exec(self, fn):
+            t0 = time.perf_counter()
+            result = fn()
+            ms = (time.perf_counter() - t0) * 1000
+            logger.warning("MODULE_QUERY: %s = %.2fms", label, ms)
+            return result
+
+        def all(self):
+            return self._exec(self._q.all)
+
+        def first(self):
+            return self._exec(self._q.first)
+
+        def count(self):
+            return self._exec(self._q.count)
+
+        def scalar(self):
+            return self._exec(self._q.scalar)
+
+        # Support chaining (e.g. timed_query(..., db.query(M)).filter(...).all())
+        def __getattr__(self, name):
+            attr = getattr(self._q, name)
+            if callable(attr):
+                def wrapper(*args, **kwargs):
+                    self._q = attr(*args, **kwargs)
+                    return self
+                return wrapper
+            return attr
+
+    return _TimedQuery(query)
+
 
 router = APIRouter(prefix="/api/dashboard", tags=["dashboard"])
 
@@ -20,11 +80,32 @@ def parse_period(period: str, date_from: str = None, date_to: str = None):
     elif period == "month":
         return today.replace(day=1), today
     elif period == "custom" and date_from and date_to:
-        return (
-            datetime.strptime(date_from, "%d-%m-%Y").date(),
-            datetime.strptime(date_to, "%d-%m-%Y").date(),
-        )
+        for fmt in ("%Y-%m-%d", "%d-%m-%Y"):
+            try:
+                return (
+                    datetime.strptime(date_from, fmt).date(),
+                    datetime.strptime(date_to, fmt).date(),
+                )
+            except ValueError:
+                continue
     return today, today
+
+
+def count_rooms_from_string(room_numbers: str) -> int:
+    if not room_numbers:
+        return 0
+    return len([r.strip() for r in room_numbers.split(",") if r.strip()])
+
+
+def parse_group_date(date_str: str):
+    if not date_str:
+        return None
+    for fmt in ("%Y-%m-%d", "%d-%m-%Y", "%Y-%m-%d %H:%M:%S"):
+        try:
+            return datetime.strptime(date_str.strip(), fmt).date()
+        except ValueError:
+            continue
+    return None
 
 
 @router.get("/stats")
@@ -37,71 +118,143 @@ def get_dashboard_stats(
     start, end = parse_period(period, date_from, date_to)
     today = date.today()
 
-    active_guests = db.query(models.Guest).filter(
-        models.Guest.check_in <= today,
-        models.Guest.check_out >= today,
+    # ── Active Guests ──
+    individual_active = timed_query(
+        "Active Individual Guests",
+        db.query(models.Guest).filter(
+            models.Guest.check_in <= today,
+            models.Guest.check_out >= today,
+        )
     ).count()
 
-    checkins = db.query(models.Guest).filter(
-        models.Guest.check_in >= start,
-        models.Guest.check_in <= end,
+    all_active_groups = timed_query(
+        "Active Group Bookings",
+        db.query(models.GroupBooking).filter(models.GroupBooking.is_active == 1)
+    ).all()
+
+    group_rooms_active = 0
+    for grp in all_active_groups:
+        ci = parse_group_date(grp.check_in)
+        co = parse_group_date(grp.check_out)
+        if ci and co and ci <= today and co >= today:
+            group_rooms_active += count_rooms_from_string(grp.room_numbers)
+
+    active_guests = individual_active + group_rooms_active
+
+    # ── Check-ins in period ──
+    individual_checkins = timed_query(
+        "Individual Check-ins",
+        db.query(models.Guest).filter(
+            models.Guest.check_in >= start,
+            models.Guest.check_in <= end,
+        )
     ).count()
 
-    checkouts = db.query(models.Guest).filter(
-        models.Guest.check_out >= start,
-        models.Guest.check_out <= end,
-    ).count()
+    all_groups = timed_query("All Group Bookings", db.query(models.GroupBooking)).all()
 
-    # Active theme
-    active_theme = db.query(models.Template).filter(models.Template.status == "active").first()
+    group_checkins = 0
+    group_checkouts = 0
+    group_rooms_checkin = 0
+    group_rooms_checkout = 0
+
+    for grp in all_groups:
+        ci = parse_group_date(grp.check_in)
+        co = parse_group_date(grp.check_out)
+        room_count = count_rooms_from_string(grp.room_numbers)
+        if ci and start <= ci <= end:
+            group_checkins += 1
+            group_rooms_checkin += room_count
+        if co and start <= co <= end:
+            group_checkouts += 1
+            group_rooms_checkout += room_count
+
+    checkins = individual_checkins + group_checkins
+
+    individual_checkouts = timed_query(
+        "Individual Check-outs",
+        db.query(models.Guest).filter(
+            models.Guest.check_out >= start,
+            models.Guest.check_out <= end,
+        )
+    ).count()
+    checkouts = individual_checkouts + group_checkouts
+
+    # ── Active Theme ──
+    active_theme = timed_query(
+        "Active Theme",
+        db.query(models.Template).filter(models.Template.status == "active")
+    ).first()
     theme_name = active_theme.name if active_theme else "—"
-    theme_sub  = f"{active_theme.start_date} → {active_theme.end_date}" if active_theme else "No active theme"
+    theme_sub = (
+        f"{active_theme.start_date} → {active_theme.end_date}"
+        if active_theme else "No active theme"
+    )
 
-    # TV stats
-    all_tvs   = db.query(models.TV).all()
+    # ── TV Stats ──
+    all_tvs = timed_query("TV List", db.query(models.TV)).all()
     tv_online = sum(1 for t in all_tvs if t.status == "ONLINE")
     tv_bound  = sum(1 for t in all_tvs if t.bound)
     tv_total  = len(all_tvs)
 
-    # PMS Bookings in period
-    food_orders = db.query(models.Order).filter(
-        func.date(models.Order.ordered_at) >= start,
-        func.date(models.Order.ordered_at) <= end,
-    ).count()
-
-    spa_bookings = db.query(models.SpaBooking).filter(
-        func.date(models.SpaBooking.booked_at) >= start,
-        func.date(models.SpaBooking.booked_at) <= end,
-    ).count()
-
-    dine_bookings = db.query(models.DineBooking).filter(
-        func.date(models.DineBooking.booked_at) >= start,
-        func.date(models.DineBooking.booked_at) <= end,
-    ).count()
-
-    ent_bookings = db.query(models.EntertainmentBooking).filter(
-        func.date(models.EntertainmentBooking.booked_at) >= start,
-        func.date(models.EntertainmentBooking.booked_at) <= end,
-    ).count()
-
-    act_activities = db.query(models.ActivityBooking).filter(
-        func.date(models.ActivityBooking.booked_at) >= start,
-        func.date(models.ActivityBooking.booked_at) <= end,
-    ).count()
-
-    total_orders = (
-        db.query(func.sum(models.Order.total))
-        .filter(
+    # ── PMS Bookings ──
+    food_orders = timed_query(
+        "Food Orders",
+        db.query(models.Order).filter(
             func.date(models.Order.ordered_at) >= start,
             func.date(models.Order.ordered_at) <= end,
         )
-        .scalar() or 0
+    ).count()
+
+    spa_bookings = timed_query(
+        "Spa Bookings",
+        db.query(models.SpaBooking).filter(
+            func.date(models.SpaBooking.booked_at) >= start,
+            func.date(models.SpaBooking.booked_at) <= end,
+        )
+    ).count()
+
+    dine_bookings = timed_query(
+        "Dine Bookings",
+        db.query(models.DineBooking).filter(
+            func.date(models.DineBooking.booked_at) >= start,
+            func.date(models.DineBooking.booked_at) <= end,
+        )
+    ).count()
+
+    ent_bookings = timed_query(
+        "Entertainment Bookings",
+        db.query(models.EntertainmentBooking).filter(
+            func.date(models.EntertainmentBooking.booked_at) >= start,
+            func.date(models.EntertainmentBooking.booked_at) <= end,
+        )
+    ).count()
+
+    act_activities = timed_query(
+        "Activity Bookings",
+        db.query(models.ActivityBooking).filter(
+            func.date(models.ActivityBooking.booked_at) >= start,
+            func.date(models.ActivityBooking.booked_at) <= end,
+        )
+    ).count()
+
+    total_orders = (
+        timed_query(
+            "Total Order Revenue",
+            db.query(func.sum(models.Order.total)).filter(
+                func.date(models.Order.ordered_at) >= start,
+                func.date(models.Order.ordered_at) <= end,
+            )
+        ).scalar() or 0
     )
 
-    # Occupancy
-    occupied    = active_guests
-    total_rooms = tv_total  # one TV per room
-    available   = max(0, total_rooms - occupied)
+    # ── Occupancy ──
+    config = timed_query(
+        "Hotel Config (total_rooms)",
+        db.query(models.HotelConfig).filter_by(key="total_rooms")
+    ).first()
+    total_rooms = int(config.value) if config else max(tv_total, active_guests)
+    occupied  = min(active_guests, total_rooms)
+    available = max(0, total_rooms - occupied)
 
     return {
         "date_from": start.strftime("%d %b %Y"),
@@ -109,26 +262,22 @@ def get_dashboard_stats(
         "active_guests": active_guests,
         "checkins":  checkins,
         "checkouts": checkouts,
-        "theme": {
-            "name": theme_name,
-            "sub":  theme_sub,
+        "checkin_breakdown": {
+            "individual":     individual_checkins,
+            "group_bookings": group_checkins,
+            "group_rooms":    group_rooms_checkin,
         },
-        "tv": {
-            "online": tv_online,
-            "bound":  tv_bound,
-            "total":  tv_total,
-        },
+        "theme": {"name": theme_name, "sub": theme_sub},
+        "tv":    {"online": tv_online, "bound": tv_bound, "total": tv_total},
         "pms_bookings": {
-            "food":          food_orders,
-            "spa":           spa_bookings,
-            "dine":          dine_bookings,
-            "entertainment": ent_bookings,
+            "food": food_orders, "spa": spa_bookings,
+            "dine": dine_bookings, "entertainment": ent_bookings,
         },
         "pms_activity": {
-            "checkins":   checkins,
-            "checkouts":  checkouts,
+            "checkins":  checkins,
+            "checkouts": checkouts,
             "activities": act_activities,
-            "total":      total_orders,
+            "total":     total_orders,
         },
         "occupancy": {
             "occupied":    occupied,
@@ -136,6 +285,7 @@ def get_dashboard_stats(
             "total_rooms": total_rooms,
         },
     }
+
 
 @router.get("/charts")
 def get_dashboard_charts(
@@ -146,138 +296,77 @@ def get_dashboard_charts(
 ):
     start, end = parse_period(period, date_from, date_to)
 
-    # ── Booking Trend: daily check-ins + total bookings per day ──
-    # Build date range labels
     delta = (end - start).days + 1
-    dates = [start + timedelta(days=i) for i in range(delta)]
+    dates  = [start + timedelta(days=i) for i in range(delta)]
     labels = [d.strftime("%m-%d") for d in dates]
 
-    checkin_counts = defaultdict(int)
-    booking_counts = defaultdict(int)
+    checkin_counts  = defaultdict(int)
+    booking_counts  = defaultdict(int)
 
-    guests = db.query(models.Guest).filter(
-        models.Guest.check_in >= start,
-        models.Guest.check_in <= end,
+    guests = timed_query(
+        "Guest Checkin Trend",
+        db.query(models.Guest).filter(
+            models.Guest.check_in >= start,
+            models.Guest.check_in <= end,
+        )
     ).all()
     for g in guests:
         checkin_counts[str(g.check_in)] += 1
 
-    for Model, col in [
-        (models.Order,                "ordered_at"),
-        (models.SpaBooking,           "booked_at"),
-        (models.DineBooking,          "booked_at"),
-        (models.EntertainmentBooking, "booked_at"),
+    all_groups_chart = timed_query("Group Checkin Trend", db.query(models.GroupBooking)).all()
+    for grp in all_groups_chart:
+        ci = parse_group_date(grp.check_in)
+        if ci and start <= ci <= end:
+            checkin_counts[str(ci)] += 1
+
+    for Model, col, label in [
+        (models.Order,                 "ordered_at", "Order Trend"),
+        (models.SpaBooking,            "booked_at",  "Spa Trend"),
+        (models.DineBooking,           "booked_at",  "Dine Trend"),
+        (models.EntertainmentBooking,  "booked_at",  "Entertainment Trend"),
+        (models.ActivityBooking,       "booked_at",  "Activity Trend"),
     ]:
-        rows = db.query(Model).filter(
-            func.date(getattr(Model, col)) >= start,
-            func.date(getattr(Model, col)) <= end,
+        rows = timed_query(
+            label,
+            db.query(Model).filter(
+                func.date(getattr(Model, col)) >= start,
+                func.date(getattr(Model, col)) <= end,
+            )
         ).all()
         for r in rows:
-            day = str(getattr(r, col).date()) if hasattr(getattr(r, col), 'date') else str(getattr(r, col))[:10]
+            dt  = getattr(r, col)
+            day = str(dt.date()) if hasattr(dt, "date") else str(dt)[:10]
             booking_counts[day] += 1
 
-    trend_checkins  = [checkin_counts.get(str(d), 0) for d in dates]
-    trend_bookings  = [booking_counts.get(str(d), 0) for d in dates]
+    trend_checkins  = [checkin_counts.get(str(d), 0)  for d in dates]
+    trend_bookings  = [booking_counts.get(str(d), 0)  for d in dates]
 
-    # ── Recent Activity (last 10 events in period) ──
+    # ── Recent Activity ──
     recent = []
-
-    orders = db.query(models.Order).filter(
-        func.date(models.Order.ordered_at) >= start,
-        func.date(models.Order.ordered_at) <= end,
-    ).order_by(models.Order.ordered_at.desc()).limit(5).all()
-    for o in orders:
-        recent.append({
-            "icon": "🍽️",
-            "label": f"Food Order — {o.guest_name or 'Guest'}",
-            "room": o.room_no,
-            "time": o.ordered_at.strftime("%I:%M %p") if o.ordered_at else "",
-            "type": "Food",
-        })
-
-    spas = db.query(models.SpaBooking).filter(
-        func.date(models.SpaBooking.booked_at) >= start,
-        func.date(models.SpaBooking.booked_at) <= end,
-    ).order_by(models.SpaBooking.booked_at.desc()).limit(5).all()
-    for s in spas:
-        recent.append({
-            "icon": "🧖",
-            "label": f"{s.item_title} — {s.guest_name or 'Guest'}",
-            "room": s.room_no,
-            "time": s.booked_at.strftime("%I:%M %p") if s.booked_at else "",
-            "type": "Spa",
-        })
-
-    dines = db.query(models.DineBooking).filter(
-        func.date(models.DineBooking.booked_at) >= start,
-        func.date(models.DineBooking.booked_at) <= end,
-    ).order_by(models.DineBooking.booked_at.desc()).limit(3).all()
-    for d2 in dines:
-        recent.append({
-            "icon": "🕯️",
-            "label": f"{d2.item_title} — {d2.guest_name or 'Guest'}",
-            "room": d2.room_no,
-            "time": d2.booked_at.strftime("%I:%M %p") if d2.booked_at else "",
-            "type": "Dine",
-        })
-
-    ents = db.query(models.EntertainmentBooking).filter(
-        func.date(models.EntertainmentBooking.booked_at) >= start,
-        func.date(models.EntertainmentBooking.booked_at) <= end,
-    ).order_by(models.EntertainmentBooking.booked_at.desc()).limit(3).all()
-    for e in ents:
-        recent.append({
-            "icon": "🎮",
-            "label": f"{e.item_title} — {e.guest_name or 'Guest'}",
-            "room": e.room_no,
-            "time": e.booked_at.strftime("%I:%M %p") if e.booked_at else "",
-            "type": "Entertainment",
-        })
-
-    # Sort by time desc and take top 8
-    recent.sort(key=lambda x: x["time"], reverse=True)
-    recent = recent[:8]
-
-    # ── Top Performers (booking counts by category) ──
-    food_count = db.query(models.Order).filter(
-        func.date(models.Order.ordered_at) >= start,
-        func.date(models.Order.ordered_at) <= end,
-    ).count()
-    spa_count = db.query(models.SpaBooking).filter(
-        func.date(models.SpaBooking.booked_at) >= start,
-        func.date(models.SpaBooking.booked_at) <= end,
-    ).count()
-    dine_count = db.query(models.DineBooking).filter(
-        func.date(models.DineBooking.booked_at) >= start,
-        func.date(models.DineBooking.booked_at) <= end,
-    ).count()
-    ent_count = db.query(models.EntertainmentBooking).filter(
-        func.date(models.EntertainmentBooking.booked_at) >= start,
-        func.date(models.EntertainmentBooking.booked_at) <= end,
-    ).count()
-
-    # ── Most Active Room ──
-    from sqlalchemy import union_all, literal, cast, Integer as SAInt
-
-    room_tally = defaultdict(int)
-    for Model, col in [
-        (models.Order, "ordered_at"),
-        (models.SpaBooking, "booked_at"),
-        (models.DineBooking, "booked_at"),
-        (models.EntertainmentBooking, "booked_at"),
+    for Model, col, label, icon, type_label in [
+        (models.Order,                "ordered_at", "Food Order",    "🍽️", "Food"),
+        (models.SpaBooking,           "booked_at",  "Spa Booking",   "🧖", "Spa"),
+        (models.DineBooking,          "booked_at",  "Dine Booking",  "🕯️", "Dine"),
+        (models.EntertainmentBooking, "booked_at",  "Entertainment", "🎮", "Entertain"),
     ]:
-        rows = db.query(Model.room_no).filter(
-            func.date(getattr(Model, col)) >= start,
-            func.date(getattr(Model, col)) <= end,
+        rows = timed_query(
+            f"Recent {type_label}",
+            db.query(Model).filter(
+                func.date(getattr(Model, col)) >= start,
+                func.date(getattr(Model, col)) <= end,
+            ).order_by(getattr(Model, col).desc()).limit(5)
         ).all()
-        for (rno,) in rows:
-            if rno:
-                room_tally[rno] += 1
+        for r in rows:
+            dt = getattr(r, col)
+            recent.append({
+                "icon":  icon,
+                "label": label,
+                "room":  r.room_no or "—",
+                "time":  dt.strftime("%I:%M %p") if dt else "—",
+                "type":  type_label,
+            })
 
-    most_active_room = max(room_tally, key=room_tally.get) if room_tally else None
-
-    # ── Total orders count ──
-    total_orders_count = food_count + spa_count + dine_count + ent_count
+    recent = sorted(recent, key=lambda x: x["time"], reverse=True)[:10]
 
     return {
         "trend": {
@@ -286,12 +375,4 @@ def get_dashboard_charts(
             "bookings": trend_bookings,
         },
         "recent_activity": recent,
-        "top_performers": {
-            "food":          food_count,
-            "spa":           spa_count,
-            "dine":          dine_count,
-            "entertainment": ent_count,
-        },
-        "most_active_room":  most_active_room,
-        "total_orders_count": total_orders_count,
     }

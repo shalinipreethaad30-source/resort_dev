@@ -2,30 +2,80 @@
 <html>
 <head>
     <title>Live TV</title>
-
     <style>
-        body{
-            margin:0;
-            background:black;
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            height:100vh;
+        body {
+            margin: 0;
+            background: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
-
-        video{
-            width:90%;
-            height:auto;
-            border-radius:10px;
+        video {
+            width: 90%;
+            height: auto;
+            border-radius: 10px;
+        }
+        .home-btn {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.1);
+            border: .5px solid rgba(255,255,255,0.25);
+            border-radius: 30px;
+            color: #fff;
+            font-family: sans-serif;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: .25em;
+            text-transform: uppercase;
+            cursor: pointer;
+            text-decoration: none;
+            backdrop-filter: blur(10px);
+            transition: background .25s, border-color .25s;
+        }
+        .home-btn:hover {
+            background: rgba(192,24,90,0.35);
+            border-color: rgba(192,24,90,0.7);
+        }
+        .home-btn svg {
+            width: 14px;
+            height: 14px;
         }
     </style>
 </head>
-
 <body>
 
-<video controls autoplay>
-    <source src="/static/sample.mp4" type="video/mp4">
-</video>
+    <a class="home-btn" id="homeBtn" href="#">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M19 12H5M5 12l7 7M5 12l7-7"/>
+    </svg>
+    Home
+</a>
+
+<script>
+    // Read room_no from URL query string (?room_no=101)
+    const roomNo = new URLSearchParams(window.location.search).get('room_no') || '';
+    const homeBtn = document.getElementById('homeBtn');
+    if (roomNo) {
+        homeBtn.href = '/tv/' + roomNo;
+    } else {
+        // Fallback — go to previous page
+        homeBtn.onclick = function(e) {
+            e.preventDefault();
+            window.history.back();
+        };
+    }
+</script>
+
+    <video controls autoplay>
+        <source src="/static/sample.mp4" type="video/mp4">
+    </video>
 
 </body>
 </html>

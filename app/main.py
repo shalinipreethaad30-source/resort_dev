@@ -1,6 +1,8 @@
-from fastapi import FastAPI, Request, Form, WebSocket, WebSocketDisconnect, Depends, UploadFile, File
+from fastapi import FastAPI, Request, Response, Form, WebSocket, WebSocketDisconnect, Depends, UploadFile, File, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
+from starlette.middleware.sessions import SessionMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi.staticfiles import StaticFiles
 from datetime import date, datetime
 from pydantic import BaseModel
@@ -10,6 +12,9 @@ import asyncio
 import os
 import re
 import uuid
+import time
+import bcrypt
+from functools import wraps
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 import json
@@ -22,6 +27,17 @@ import httpx
 from .models import GroupBooking  
 from fastapi.responses import JSONResponse   
 from app.dashboard import router as dashboard_router                                      # NEW: used by booking_routes for PMS sync
+
+
+
+class ServerTimingMiddleware(BaseHTTPMiddleware):
+    """Adds Server-Timing header to every response for latency visibility."""
+    async def dispatch(self, request: Request, call_next):
+        start = time.perf_counter()
+        response = await call_next(request)
+        duration_ms = (time.perf_counter() - start) * 1000
+        response.headers["Server-Timing"] = f"app;desc=\"Server\";dur={duration_ms:.2f}"
+        return response
 
 
 models.Base.metadata.create_all(bind=engine)
@@ -41,7 +57,47 @@ with engine.connect() as _conn:
             pass   # column already exists — safe to ignore
 
 
+# Absolute path anchor — resolves correctly regardless of working directory
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_DIR = os.path.join(BASE_DIR, "static")
+MENU_CARD_DIR = os.path.join(STATIC_DIR, "uploads", "menu_card")
+
 app = FastAPI()
+
+                         # configure structured logging
+app.add_middleware(SessionMiddleware, secret_key="b755357017fd3100fca04f7955592dda46c2e78415ab769562ba6f272fe56d6a")
+   # detailed per-route latency tracking
+app.add_middleware(ServerTimingMiddleware)  # Server-Timing response header
+
+# =========================
+# ADMIN AUTH HELPERS
+# =========================
+
+def get_admin_password_hash() -> bytes:
+    """Load hash from file (if password was reset) or fall back to default."""
+    if os.path.exists('admin_pass.hash'):
+        with open('admin_pass.hash', 'rb') as f:
+            return f.read().strip()
+    # Default hash — generated from 'admin123'
+    # To change: run bcrypt.hashpw(b'newpassword', bcrypt.gensalt()) in Python shell
+    return b'$2b$12$L7Ds0BvT4Lu0lY/14lsOpeM27Kywq1QoDqXDT7Ua54wJiq31Zp6M6'
+
+
+def require_admin(request: Request):
+    """Dependency — raises 401 if admin is not logged in."""
+    if not request.session.get('admin_logged_in'):
+        raise HTTPException(status_code=401, detail='Unauthorized')
+    return True
+
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+
+class ChangePasswordRequest(BaseModel):
+    new_password: str
+
 app.include_router(booking_router)  
 app.include_router(dashboard_router) # NEW: registers all /api/order, /api/spa-booking etc.
 
@@ -112,6 +168,43 @@ def check_tv_status(ip_address):
 # =========================
 
 room_messages = {}
+
+
+# =========================
+# ADMIN AUTH ROUTES
+# =========================
+
+@app.post('/api/admin/login')
+async def admin_login(data: LoginRequest, request: Request):
+    password = data.password.encode('utf-8')
+    if data.username == 'admin' and bcrypt.checkpw(password, get_admin_password_hash()):
+        request.session['admin_logged_in'] = True
+        request.session.update({'admin_logged_in': True})
+        return {'success': True}
+    raise HTTPException(status_code=401, detail='Invalid credentials')
+
+
+@app.post('/api/admin/logout')
+async def admin_logout(request: Request):
+    request.session.clear()
+    return {'success': True}
+
+
+@app.get('/api/admin/check-session')
+async def check_admin_session(request: Request):
+    return {'logged_in': request.session.get('admin_logged_in', False)}
+
+
+@app.post('/api/admin/change-password')
+async def change_admin_password(data: ChangePasswordRequest, request: Request):
+    if not request.session.get('admin_logged_in'):
+        raise HTTPException(status_code=401, detail='Unauthorized')
+    if len(data.new_password) < 6:
+        raise HTTPException(status_code=400, detail='Password too short')
+    new_hash = bcrypt.hashpw(data.new_password.encode('utf-8'), bcrypt.gensalt())
+    with open('admin_pass.hash', 'wb') as f:
+        f.write(new_hash)
+    return {'success': True}
 
 
 # =========================
@@ -243,27 +336,38 @@ def add_tv(
 async def websocket_tv_status(websocket: WebSocket):
     await websocket.accept()
 
-    while True:
-        db = SessionLocal()
-        tvs = db.query(models.TV).all()
-        data = []
+    try:
+        while True:
+            db = SessionLocal()
+            try:
+                tvs = db.query(models.TV).all()
+                data = []
 
-        for tv in tvs:
-            status = check_tv_status(tv.ip_address)
-            tv.status = status
-            data.append({
-                "room_no": tv.room_no,
-                "mac_address": tv.mac_address,
-                "ip_address": tv.ip_address,
-                "status": status,
-                "bound": tv.bound
-            })
+                for tv in tvs:
+                    status = check_tv_status(tv.ip_address)
+                    tv.status = status
+                    data.append({
+                        "room_no": tv.room_no,
+                        "mac_address": tv.mac_address,
+                        "ip_address": tv.ip_address,
+                        "status": status,
+                        "bound": tv.bound
+                    })
 
-        db.commit()
-        db.close()
+                db.commit()
+            except Exception as e:
+                db.rollback()
+                print(f"[TV WebSocket] DB error: {e}")
+            finally:
+                db.close()
 
-        await websocket.send_json(data)
-        await asyncio.sleep(5)
+            await websocket.send_json(data)
+            await asyncio.sleep(5)
+
+    except WebSocketDisconnect:
+        print(f"[TV WebSocket] Client disconnected — stopping TV status loop.")
+    except Exception as e:
+        print(f"[TV WebSocket] Unexpected error: {e}")
 
 
 # =========================
@@ -700,6 +804,26 @@ def services_page(request: Request):
     )
 
 
+# =========================
+# DUPLICATE CHECK API (pre-flight from frontend)
+# =========================
+
+@app.get("/api/services/check-duplicate")
+def check_service_duplicate(title: str, db: Session = Depends(get_db)):
+    """Returns {duplicate: true/false, conflict_with: str} based on word-token overlap."""
+    new_words = set(
+        w.lower() for w in re.split(r"[\s\-&,/]+", title.strip()) if len(w) >= 3
+    )
+    existing = db.query(models.Service).all()
+    for svc in existing:
+        existing_words = set(
+            w.lower() for w in re.split(r"[\s\-&,/]+", svc.title.strip()) if len(w) >= 3
+        )
+        if new_words & existing_words:
+            return {"duplicate": True, "conflict_with": svc.title}
+    return {"duplicate": False, "conflict_with": None}
+
+
 @app.post("/admin/services/add")
 async def add_service(
     title: str = Form(...),
@@ -709,6 +833,23 @@ async def add_service(
         return RedirectResponse("/admin/services?error=no_image", status_code=303)
 
     db = SessionLocal()
+
+    # Server-side duplicate guard (catches direct POST bypassing frontend)
+    new_words = set(
+        w.lower() for w in re.split(r"[\s\-&,/]+", title.strip()) if len(w) >= 3
+    )
+    existing = db.query(models.Service).all()
+    for svc in existing:
+        existing_words = set(
+            w.lower() for w in re.split(r"[\s\-&,/]+", svc.title.strip()) if len(w) >= 3
+        )
+        if new_words & existing_words:
+            db.close()
+            return RedirectResponse(
+                f"/admin/services?error=duplicate&conflict={svc.title}",
+                status_code=303
+            )
+
     service_dir = os.path.join(UPLOAD_DIR, "services")
     os.makedirs(service_dir, exist_ok=True)
 
@@ -724,7 +865,6 @@ async def add_service(
     db.commit()
     db.close()
     return RedirectResponse("/admin/services", status_code=303)
-
 
 @app.delete("/admin/services/{service_id}")
 def delete_service(service_id: int):
@@ -789,11 +929,14 @@ def food_admin(request: Request, category: str = "all"):
     else:
         items = db.query(models.FoodItem).filter(models.FoodItem.category == category).all()
     db.close()
+    menu_card_url, menu_card_updated_at = get_menu_card_url()
     return templates.TemplateResponse("dashboard.html", {
         "request": request,
         "page": "food",
         "items": items,
-        "selected_category": category
+        "selected_category": category,
+        "menu_card_url": menu_card_url,           # ✅ add this
+        "menu_card_updated_at": menu_card_updated_at
     })
 
 
@@ -805,6 +948,14 @@ async def add_food_item(
     image: Optional[UploadFile] = File(None)
 ):
     db = SessionLocal()
+
+    existing = db.query(models.FoodItem).filter(
+        models.FoodItem.title.ilike(title.strip())
+    ).first()
+    if existing:
+        db.close()
+        return RedirectResponse(f"/admin/food?category={category}&error=duplicate&conflict={existing.title}", status_code=303)
+
     food_dir = os.path.join(UPLOAD_DIR, "services", "food_menu")
     os.makedirs(food_dir, exist_ok=True)
 
@@ -814,7 +965,6 @@ async def add_food_item(
         file_path = os.path.join(food_dir, filename)
         with open(file_path, "wb") as f:
             f.write(await image.read())
-
         image_url = f"/static/images/services/food_menu/{filename}"
 
     item = models.FoodItem(title=title, category=category, price=price, image_url=image_url)
@@ -939,9 +1089,8 @@ def delete_spa_item(item_id: int):
     return {"message": "Deleted"}
 
 
-@app.post("/admin/spa/edit/{item_id}")
-async def edit_spa_item(
-    item_id: int,
+@app.post("/admin/spa/add")
+async def add_spa_item(
     title: str = Form(...),
     category: str = Form(...),
     price: int = Form(0),
@@ -951,31 +1100,37 @@ async def edit_spa_item(
     image: Optional[UploadFile] = File(None)
 ):
     db = SessionLocal()
-    item = db.query(models.SpaItem).filter(models.SpaItem.id == item_id).first()
 
-    if not item:
+    existing = db.query(models.SpaItem).filter(
+        models.SpaItem.title.ilike(title.strip())
+    ).first()
+    if existing:
         db.close()
-        return {"message": "Item not found"}
+        return RedirectResponse(f"/admin/spa?category={category}&error=duplicate&conflict={existing.title}", status_code=303)
 
-    item.title    = title
-    item.category = category
-    item.price    = price
-    item.slot1    = slot1
-    item.slot2    = slot2 or None
-    item.slot3    = slot3 or None
+    spa_dir = os.path.join(UPLOAD_DIR, "services", "spa")
+    os.makedirs(spa_dir, exist_ok=True)
 
+    image_url = "/static/images/default.jpg"
     if image and image.filename:
-        spa_dir = os.path.join(UPLOAD_DIR, "services", "spa")
-        os.makedirs(spa_dir, exist_ok=True)
         filename  = title_filename(title, image.filename)
         file_path = os.path.join(spa_dir, filename)
         with open(file_path, "wb") as f:
             f.write(await image.read())
-        item.image_url = f"/static/images/services/spa/{filename}"
+        image_url = f"/static/images/services/spa/{filename}"
 
+    item = models.SpaItem(
+        title=title, category=category,
+        price=price,
+        slot1=slot1,
+        slot2=slot2 or None,
+        slot3=slot3 or None,
+        image_url=image_url
+    )
+    db.add(item)
     db.commit()
     db.close()
-    return {"message": "Updated successfully"}
+    return RedirectResponse(f"/admin/spa?category={category}", status_code=303)
 
 
 # /api/spa-booking is now handled by booking_routes.py (saves to DB with price)
@@ -1142,6 +1297,14 @@ async def add_bar_item(
     image: Optional[UploadFile] = File(None)
 ):
     db = SessionLocal()
+
+    existing = db.query(models.BarItem).filter(
+        models.BarItem.title.ilike(title.strip())
+    ).first()
+    if existing:
+        db.close()
+        return RedirectResponse(f"/admin/bar?category={category}&error=duplicate&conflict={existing.title}", status_code=303)
+
     bar_dir = os.path.join(UPLOAD_DIR, "services", "bar")
     os.makedirs(bar_dir, exist_ok=True)
 
@@ -1253,6 +1416,14 @@ async def add_dine_item(
     image: Optional[UploadFile] = File(None)
 ):
     db = SessionLocal()
+
+    existing = db.query(models.DineItem).filter(
+        models.DineItem.title.ilike(title.strip())
+    ).first()
+    if existing:
+        db.close()
+        return RedirectResponse(f"/admin/dine?occasion={occasion}&error=duplicate&conflict={existing.title}", status_code=303)
+
     dine_dir = os.path.join(UPLOAD_DIR, "services", "dine")
     os.makedirs(dine_dir, exist_ok=True)
 
@@ -1274,7 +1445,6 @@ async def add_dine_item(
     db.commit()
     db.close()
     return RedirectResponse(f"/admin/dine?occasion={occasion}", status_code=303)
-
 
 @app.delete("/admin/dine/{item_id}")
 def delete_dine_item(item_id: int):
@@ -1418,6 +1588,14 @@ async def add_entertainment_item(
     image: Optional[UploadFile] = File(None)
 ):
     db = SessionLocal()
+
+    existing = db.query(models.EntertainmentItem).filter(
+        models.EntertainmentItem.title.ilike(title.strip())
+    ).first()
+    if existing:
+        db.close()
+        return RedirectResponse(f"/admin/entertainment?category={category}&error=duplicate&conflict={existing.title}", status_code=303)
+
     ent_dir = os.path.join(UPLOAD_DIR, "services", "entertainment")
     os.makedirs(ent_dir, exist_ok=True)
 
@@ -1442,7 +1620,6 @@ async def add_entertainment_item(
     db.commit()
     db.close()
     return RedirectResponse(f"/admin/entertainment?category={category}", status_code=303)
-
 
 @app.delete("/admin/entertainment/{item_id}")
 def delete_entertainment_item(item_id: int):
@@ -1589,6 +1766,14 @@ async def add_room_service_item(
     image:       Optional[UploadFile] = File(None)
 ):
     db = SessionLocal()
+
+    existing = db.query(models.RoomServiceItem).filter(
+        models.RoomServiceItem.title.ilike(title.strip())
+    ).first()
+    if existing:
+        db.close()
+        return RedirectResponse(f"/admin/room-services?error=duplicate&conflict={existing.title}", status_code=303)
+
     rs_dir = os.path.join(UPLOAD_DIR, "services", "room_services")
     os.makedirs(rs_dir, exist_ok=True)
 
@@ -1611,7 +1796,6 @@ async def add_room_service_item(
     db.commit()
     db.close()
     return RedirectResponse("/admin/room-services", status_code=303)
-
 
 @app.delete("/admin/room-services/{item_id}")
 def delete_room_service_item(item_id: int):
@@ -1663,9 +1847,11 @@ def toggle_room_service_item(item_id: int):
     if item:
         item.is_active = not item.is_active
         db.commit()
+        is_active = item.is_active  # read BEFORE closing session
+    else:
+        is_active = None
     db.close()
-    return {"message": "Toggled", "is_active": item.is_active if item else None}
-
+    return {"message": "Toggled", "is_active": is_active}
 
 # =========================
 # ROOM SERVICE REQUEST (from TV page)
@@ -1780,6 +1966,14 @@ async def add_gallery_item(
     image:       Optional[UploadFile]   = File(None)
 ):
     db = SessionLocal()
+
+    existing = db.query(models.GalleryItem).filter(
+        models.GalleryItem.title.ilike(title.strip())
+    ).first()
+    if existing:
+        db.close()
+        return RedirectResponse(f"/admin/gallery?error=duplicate&conflict={existing.title}", status_code=303)
+
     gallery_dir = os.path.join(UPLOAD_DIR, "services", "gallery")
     os.makedirs(gallery_dir, exist_ok=True)
 
@@ -2112,3 +2306,80 @@ def api_current_guests():
 
     db.close()
     return current_guests
+
+@app.get("/api/groups/current")
+def api_current_groups():
+    db = SessionLocal()
+    today = date.today()
+    all_groups = db.query(GroupBooking).all()
+
+    active_groups = []
+    for g in all_groups:
+        ci = g.check_in  if isinstance(g.check_in,  date) else date.fromisoformat(str(g.check_in))
+        co = g.check_out if isinstance(g.check_out, date) else date.fromisoformat(str(g.check_out))
+
+        if ci <= today <= co:
+            room_numbers_list = (
+                json.loads(g.room_numbers)
+                if isinstance(g.room_numbers, str)
+                else g.room_numbers
+            )
+            active_groups.append({
+                "id":               g.id,
+                "group_name":       g.group_name,
+                "welcome_message":  g.welcome_message or "",
+                "room_numbers_list": room_numbers_list,
+                "check_in":         str(g.check_in),
+                "check_out":        str(g.check_out),
+                "days_left":        (co - today).days,
+            })
+
+    db.close()
+    return active_groups
+
+@app.post("/admin/food/menu-card/upload")
+async def upload_menu_card(menu_card: UploadFile = File(...)):
+    if not menu_card:
+        return JSONResponse(status_code=400, content={"error": "No file provided"})
+
+    ext = os.path.splitext(menu_card.filename)[1].lower()
+    safe_name = f"menu_card{ext}"
+    save_dir  = MENU_CARD_DIR
+    os.makedirs(save_dir, exist_ok=True)
+    save_path = os.path.join(save_dir, safe_name)
+
+    contents = await menu_card.read()
+    with open(save_path, "wb") as f:
+        f.write(contents)
+
+    url = f"/static/uploads/menu_card/{safe_name}"
+    return JSONResponse(content={"url": url})
+
+
+@app.post("/admin/food/menu-card/delete")
+async def delete_menu_card():
+    for ext in [".pdf", ".jpg", ".jpeg", ".png", ".webp"]:
+        path = os.path.join(MENU_CARD_DIR, f"menu_card{ext}")
+        if os.path.exists(path):
+            os.remove(path)
+    return JSONResponse(content={"success": True})
+
+def get_menu_card_url():
+    """Scans MENU_CARD_DIR and returns the URL if a file exists."""
+    os.makedirs(MENU_CARD_DIR, exist_ok=True)
+    for ext in [".pdf", ".jpg", ".jpeg", ".png", ".webp"]:
+        path = os.path.join(MENU_CARD_DIR, f"menu_card{ext}")
+        if os.path.exists(path):
+            ts = os.path.getmtime(path)
+            updated_at = datetime.fromtimestamp(ts).strftime("%d %b %Y, %I:%M %p")
+            return f"/static/uploads/menu_card/menu_card{ext}", updated_at
+    return None, None
+
+
+@app.get("/api/menu-card")
+def api_menu_card():
+    """Guest panel fetches this to display the uploaded menu card."""
+    url, updated_at = get_menu_card_url()
+    if not url:
+        return JSONResponse(status_code=404, content={"error": "No menu card uploaded"})
+    return JSONResponse(content={"url": url, "updated_at": updated_at})

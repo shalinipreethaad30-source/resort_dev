@@ -86,7 +86,7 @@
         @keyframes floatMist { from { transform: translateX(0); } to { transform: translateX(80%); } }
 
         /* ══════════════════════════════════════════
-           FLAGPOLE (left side, prominent)
+           FLAGPOLE
         ══════════════════════════════════════════ */
         .flagpole-wrap {
     position: fixed;
@@ -149,34 +149,13 @@
 }
 
 @keyframes flag-fly {
-    0%   {
-        clip-path: polygon(0 0, 100% 5%, 98% 95%, 0 100%);
-        transform: perspective(200px) rotateY(0deg) skewY(0deg);
-    }
-    15%  {
-        clip-path: polygon(0 0, 100% 0%, 100% 100%, 0 98%);
-        transform: perspective(200px) rotateY(-3deg) skewY(-1deg);
-    }
-    30%  {
-        clip-path: polygon(0 2%, 100% 8%, 96% 92%, 0 100%);
-        transform: perspective(200px) rotateY(2deg) skewY(1.5deg);
-    }
-    50%  {
-        clip-path: polygon(0 0, 100% 3%, 99% 97%, 0 99%);
-        transform: perspective(200px) rotateY(-2deg) skewY(-0.5deg);
-    }
-    65%  {
-        clip-path: polygon(0 3%, 100% 0%, 97% 100%, 0 97%);
-        transform: perspective(200px) rotateY(3deg) skewY(2deg);
-    }
-    80%  {
-        clip-path: polygon(0 0, 100% 6%, 95% 94%, 0 100%);
-        transform: perspective(200px) rotateY(-1deg) skewY(-1deg);
-    }
-    100% {
-        clip-path: polygon(0 0, 100% 5%, 98% 95%, 0 100%);
-        transform: perspective(200px) rotateY(0deg) skewY(0deg);
-    }
+    0%   { clip-path: polygon(0 0, 100% 5%, 98% 95%, 0 100%); transform: perspective(200px) rotateY(0deg) skewY(0deg); }
+    15%  { clip-path: polygon(0 0, 100% 0%, 100% 100%, 0 98%); transform: perspective(200px) rotateY(-3deg) skewY(-1deg); }
+    30%  { clip-path: polygon(0 2%, 100% 8%, 96% 92%, 0 100%); transform: perspective(200px) rotateY(2deg) skewY(1.5deg); }
+    50%  { clip-path: polygon(0 0, 100% 3%, 99% 97%, 0 99%); transform: perspective(200px) rotateY(-2deg) skewY(-0.5deg); }
+    65%  { clip-path: polygon(0 3%, 100% 0%, 97% 100%, 0 97%); transform: perspective(200px) rotateY(3deg) skewY(2deg); }
+    80%  { clip-path: polygon(0 0, 100% 6%, 95% 94%, 0 100%); transform: perspective(200px) rotateY(-1deg) skewY(-1deg); }
+    100% { clip-path: polygon(0 0, 100% 5%, 98% 95%, 0 100%); transform: perspective(200px) rotateY(0deg) skewY(0deg); }
 }
 
 @keyframes band-ripple {
@@ -215,7 +194,7 @@
         .c-br { bottom:20px; right:20px; border-bottom:1px solid var(--green-india); border-right:1px solid var(--green-india); opacity:.4; }
 
         /* ══════════════════════════════════════════
-           HEADER (left side) — matches default.html position
+           HEADER
         ══════════════════════════════════════════ */
         .header {
             position: absolute; top: 50px; left: 70px; max-width: 520px;
@@ -322,83 +301,148 @@
         }
 
         /* ══════════════════════════════════════════
-           WIFI WIDGET
+           WIFI WIDGET  (saffron-themed, from default.html)
         ══════════════════════════════════════════ */
         .wifi-widget {
-            position: absolute; top: 44px; right: 72px; width: 280px;
-            animation: fadeUp .9s ease .15s both; cursor: pointer; z-index: 20;
+            position: absolute;
+            top: 44px;
+            right: 72px;
+            width: 280px;
+            animation: fadeUp .9s ease .15s both;
+            cursor: pointer;
+            z-index: 20;
+            pointer-events: all;
         }
         .wifi-bar {
             display: flex; align-items: center; gap: 10px;
-            background: rgba(20,12,4,0.72);
+            background: rgba(22,12,4,0.72);
             border: .5px solid rgba(255,153,51,.28);
-            backdrop-filter: blur(12px); border-radius: 10px; padding: 10px 14px;
+            backdrop-filter: blur(12px);
+            border-radius: 10px;
+            padding: 10px 14px;
             transition: border-color .3s, box-shadow .3s;
         }
         .wifi-bar:hover {
             border-color: rgba(255,153,51,.55);
             box-shadow: 0 0 18px rgba(255,153,51,.1);
         }
-        .wifi-icon { width: 28px; height: 28px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+        .wifi-icon {
+            width: 28px; height: 28px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+        }
         .wifi-icon svg { width: 20px; height: 20px; }
         .wifi-bar-text { flex: 1; min-width: 0; }
         .wifi-bar-label {
             font-size: 9px; letter-spacing: .45em; text-transform: uppercase;
             color: var(--saffron); font-weight: 400; margin-bottom: 2px;
         }
-        .wifi-bar-ssid { font-size: 13px; font-weight: 500; color: var(--cream); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .wifi-tap-hint { font-size: 9px; letter-spacing: .2em; text-transform: uppercase; color: rgba(255,153,51,.45); flex-shrink: 0; }
+        .wifi-bar-ssid {
+            font-size: 13px; font-weight: 500; color: var(--cream);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .wifi-tap-hint {
+            font-size: 9px; letter-spacing: .2em; text-transform: uppercase;
+            color: rgba(255,153,51,.45); flex-shrink: 0;
+        }
 
         /* ══════════════════════════════════════════
-           WIFI MODAL
+           WIFI MODAL  (saffron-themed, from default.html)
         ══════════════════════════════════════════ */
         .wifi-modal-overlay {
             position: fixed; inset: 0; z-index: 250;
             display: flex; align-items: center; justify-content: center;
             background: rgba(0,0,0,.78); backdrop-filter: blur(16px);
-            opacity: 0; visibility: hidden; pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
             transition: opacity 0.3s ease, visibility 0.3s ease;
         }
-        .wifi-modal-overlay.active { opacity: 1; visibility: visible; pointer-events: all; }
+        .wifi-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: all;
+        }
         .wifi-modal {
             background: linear-gradient(160deg, rgba(22,12,2,0.99), rgba(8,4,0,0.99));
             border: .5px solid rgba(255,153,51,.35);
-            border-radius: 22px; padding: 36px 40px 32px;
-            width: min(440px, 92vw); text-align: center; position: relative;
+            border-radius: 22px;
+            padding: 36px 40px 32px;
+            width: min(440px, 92vw);
+            text-align: center;
+            position: relative;
             animation: fadeUp .35s ease both;
         }
         .wifi-modal-close {
             position: absolute; top: 16px; right: 16px;
             width: 34px; height: 34px; border-radius: 50%;
-            border: .5px solid rgba(255,255,255,.12); background: rgba(255,255,255,.06);
-            color: rgba(255,249,240,.45); display: flex; align-items: center; justify-content: center;
+            border: .5px solid rgba(255,255,255,.12);
+            background: rgba(255,255,255,.06);
+            color: rgba(255,249,240,.45);
+            display: flex; align-items: center; justify-content: center;
             font-size: 16px; cursor: pointer; transition: all .2s;
         }
-        .wifi-modal-close:hover { background: rgba(255,153,51,.2); border-color: rgba(255,153,51,.5); color: var(--cream); }
-        .wifi-modal-eyebrow { font-size: 9px; letter-spacing: .55em; text-transform: uppercase; color: var(--saffron); margin-bottom: 8px; }
-        .wifi-modal-title { font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 300; color: var(--cream); margin-bottom: 24px; letter-spacing: .02em; }
+        .wifi-modal-close:hover {
+            background: rgba(255,153,51,.2);
+            border-color: rgba(255,153,51,.5);
+            color: var(--cream);
+        }
+        .wifi-modal-eyebrow {
+            font-size: 9px; letter-spacing: .55em; text-transform: uppercase;
+            color: var(--saffron); margin-bottom: 8px;
+        }
+        .wifi-modal-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 30px; font-weight: 300; color: var(--cream);
+            margin-bottom: 24px; letter-spacing: .02em;
+        }
         .wifi-modal-title em { color: var(--saffron); font-style: italic; }
+
+        /* QR code box */
         .wifi-qr-wrap {
-            width: 160px; height: 160px; background: #fff; border-radius: 14px;
-            margin: 0 auto 22px; display: flex; align-items: center; justify-content: center; padding: 10px;
+            width: 160px; height: 160px;
+            background: #fff;
+            border-radius: 14px;
+            margin: 0 auto 22px;
+            display: flex; align-items: center; justify-content: center;
+            padding: 10px;
             box-shadow: 0 0 0 1px rgba(255,153,51,.25), 0 0 24px rgba(255,153,51,.08);
         }
-        .wifi-qr-wrap canvas, .wifi-qr-wrap img { width: 100%; height: 100%; }
+        .wifi-qr-wrap canvas,
+        .wifi-qr-wrap img { width: 100%; height: 100%; border-radius: 6px; }
+
+        /* Credentials */
         .wifi-creds {
-            background: rgba(255,255,255,.04); border: .5px solid rgba(255,255,255,.09);
-            border-radius: 14px; padding: 14px 20px; margin-bottom: 18px; text-align: left;
+            background: rgba(255,255,255,.04);
+            border: .5px solid rgba(255,255,255,.09);
+            border-radius: 14px;
+            padding: 14px 20px;
+            margin-bottom: 18px;
+            text-align: left;
         }
-        .wifi-cred-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: .5px solid rgba(255,255,255,.06); }
+        .wifi-cred-row {
+            display: flex; align-items: center;
+            justify-content: space-between;
+            padding: 9px 0;
+            border-bottom: .5px solid rgba(255,255,255,.06);
+        }
         .wifi-cred-row:last-child { border-bottom: none; }
-        .wifi-cred-label { font-size: 10px; letter-spacing: .25em; text-transform: uppercase; color: rgba(255,249,240,.38); }
-        .wifi-cred-value { font-size: 14px; font-weight: 500; color: var(--cream); letter-spacing: .04em; }
-        .wifi-copy-btn { background: none; border: none; font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--saffron); cursor: pointer; padding: 2px 6px; border-radius: 4px; transition: color .2s, background .2s; font-family: 'Jost', sans-serif; }
-        .wifi-copy-btn:hover { color: var(--gold-light); background: rgba(255,153,51,.1); }
-        .wifi-copy-btn.copied { color: #1abc9c; }
-        .wifi-modal-note { font-size: 11px; font-weight: 300; color: rgba(255,249,240,.3); font-style: italic; line-height: 1.6; }
+        .wifi-cred-label {
+            font-size: 10px; letter-spacing: .25em; text-transform: uppercase;
+            color: rgba(255,249,240,.38);
+        }
+        .wifi-cred-value {
+            font-size: 14px; font-weight: 500; color: var(--cream);
+            letter-spacing: .04em;
+        }
+        
+        .wifi-modal-note {
+            font-size: 11px; font-weight: 300;
+            color: rgba(255,249,240,.3);
+            font-style: italic; line-height: 1.6;
+        }
 
         /* ══════════════════════════════════════════
-           ACTIVITIES PANEL (right side)
+           ACTIVITIES PANEL
         ══════════════════════════════════════════ */
         .activities {
             position: absolute; top: 150px; right: 72px; width: 280px;
@@ -998,10 +1042,49 @@
         /* ══════════════════════════════════════════
            MY BOOKINGS OVERLAY
         ══════════════════════════════════════════ */
+
+        /* ── My Bookings scroll arrows (up & down) ───────────── */
+        .mo-scroll-arrow {
+            position: fixed;
+            left: 16.666%;
+            transform: translateX(-50%);
+            z-index: 200;
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            background: rgba(20,4,10,0.82);
+            border: .5px solid rgba(212,168,67,.45);
+            color: var(--gold-light);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            transition: background .25s, border-color .25s, box-shadow .25s, opacity .3s;
+            opacity: 1;
+            pointer-events: all;
+        }
+        .mo-scroll-arrow svg {
+            width: 18px; height: 18px;
+            stroke: currentColor; stroke-width: 2;
+            fill: none; stroke-linecap: round; stroke-linejoin: round;
+            transition: transform .2s;
+        }
+        .mo-scroll-arrow:hover {
+            background: rgba(192,24,90,.35);
+            border-color: var(--pink-light);
+            color: #fff;
+            box-shadow: 0 0 18px rgba(192,24,90,.35);
+        }
+        .mo-scroll-arrow:hover svg { transform: scale(1.15); }
+        .mo-scroll-arrow.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        #moScrollUp   { top: 24px; }
+        #moScrollDown { bottom: 24px; }
+
         #myOrdersOverlay {
             position: fixed; inset: 0; z-index: 100;
             display: flex; flex-direction: column;
-            background: rgba(8,4,0,0.97);
+            background: rgba(8,2,5,0.97);
             backdrop-filter: blur(24px);
             overflow: hidden;
             opacity: 0;
@@ -1014,47 +1097,194 @@
             visibility: visible;
             pointer-events: all;
         }
+
+        /* ── Full-width panel replacing the old narrow 600px centered panel ── */
         .mo-panel {
-            width: min(600px, 96vw); margin: 0 auto;
-            padding: 32px 40px 40px;
-            overflow-y: auto; height: 100%;
-            scrollbar-width: none; -ms-overflow-style: none;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
         .mo-panel::-webkit-scrollbar { display: none; }
+
+        /* ── Top header bar ── */
         .mo-header {
             display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 28px; padding-bottom: 18px;
-            border-bottom: .5px solid rgba(255,153,51,.15);
+            padding: 22px 52px 18px;
+            border-bottom: .5px solid rgba(192,24,90,.15);
+            flex-shrink: 0;
         }
         .mo-title {
             font-family: 'Cormorant Garamond', serif;
             font-size: 36px; font-weight: 300; color: var(--cream); letter-spacing: .02em;
         }
-        .mo-title em { color: var(--saffron); font-style: italic; }
-        .mo-scroll-arrow {
-            position: fixed; left: 50%; transform: translateX(-50%);
-            z-index: 200; width: 44px; height: 44px; border-radius: 50%;
-            background: rgba(20,10,0,0.82); border: .5px solid rgba(255,153,51,.45);
-            color: var(--saffron); display: flex; align-items: center; justify-content: center;
-            cursor: pointer; backdrop-filter: blur(8px);
-            transition: background .25s, border-color .25s, box-shadow .25s, opacity .3s;
-            opacity: 1; pointer-events: all;
+        .mo-title em { color: var(--gold-light); font-style: italic; }
+
+        /* ── Two-column body: left 1/3 summary | right 2/3 order cards ── */
+        .mo-body {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            gap: 0;
         }
-        .mo-scroll-arrow svg {
-            width: 18px; height: 18px;
-            stroke: currentColor; stroke-width: 2;
-            fill: none; stroke-linecap: round; stroke-linejoin: round;
+
+        /* Left column — group summary + total charges + meal plan */
+        .mo-left {
+            width: 33.333%;
+            flex-shrink: 0;
+            padding: 20px 20px 20px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            overflow-y: auto;
+            scrollbar-width: none;
+            border-right: .5px solid rgba(192,24,90,.12);
         }
-        .mo-scroll-arrow:hover {
-            background: rgba(255,153,51,.35); border-color: var(--saffron);
-            color: #fff; box-shadow: 0 0 18px rgba(255,153,51,.35);
+        .mo-left::-webkit-scrollbar { display: none; }
+
+        /* Right column — 3-col grid of order category cards */
+        .mo-right {
+            flex: 1;
+            padding: 20px 32px 20px 20px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 14px;
+            overflow: hidden;
         }
-        .mo-scroll-arrow.hidden { opacity: 0; pointer-events: none; }
-        #moScrollUp   { top: 24px; }
-        #moScrollDown { bottom: 24px; }
-    
-    
-    
+
+        /* Each injected order-section card fills its grid cell */
+        .mo-right > * {
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        /* ── My Bookings: staging div — hidden, zero size ── */
+        #myOrdersContent {
+            display: none !important;
+            width: 0; height: 0; overflow: hidden;
+        }
+
+        /* ── Left column cards ── */
+        .mo-left-card {
+            background: linear-gradient(135deg, rgba(18,4,10,0.95) 0%, rgba(30,8,18,0.95) 100%);
+            border: .5px solid rgba(192,24,90,.32);
+            border-radius: 14px;
+            padding: 18px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .mo-left-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--pink), var(--gold), transparent);
+        }
+        #moLeftInjected {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        /* ── Right grid: service section cards ── */
+        .mo-card {
+            background: rgba(18,4,11,0.92);
+            border: .5px solid rgba(192,24,90,.22);
+            border-radius: 14px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-height: 0;
+            min-width: 0;
+            transition: border-color .3s;
+        }
+        .mo-card:hover {
+            border-color: rgba(192,24,90,.42);
+        }
+        .mo-card-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 16px 12px;
+            border-bottom: .5px solid rgba(192,24,90,.15);
+            flex-shrink: 0;
+            background: rgba(192,24,90,.06);
+        }
+        .mo-card-icon {
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .mo-card-label {
+            font-size: 10px;
+            letter-spacing: .4em;
+            text-transform: uppercase;
+            color: rgba(248,243,236,.55);
+            font-weight: 500;
+        }
+        .mo-card-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 4px 16px 12px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(192,24,90,.2) transparent;
+        }
+        .mo-card-body::-webkit-scrollbar { width: 3px; }
+        .mo-card-body::-webkit-scrollbar-thumb { background: rgba(192,24,90,.25); border-radius: 3px; }
+
+        /* ══ MENU CARD IMAGE OVERLAY ══ */
+        #menuCardOverlay {
+            position: fixed; inset: 0; z-index: 150;
+            display: flex; flex-direction: column;
+            background: rgba(6,1,4,0.98);
+            backdrop-filter: blur(28px);
+            opacity: 0; visibility: hidden; pointer-events: none;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+        }
+        #menuCardOverlay.active { opacity: 1; visibility: visible; pointer-events: all; }
+        .mc-topbar {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 22px 52px 18px;
+            border-bottom: .5px solid rgba(255,153,51,.15); flex-shrink: 0;
+        }
+        .mc-topbar-left { display: flex; align-items: center; gap: 16px; }
+        .mc-title { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 300; color: var(--cream); }
+        .mc-title em { color: var(--gold-light); font-style: italic; }
+        .view-menu-card-btn {
+            display: flex; align-items: center; gap: 8px;
+            padding: 9px 20px; border-radius: 30px;
+            background: rgba(255,153,51,.1); border: .5px solid rgba(255,153,51,.45);
+            color: var(--saffron); font-family: 'Jost', sans-serif;
+            font-size: 11px; font-weight: 500; letter-spacing: .25em; text-transform: uppercase;
+            cursor: pointer; transition: background .25s, border-color .25s, color .25s;
+        }
+        .view-menu-card-btn:hover { background: rgba(255,153,51,.22); border-color: var(--saffron); color: var(--cream); }
+        .mc-body {
+            flex: 1; overflow-y: auto; display: flex; flex-direction: column;
+            align-items: center; padding: 32px 52px 48px; gap: 28px;
+            scrollbar-width: thin; scrollbar-color: rgba(255,153,51,.2) transparent;
+        }
+        .mc-no-image {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            flex: 1; gap: 16px; color: rgba(255,249,240,.3);
+            font-style: italic; font-size: 15px; text-align: center;
+        }
+        .mc-no-image-icon { font-size: 52px; opacity: .4; }
+        .mc-image-wrap {
+            width: 100%; max-width: 960px;
+            background: rgba(20,10,0,.6); border: .5px solid rgba(212,160,23,.2);
+            border-radius: 18px; overflow: hidden; box-shadow: 0 12px 48px rgba(0,0,0,.6);
+        }
+        .mc-image-wrap img { width: 100%; height: auto; display: block; }
+        .mc-image-label {
+            padding: 14px 20px; font-size: 12px; letter-spacing: .2em;
+            text-transform: uppercase; color: rgba(245,215,110,.55);
+            text-align: center; border-top: .5px solid rgba(255,255,255,.06);
+        }
+        .mc-loading {
+            display: flex; align-items: center; justify-content: center;
+            flex: 1; color: rgba(255,249,240,.3); font-style: italic; font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -1101,7 +1331,6 @@
 <div id="petals"></div>
 
 <!-- ░░ FLAGPOLE ░░ -->
-<!-- ░░ FLAGPOLE ░░ -->
 <div class="flagpole-wrap">
     <div class="pole"></div>
     <div class="flag-container">
@@ -1144,7 +1373,7 @@
             <span style="opacity:.4;font-size:8px;">&#9679;</span>
             Resort &amp; Spa
         </div>
-        <div class="guest-name" id="guestName">Welcome, <em>{{ guest.name }}</em></div>
+        <div class="guest-name" id="guestName">Welcome, <em>Guest</em></div>
         <div class="hindi-line">वन्दे मातरम् — Proud to be Indian 🇮🇳</div>
         <div class="room-info">
             <div class="room-chip" id="roomNo">Room 101</div>
@@ -1152,7 +1381,6 @@
             <div class="tagline-text">Celebrating 78 glorious years of freedom</div>
         </div>
         <div class="custom-msg" id="customMessage">May the tricolour inspire us always. Jai Hind!</div>
-        
     </div>
 
     <div class="clock">
@@ -1160,7 +1388,7 @@
         <div class="clock-date" id="clockDate">---</div>
     </div>
 
-    <!-- WiFi Widget -->
+    <!-- ══ WiFi Widget (saffron-themed) ══ -->
     <div class="wifi-widget" onclick="openWifiModal()">
         <div class="wifi-bar">
             <div class="wifi-icon">
@@ -1202,36 +1430,100 @@
     </div>
 </div>
 
-<!-- ░░ WIFI MODAL ░░ -->
+<!-- ══════════════════════════════════════════
+     WiFi MODAL  (from default.html, saffron-themed)
+══════════════════════════════════════════ -->
 <div class="wifi-modal-overlay" id="wifiModalOverlay">
     <div class="wifi-modal">
         <button class="wifi-modal-close" onclick="closeWifiModal()">✕</button>
         <div class="wifi-modal-eyebrow">Vibe Munnar · Resort &amp; Spa</div>
         <div class="wifi-modal-title">Complimentary <em>WiFi</em></div>
-        <div class="wifi-qr-wrap" id="wifiQrWrap"></div>
+
+        <!-- QR Code — generated by JS -->
+        <div class="wifi-qr-wrap" id="wifiQrWrap">
+            <!-- canvas injected by script -->
+        </div>
+
+        <!-- Credentials -->
         <div class="wifi-creds">
             <div class="wifi-cred-row">
                 <span class="wifi-cred-label">Network</span>
-                <span class="wifi-cred-value" id="wifiNetworkDisplay">VibeMunnar_Premium</span>
-                <button class="wifi-copy-btn" onclick="wifiCopy('wifiNetworkDisplay', this)">Copy</button>
-            </div>
-            <div class="wifi-cred-row">
-                <span class="wifi-cred-label">Username</span>
-                <span class="wifi-cred-value" id="wifiUserDisplay">vibeguest</span>
-                <button class="wifi-copy-btn" onclick="wifiCopy('wifiUserDisplay', this)">Copy</button>
+                <span class="wifi-cred-value" id="wifiNetworkDisplay">Oviyawifi</span>
+                
             </div>
             <div class="wifi-cred-row">
                 <span class="wifi-cred-label">Password</span>
-                <span class="wifi-cred-value" id="wifiPassDisplay">Munnar@2025</span>
-                <button class="wifi-copy-btn" onclick="wifiCopy('wifiPassDisplay', this)">Copy</button>
+                <span class="wifi-cred-value" id="wifiPassDisplay">oviya1602</span>
+                
             </div>
         </div>
+
         <div class="wifi-modal-note">
             Scan the QR code with your device camera to connect instantly.<br>
             For assistance, dial <strong style="color:var(--saffron);">0</strong> from your room phone.
         </div>
     </div>
 </div>
+
+<!-- ══ WiFi JS (ported from default.html) ══ -->
+<script>
+/* ── WiFi Config — change these values to match your actual network ── */
+const WIFI_CONFIG = {
+    ssid:     "Oviyawifi",
+    password: 'oviya1602',
+    security: 'WPA',
+};
+
+/* ── Open / Close ─────────────────────────────────────────── */
+function openWifiModal() {
+    document.getElementById('wifiModalOverlay').classList.add('active');
+    buildWifiQR();
+}
+function closeWifiModal() {
+    document.getElementById('wifiModalOverlay').classList.remove('active');
+}
+/* close on backdrop click */
+document.getElementById('wifiModalOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closeWifiModal();
+});
+
+/* ── QR Code generator (Google Charts API — no library needed) ── */
+function buildWifiQR() {
+    var wrap = document.getElementById('wifiQrWrap');
+    if (wrap.querySelector('img')) return;
+
+    var str = "WIFI:T:" + WIFI_CONFIG.security + ";S:" + WIFI_CONFIG.ssid + ";P:" + WIFI_CONFIG.password + ";;";
+    var encoded = encodeURIComponent(str);
+    var src = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encoded + "&bgcolor=ffffff&color=0c0a00&margin=0";
+
+    var img = document.createElement('img');
+    img.src = src;
+    img.alt = 'WiFi QR Code';
+    img.style.cssText = 'width:100%;height:100%;border-radius:6px;';
+    wrap.innerHTML = '';
+    wrap.appendChild(img);
+}
+
+/* ── Copy to clipboard ────────────────────────────────────── */
+function wifiCopy(elementId, btn) {
+    var text = document.getElementById(elementId).textContent;
+    navigator.clipboard.writeText(text).then(function() {
+        var orig = btn.textContent;
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(function() { btn.textContent = orig; btn.classList.remove('copied'); }, 1800);
+    }).catch(function() {
+        /* fallback for older browsers */
+        var ta = document.createElement('textarea');
+        ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        btn.textContent = 'Copied!'; btn.classList.add('copied');
+        setTimeout(function() { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1800);
+    });
+}
+</script>
 
 <!-- ░░ FOOD OVERLAY ░░ -->
 <div class="overlay-base" id="foodOverlay">
@@ -1243,7 +1535,16 @@
             </button>
             <div class="overlay-page-title" id="foodPageTitle">Food <em>Menu</em></div>
         </div>
-        <button class="overlay-close-btn" onclick="foodGoBack()" title="Close">✕</button>
+        <div style="display:flex;align-items:center;gap:12px;">
+            <button class="view-menu-card-btn" onclick="openMenuCardOverlay()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:14px;height:14px;">
+                    <rect x="3" y="3" width="18" height="18" rx="3"/>
+                    <path d="M3 9h18M9 21V9"/>
+                </svg>
+                View Menu Card
+            </button>
+            <button class="overlay-close-btn" onclick="foodGoBack()" title="Close">✕</button>
+        </div>
     </div>
     <div class="cat-screen-bg" id="foodCategoryScreen"><div class="cat-grid" id="catGrid"></div></div>
     <div id="foodItemsScreen">
@@ -1502,9 +1803,20 @@
             <div class="mo-title">My <em>Bookings</em></div>
             <button class="overlay-close-btn" onclick="closeMyOrders()" title="Close">&#10005;</button>
         </div>
-        <div id="grpSummarySection"></div>
-        <div id="myOrdersContent"></div>
+        <div class="mo-body">
+            <!-- LEFT 1/3: group summary + total charges + meal plan -->
+            <div class="mo-left" id="moLeft">
+                <!-- Group Summary card — shown only when room belongs to a group booking -->
+                <div id="grpSummarySection"></div>
+                <!-- Total charges & meal plan are moved here from #myOrdersContent by JS -->
+                <div id="moLeftInjected"></div>
+            </div>
+            <!-- RIGHT 2/3: order category cards (food, spa, bar, entertainment, dine-in) -->
+            <div class="mo-right" id="moRight"></div>
+        </div>
     </div>
+    <!-- Hidden staging area — common.js injects here, redistributor moves nodes out -->
+    <div id="myOrdersContent" aria-hidden="true"></div>
     <button id="moScrollUp" class="mo-scroll-arrow hidden" onclick="moScrollStep(-1)" title="Scroll up">
         <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
     </button>
@@ -1513,249 +1825,55 @@
     </button>
 </div>
 
-<script src="/static/common.js"></script>
-
-<!-- Blink fix removed — loadMyOrders in common.js is now silent by design -->
-
-<script>
-/* ══════════════════════════════════════════════════════
-   GROUP SUMMARY — fetches /api/group-summary/{room_no}
-   and renders a Group Total card at the top of My Bookings.
-   Called by openMyOrders (patched below) and on every 15 s poll.
-══════════════════════════════════════════════════════ */
-async function loadGroupSummary() {
-    if (!window.ROOM_NO) return;
-    const container = document.getElementById('grpSummarySection');
-    if (!container) return;
-
-    /* Only run when the overlay is open */
-    const overlay = document.getElementById('myOrdersOverlay');
-    if (!overlay || !overlay.classList.contains('active')) return;
-
-    try {
-        const data = await fetch('/api/group-summary/' + window.ROOM_NO).then(r => r.json());
-        if (!data.is_group) { container.innerHTML = ''; return; }
-
-        const fmt = n => '₹' + Number(n || 0).toLocaleString('en-IN');
-
-        const rows = (data.per_room || []).map(r => {
-            const isMe = r.room_no == window.ROOM_NO;
-            const chips = [
-                r.food || r.bar ? `<span class="grp-chip">Food ${fmt((r.food||0)+(r.bar||0))}</span>` : '',
-                r.spa  ? `<span class="grp-chip">Spa ${fmt(r.spa)}</span>` : '',
-                r.entertainment ? `<span class="grp-chip">Ent ${fmt(r.entertainment)}</span>` : '',
-                r.dine ? `<span class="grp-chip">Dine ${fmt(r.dine)}</span>` : ''
-            ].filter(Boolean).join('');
-
-            return `<div class="grp-room-row${isMe ? ' is-my-room' : ''}">
-                <div class="grp-room-label">
-                    <span class="rno">Room ${r.room_no}</span>
-                    <span class="gname">${r.guest_name || ''}</span>
-                </div>
-                ${isMe ? '<span class="grp-you-badge">You</span>' : ''}
-                <div class="grp-room-chips">${chips || '<span class="grp-chip">No charges</span>'}</div>
-                <div class="grp-room-total">${fmt(r.total)}</div>
-            </div>`;
-        }).join('');
-
-        container.innerHTML = `
-        <div class="grp-summary-card">
-            <div class="grp-header">
-                <div class="grp-icon">🏘️</div>
-                <div class="grp-header-text">
-                    <h3>${data.group_name || 'Group Booking'}</h3>
-                    <p>${data.total_rooms} rooms · Group charges</p>
-                </div>
-            </div>
-            <div class="grp-rooms-list">${rows}</div>
-            <div class="grp-grand-row">
-                <span class="grp-grand-label">Group Grand Total</span>
-                <span class="grp-grand-amt">${fmt(data.group_grand_total)}</span>
-            </div>
-        </div>`;
-    } catch (e) {
-        container.innerHTML = '';
-    }
-}
-
-/* Patch openMyOrders to also trigger group summary */
-(function () {
-    const _origOpen = window.openMyOrders;
-    if (!_origOpen) return; /* common.js not yet loaded — DOMContentLoaded will retry */
-    window.openMyOrders = function () {
-        _origOpen();
-        loadGroupSummary();
-    };
-})();
-
-/* Retry patch after common.js initialises (it's loaded after this block) */
-document.addEventListener('DOMContentLoaded', function () {
-    const _origOpen = window.openMyOrders;
-    if (_origOpen && !_origOpen._grpPatched) {
-        window.openMyOrders = function () { _origOpen(); loadGroupSummary(); };
-        window.openMyOrders._grpPatched = true;
-    }
-
-    /* Also hook into the 15 s poll — common.js exposes loadMyOrders globally */
-    const _origLoad = window.loadMyOrders;
-    if (_origLoad) {
-        window.loadMyOrders = function () { _origLoad(); loadGroupSummary(); };
-    }
-});
-</script>
-
-<script>
-(function() {
-    function showPage() {
-        document.body.classList.add('page-ready');
-    }
-    if (document.readyState === 'complete') {
-        showPage();
-    } else {
-        window.addEventListener('load', showPage);
-    }
-})();
-</script>
-
-<script>
-
-(function patchLoadMyOrders() {
-
-    /* Wait until common.js has finished defining window.loadMyOrders */
-    function applyPatch() {
-        var _origLoadMyOrders = window.loadMyOrders;
-        if (typeof _origLoadMyOrders !== 'function') {
-            /* common.js not ready yet — retry on next tick */
-            setTimeout(applyPatch, 50);
-            return;
-        }
-
-        /* Patched version: silent fetch, no "Loading…" flash,
-           only runs when overlay is visible.                    */
-        window.loadMyOrders = function loadMyOrdersPatched() {
-            var overlay = document.getElementById('myOrdersOverlay');
-            var container = document.getElementById('myOrdersContent');
-
-            /* If overlay is not open, do nothing — no DOM touching */
-            if (!overlay || !overlay.classList.contains('active')) return;
-            if (!container) return;
-
-            /* Fetch silently — do NOT touch innerHTML until data arrives */
-            if (!window.ROOM_NO) return;
-            fetch('/api/my-orders/' + window.ROOM_NO)
-                .then(function(r) { return r.json(); })
-                .then(function(data) {
-                    /* Only update if overlay is still open */
-                    if (!overlay.classList.contains('active')) return;
-                    _origLoadMyOrders();
-                })
-                .catch(function() {
-                    /* silent fail — don't blink on error either */
-                });
-        };
-
-        /* Cancel the background interval common.js already started
-           and replace with ours that uses the patched function.    */
-        var highId = setInterval(function(){}, 99999); /* get a high watermark */
-        clearInterval(highId);
-        /* Cancel every interval up to the current counter */
-        for (var i = 1; i <= highId; i++) { clearInterval(i); }
-
-        /* Re-register all the intervals common.js intended, but
-           now loadMyOrders is already patched so it's safe.    */
-        setInterval(window.loadMyOrders,   30000);  /* bookings  */
-        setInterval(window.loadServices,   30000);  /* services  */
-        setInterval(window.loadActivities, 10000);  /* activities*/
-        setInterval(window.loadRoomData,    5000);  /* room data */
-        /* clock is internal to common.js — tickClock runs on its own 10s interval */
-        /* Re-run a fresh tick so clock doesn't skip after interval reset */
-        var clockEl = document.getElementById('clockTime');
-        if (clockEl) {
-            var now = new Date();
-            clockEl.textContent = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
-        }
-    }
-
-    /* Run patch after DOM + common.js are both ready */
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function() { setTimeout(applyPatch, 0); });
-    } else {
-        setTimeout(applyPatch, 0);
-    }
-
-})();
-</script>
-
-<!-- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-     MEAL PLAN PICKER DIALOG
-░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ -->
+<!-- ░░ MEAL PLAN PICKER DIALOG ░░ -->
 <div id="mealPlanDialog">
     <div class="mpd-modal">
         <button class="mpd-close" onclick="closeMealPlanDialog()">&#10005;</button>
         <div class="mpd-eyebrow">Meal Plan</div>
         <div class="mpd-heading">Choose Your <em>Plan</em></div>
         <div class="mpd-sub">Select a dining arrangement for your stay</div>
-
         <div class="mpd-current-row">
             <div class="mpd-current-dot"></div>
             <span class="mpd-current-label">Current plan &nbsp;·&nbsp;</span>
             <span class="mpd-current-name" id="mpdCurrentName">—</span>
         </div>
-
         <div class="mpd-grid">
             <div class="mpd-option" data-code="AI" onclick="selectMealPlan(this)">
                 <div class="mpd-check">✓</div>
                 <div class="mpd-opt-code">AI</div>
                 <div class="mpd-opt-name">All Inclusive</div>
                 <div class="mpd-opt-tag">Everything covered</div>
-                <div class="mpd-opt-pills">
-                    <span class="mpd-pill">Breakfast</span>
-                    <span class="mpd-pill">Lunch</span>
-                    <span class="mpd-pill">Dinner</span>
-                    <span class="mpd-pill">Bar</span>
-                </div>
+                <div class="mpd-opt-pills"><span class="mpd-pill">Breakfast</span><span class="mpd-pill">Lunch</span><span class="mpd-pill">Dinner</span><span class="mpd-pill">Bar</span></div>
             </div>
             <div class="mpd-option" data-code="AP" onclick="selectMealPlan(this)">
                 <div class="mpd-check">✓</div>
                 <div class="mpd-opt-code">AP</div>
                 <div class="mpd-opt-name">Full Board</div>
                 <div class="mpd-opt-tag">Three meals daily</div>
-                <div class="mpd-opt-pills">
-                    <span class="mpd-pill">Breakfast</span>
-                    <span class="mpd-pill">Lunch</span>
-                    <span class="mpd-pill">Dinner</span>
-                </div>
+                <div class="mpd-opt-pills"><span class="mpd-pill">Breakfast</span><span class="mpd-pill">Lunch</span><span class="mpd-pill">Dinner</span></div>
             </div>
             <div class="mpd-option" data-code="MAP" onclick="selectMealPlan(this)">
                 <div class="mpd-check">✓</div>
                 <div class="mpd-opt-code">MAP</div>
                 <div class="mpd-opt-name">Half Board</div>
                 <div class="mpd-opt-tag">Room &amp; two meals</div>
-                <div class="mpd-opt-pills">
-                    <span class="mpd-pill">Breakfast</span>
-                    <span class="mpd-pill">Dinner</span>
-                </div>
+                <div class="mpd-opt-pills"><span class="mpd-pill">Breakfast</span><span class="mpd-pill">Dinner</span></div>
             </div>
             <div class="mpd-option" data-code="CP" onclick="selectMealPlan(this)">
                 <div class="mpd-check">✓</div>
                 <div class="mpd-opt-code">CP</div>
                 <div class="mpd-opt-name">Breakfast Only</div>
                 <div class="mpd-opt-tag">Morning meal included</div>
-                <div class="mpd-opt-pills">
-                    <span class="mpd-pill">Breakfast</span>
-                </div>
+                <div class="mpd-opt-pills"><span class="mpd-pill">Breakfast</span></div>
             </div>
             <div class="mpd-option" data-code="EP" onclick="selectMealPlan(this)" style="grid-column: 1 / -1;">
                 <div class="mpd-check">✓</div>
                 <div class="mpd-opt-code">EP</div>
                 <div class="mpd-opt-name">Room Only</div>
                 <div class="mpd-opt-tag">No meals included</div>
-                <div class="mpd-opt-pills">
-                    <span class="mpd-pill">Pay per meal</span>
-                </div>
+                <div class="mpd-opt-pills"><span class="mpd-pill">Pay per meal</span></div>
             </div>
         </div>
-
         <div class="mpd-actions">
             <button class="mpd-cancel-btn" onclick="closeMealPlanDialog()">Cancel</button>
             <button class="mpd-confirm-btn" id="mpdConfirmBtn" disabled onclick="confirmMealPlan()">Confirm Plan</button>
@@ -1763,158 +1881,539 @@ document.addEventListener('DOMContentLoaded', function () {
     </div>
 </div>
 
+<script src="/static/common.js"></script>
+
+<script>
+/* ── Services scroll arrows ─────────────────────────── */
+function scrollServices(dir) {
+    var row = document.getElementById('services-container');
+    row.scrollBy({ left: dir * 220, behavior: 'smooth' });
+}
+
+function updateSvcArrows() {
+    var row = document.getElementById('services-container');
+    var leftBtn  = document.getElementById('svcArrowLeft');
+    var rightBtn = document.getElementById('svcArrowRight');
+    if (!row || !leftBtn || !rightBtn) return;
+    var atStart = row.scrollLeft <= 4;
+    var atEnd   = row.scrollLeft + row.clientWidth >= row.scrollWidth - 4;
+    leftBtn.classList.toggle('hidden', atStart);
+    rightBtn.classList.toggle('hidden', atEnd);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var row = document.getElementById('services-container');
+    if (row) {
+        row.addEventListener('scroll', updateSvcArrows);
+        setTimeout(updateSvcArrows, 800);
+        setTimeout(updateSvcArrows, 2000);
+    }
+});
+</script>
+
+<script>
+/* ══════════════════════════════════════════════════════
+   GROUP SUMMARY
+══════════════════════════════════════════════════════ */
+async function loadGroupSummary() {
+    if (!window.ROOM_NO) return;
+    var container = document.getElementById('grpSummarySection');
+    if (!container) return;
+    var overlay = document.getElementById('myOrdersOverlay');
+    if (!overlay || !overlay.classList.contains('active')) return;
+    try {
+        var data = await fetch('/api/group-summary/' + window.ROOM_NO).then(function(r){ return r.json(); });
+        if (!data.is_group) { container.innerHTML = ''; return; }
+        var fmt = function(n) { return '₹' + Number(n || 0).toLocaleString('en-IN'); };
+        var rows = (data.per_room || []).map(function(r) {
+            var isMe = r.room_no == window.ROOM_NO;
+            var chips = [
+                r.food || r.bar ? '<span class="grp-chip">Food ' + fmt((r.food||0)+(r.bar||0)) + '</span>' : '',
+                r.spa  ? '<span class="grp-chip">Spa ' + fmt(r.spa) + '</span>' : '',
+                r.entertainment ? '<span class="grp-chip">Ent ' + fmt(r.entertainment) + '</span>' : '',
+                r.dine ? '<span class="grp-chip">Dine ' + fmt(r.dine) + '</span>' : ''
+            ].filter(Boolean).join('');
+            return '<div class="grp-room-row' + (isMe ? ' is-my-room' : '') + '">' +
+                '<div class="grp-room-label"><span class="rno">Room ' + r.room_no + '</span><span class="gname">' + (r.guest_name || '') + '</span></div>' +
+                (isMe ? '<span class="grp-you-badge">You</span>' : '') +
+                '<div class="grp-room-chips">' + (chips || '<span class="grp-chip">No charges</span>') + '</div>' +
+                '<div class="grp-room-total">' + fmt(r.total) + '</div></div>';
+        }).join('');
+        container.innerHTML = '<div class="grp-summary-card"><div class="grp-header"><div class="grp-icon">🏘️</div><div class="grp-header-text"><h3>' + (data.group_name || 'Group Booking') + '</h3><p>' + data.total_rooms + ' rooms · Group charges</p></div></div><div class="grp-rooms-list">' + rows + '</div><div class="grp-grand-row"><span class="grp-grand-label">Group Grand Total</span><span class="grp-grand-amt">' + fmt(data.group_grand_total) + '</span></div></div>';
+    } catch(e) { container.innerHTML = ''; }
+}
+
+(function() {
+    var _origOpen = window.openMyOrders;
+    if (_origOpen) { window.openMyOrders = function() { _origOpen(); loadGroupSummary(); }; }
+})();
+
+document.addEventListener('DOMContentLoaded', function() {
+    var _origOpen = window.openMyOrders;
+    if (_origOpen && !_origOpen._grpPatched) {
+        window.openMyOrders = function() { _origOpen(); loadGroupSummary(); };
+        window.openMyOrders._grpPatched = true;
+    }
+    var _origLoad = window.loadMyOrders;
+    if (_origLoad) { window.loadMyOrders = function() { _origLoad(); loadGroupSummary(); }; }
+});
+</script>
+
+<script>
+(function() {
+    function showPage() { document.body.classList.add('page-ready'); }
+    if (document.readyState === 'complete') { showPage(); }
+    else { window.addEventListener('load', showPage); }
+})();
+</script>
+
+<script>
+/* ══════════════════════════════════════════════════════
+   MY BOOKINGS — SELF-CONTAINED RENDERER
+   Fetches /api/my-orders/ directly, bypasses common.js
+   rendering entirely for the bookings panel, renders
+   cleanly into left/right columns.
+══════════════════════════════════════════════════════ */
+(function() {
+
+    /* ── Helpers ── */
+    var fmt = function(n) { return '₹' + Number(n || 0).toLocaleString('en-IN'); };
+
+    /* Auto-confirm: if pending and booked >10 mins ago, show as confirmed */
+    var CANCEL_WIN_MS = 600000; // 10 minutes — must match backend & common.js
+    function _resolveStatus(status, bookedEpoch) {
+        if (!status) return status;
+        if (status.toLowerCase() !== 'pending') return status;
+        if (!bookedEpoch) return status;
+        return (Date.now() - bookedEpoch) > CANCEL_WIN_MS ? 'confirmed' : 'pending';
+    }
+
+    function statusBadge(status) {
+        if (!status) return '';
+        var s = (status || '').toLowerCase();
+        var color = s === 'confirmed' ? '#1abc9c' :
+                    s === 'pending'   ? '#e0a020' :
+                    s === 'cancelled' ? '#c0185a' : '#aaa';
+        return '<span style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;padding:3px 10px;border-radius:20px;background:'+color+'22;border:.5px solid '+color+';color:'+color+';flex-shrink:0;">' + (status.charAt(0).toUpperCase()+status.slice(1)) + '</span>';
+    }
+
+    function cancelBtn(type, id, bookedEpoch) {
+        if (!id) return '';
+        var now = Date.now();
+        var withinWindow = bookedEpoch && (now - bookedEpoch) < CANCEL_WIN_MS;
+        var typeMap = {
+            food:          'order',
+            bar:           'order',
+            spa:           'spa',
+            entertainment: 'entertainment',
+            dining:        'dine',
+            activity:      'activity'
+        };
+        var cancelType = typeMap[type] || type;
+        if (withinWindow) {
+            return '<button onclick="if(window.guestCancel){window.guestCancel(\''+cancelType+'\','+id+',this);}else{window._moCancel(\''+type+'\',\''+id+'\');}" '
+                + 'style="margin-top:6px;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:600;'
+                + 'background:rgba(231,76,60,.12);color:#e74c3c;border:.5px solid rgba(231,76,60,.4);'
+                + 'cursor:pointer;letter-spacing:.04em;display:inline-flex;align-items:center;gap:4px;">&#10005; Cancel</button>';
+        }
+        return '';
+    }
+
+    /* Fallback cancel via DELETE API */
+    window._moCancel = function(type, id) {
+        var endpointMap = {
+            food:          '/api/food-orders/',
+            bar:           '/api/bar-orders/',
+            spa:           '/api/spa-bookings/',
+            entertainment: '/api/entertainment-bookings/',
+            dining:        '/api/dining-reservations/',
+            room_service:  '/api/room-service/',
+            activity:      '/api/activity-bookings/'
+        };
+        var url = (endpointMap[type] || '/api/orders/') + id;
+        fetch(url, { method: 'DELETE' })
+            .then(function() { renderMyBookings(); })
+            .catch(function(e) { console.warn('Cancel failed', e); });
+    };
+
+    /* ── Render one item row ── */
+    function itemRow(title, subtitle, status, id, type, bookedEpoch) {
+        var resolvedStatus = _resolveStatus(status, bookedEpoch);
+        return '<div style="padding:12px 0;border-bottom:.5px solid rgba(255,255,255,.06);">' +
+            '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:4px;">' +
+                '<span style="font-size:13px;font-weight:500;color:#f8f3ec;line-height:1.35;flex:1;">' + (title||'') + '</span>' +
+                statusBadge(resolvedStatus) +
+            '</div>' +
+            (subtitle ? '<div style="font-size:11px;color:rgba(248,243,236,.4);margin-bottom:2px;">' + subtitle + '</div>' : '') +
+            (resolvedStatus !== 'cancelled' ? cancelBtn(type, id, bookedEpoch) : '') +
+        '</div>';
+    }
+
+    /* ── Render one section card ── */
+    var ICONS = {
+        food:          '🍽️',
+        bar:           '🍸',
+        spa:           '🧖',
+        entertainment: '🎭',
+        dining:        '🪔',
+        room_service:  '🛎️',
+        activity:      '🎯'
+    };
+    var LABELS = {
+        food:          'FOOD ORDERS',
+        bar:           'BAR ORDERS',
+        spa:           'SPA & WELLNESS',
+        entertainment: 'ENTERTAINMENT',
+        dining:        'DINING RESERVATIONS',
+        room_service:  'ROOM SERVICE',
+        activity:      'ACTIVITY RESERVATIONS'
+    };
+
+    function _safeJsonItems(raw) {
+        if (!raw) return [];
+        if (Array.isArray(raw)) return raw;
+        if (typeof raw === 'object') return [raw];
+        try { return JSON.parse(String(raw).replace(/'/g, '"')); }
+        catch(e) { return []; }
+    }
+
+    function _orderTitle(item, key) {
+        if (item.items_summary) return item.items_summary;
+        if (item.item_title) return item.item_title;
+        if (item.item_name) return item.item_name;
+        if (item.service_title) return item.service_title;
+        if (item.name || item.title || item.description) return item.name || item.title || item.description;
+        var parsed = _safeJsonItems(item.items);
+        if (parsed.length) {
+            return parsed.map(function(i) {
+                return (i.name || i.title || 'Item') + (i.qty ? ' x' + i.qty : '');
+            }).join(', ');
+        }
+        return key === 'bar' ? 'Bar Order #' + (item.id || '') :
+               key === 'food' ? 'Food Order #' + (item.id || '') :
+               'Booking #' + (item.id || '');
+    }
+
+    function _cleanItems(items) {
+        return (items || []).filter(function(i) {
+            return String(i.status || '').toLowerCase() !== 'cancelled';
+        });
+    }
+
+    function sectionCard(key, items) {
+        items = _cleanItems(items);
+        var rows = '';
+        if (items && items.length) {
+            rows = items.map(function(item) {
+                var title    = _orderTitle(item, key);
+                var amount   = item.amount || item.price || item.total || 0;
+                var dt       = item.created_at || item.ordered_at || item.booked_at || item.date || item.booking_date || '';
+                var timeStr  = item.time_slot || item.slot || (item.start_time ? item.start_time + (item.end_time ? ' — '+item.end_time : '') : '');
+                var location = item.location || item.venue || item.table_info || item.occasion || '';
+                var status   = item.status || '';
+                var id       = item.id || item.order_id || item.booking_id || '';
+                var bookedEpoch = item.booked_epoch || item.created_epoch || 0;
+                if (!bookedEpoch) {
+                    var rawDt = item.created_at || item.ordered_at || item.booked_at || '';
+                    if (rawDt) { try { bookedEpoch = new Date(rawDt).getTime() || 0; } catch(e){} }
+                }
+                var sub = [
+                    amount ? fmt(amount) : '',
+                    timeStr,
+                    location,
+                    dt
+                ].filter(Boolean).join(' · ');
+                return itemRow(title, sub, status, id, key, bookedEpoch);
+            }).join('');
+        } else {
+            rows = '<div style="flex:1;display:flex;align-items:center;justify-content:center;color:rgba(248,243,236,.2);font-size:12px;font-style:italic;padding:20px 0;">No bookings yet</div>';
+        }
+
+        return '<div class="mo-card" data-section="'+key+'">' +
+            '<div class="mo-card-head">' +
+                '<span class="mo-card-icon">' + (ICONS[key]||'📋') + '</span>' +
+                '<span class="mo-card-label">' + (LABELS[key]||key.toUpperCase()) + '</span>' +
+            '</div>' +
+            '<div class="mo-card-body">' + rows + '</div>' +
+        '</div>';
+    }
+
+    /* ── Render left column: total charges + meal plan ── */
+    var _probedMealPlan = null;
+
+    function probeMealPlanFromCommonJS() {
+        try {
+            var content = document.getElementById('myOrdersContent');
+            if (!content) return;
+            if (typeof window._moOrigLoadMyOrders === 'function') {
+                window._moOrigLoadMyOrders();
+                var sel = content.querySelector('select');
+                if (sel) {
+                    for (var i = 0; i < sel.options.length; i++) {
+                        if (sel.options[i].selected || sel.options[i].defaultSelected) {
+                            _probedMealPlan = sel.options[i].value || null;
+                            break;
+                        }
+                    }
+                }
+                content.innerHTML = '';
+            }
+        } catch(e) {}
+    }
+
+    function renderLeft(data) {
+        var left = document.getElementById('moLeftInjected');
+        if (!left) return;
+
+        function _epoch(item) {
+            if (item.booked_epoch) return Number(item.booked_epoch);
+            var raw = item.created_at || item.ordered_at || item.booked_at || '';
+            if (raw) { try { return new Date(raw).getTime() || 0; } catch(e){} }
+            return 0;
+        }
+
+        function _isConfirmed(item) {
+            var st = String(item.status || '').toLowerCase();
+            if (st === 'cancelled') return false;
+            return _resolveStatus(st, _epoch(item)) === 'confirmed';
+        }
+
+        function _isPending(item) {
+            var st = String(item.status || '').toLowerCase();
+            if (st === 'cancelled') return false;
+            return _resolveStatus(st, _epoch(item)) === 'pending';
+        }
+
+        var allOrdersForTotal = data.orders || [];
+        var computed = {
+            food:          allOrdersForTotal.filter(function(o){ return String(o.type||o.order_type||'').toLowerCase()==='food' && _isConfirmed(o); }).reduce(function(s,o){ return s+Number(o.total||o.amount||0); }, 0),
+            bar:           allOrdersForTotal.filter(function(o){ return String(o.type||o.order_type||'').toLowerCase()==='bar'  && _isConfirmed(o); }).reduce(function(s,o){ return s+Number(o.total||o.amount||0); }, 0),
+            spa:           (data.spa_bookings||[]).filter(_isConfirmed).reduce(function(s,b){ return s+Number(b.price||0); }, 0),
+            entertainment: (data.entertainment_bookings||[]).filter(_isConfirmed).reduce(function(s,b){ return s+Number(b.price||0); }, 0),
+            activity:      (data.activity_bookings||[]).filter(_isConfirmed).reduce(function(s,b){ return s+Number(b.price||0); }, 0),
+            dining:        (data.dine_bookings||[]).filter(_isConfirmed).reduce(function(s,b){ return s+Number(b.price||0); }, 0)
+        };
+        var pendingTotal =
+            allOrdersForTotal.filter(function(o){ return _isPending(o); }).reduce(function(s,o){ return s+Number(o.total||o.amount||0); }, 0) +
+            (data.spa_bookings||[]).filter(_isPending).reduce(function(s,b){ return s+Number(b.price||0); }, 0) +
+            (data.entertainment_bookings||[]).filter(_isPending).reduce(function(s,b){ return s+Number(b.price||0); }, 0) +
+            (data.activity_bookings||[]).filter(_isPending).reduce(function(s,b){ return s+Number(b.price||0); }, 0) +
+            (data.dine_bookings||[]).filter(_isPending).reduce(function(s,b){ return s+Number(b.price||0); }, 0);
+
+        var totals = [
+            computed.food      ? 'Food '   + fmt(computed.food)          : '',
+            computed.bar       ? 'Bar '    + fmt(computed.bar)           : '',
+            computed.spa       ? 'Spa '    + fmt(computed.spa)           : '',
+            computed.entertainment ? 'Ent ' + fmt(computed.entertainment) : '',
+            computed.activity  ? 'Activity '+ fmt(computed.activity)     : '',
+            computed.dining    ? 'Dining ' + fmt(computed.dining)        : ''
+        ].filter(Boolean).join(' · ');
+
+        var grandTotal = computed.food + computed.bar + computed.spa + computed.entertainment + computed.activity + computed.dining;
+
+        var pendingNote = pendingTotal > 0
+            ? '<div style="font-size:11px;color:rgba(212,168,67,.55);margin-top:6px;">+ ' + fmt(pendingTotal) + ' pending confirmation</div>'
+            : '';
+
+        var totalHtml =
+            '<div class="mo-left-card">' +
+                '<div style="font-size:9px;letter-spacing:.4em;text-transform:uppercase;color:rgba(248,243,236,.45);margin-bottom:10px;">Total Charges So Far</div>' +
+                '<div style="font-size:11px;color:rgba(248,243,236,.35);line-height:1.8;">' + (totals || 'No charges yet') + '</div>' +
+                pendingNote +
+                '<div style="display:flex;justify-content:flex-end;margin-top:10px;">' +
+                    '<span style="font-family:\'Cormorant Garamond\',serif;font-size:36px;font-weight:300;color:#ecc96a;">' + fmt(grandTotal) + '</span>' +
+                '</div>' +
+            '</div>';
+
+        var mp = data.meal_plan || data.mealPlan || {};
+        var mpCode  = (typeof mp === 'string' ? mp : null) ||
+                      mp.code || mp.plan_code || mp.value ||
+                      data.meal_plan_code || data.meal_plan_type ||
+                      _probedMealPlan || '';
+        var PLAN_LABELS = { 'AI':'All Inclusive','AP':'Full Board','MAP':'Half Board','CP':'Breakfast Only','EP':'Room Only' };
+        var mpLabel = (typeof mp === 'string' ? (PLAN_LABELS[mp]||mp) : null) ||
+                      mp.label || mp.plan_label || mp.name ||
+                      data.meal_plan_label || data.meal_plan_name ||
+                      PLAN_LABELS[mpCode] || mpCode || 'Not set';
+
+        var mealHtml =
+            '<div class="mo-left-card">' +
+                '<div style="font-size:9px;letter-spacing:.4em;text-transform:uppercase;color:rgba(212,168,67,.55);margin-bottom:10px;">Meal Plan</div>' +
+                '<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">' +
+                    '<div style="display:flex;align-items:center;gap:10px;">' +
+                        '<span style="font-size:22px;">🍽️</span>' +
+                        '<span style="font-size:18px;font-family:\'Cormorant Garamond\',serif;color:#f8f3ec;">' + mpLabel + '</span>' +
+                    '</div>' +
+                    '<button id="moMealPlanBtn" onclick="window.openMealPlanDialog && openMealPlanDialog(\''+mpCode+'\',\''+mpLabel+'\')" style="background:rgba(192,24,90,.14);border:.5px solid rgba(192,24,90,.45);color:#f080a8;font-family:Jost,sans-serif;font-size:12px;letter-spacing:.18em;text-transform:uppercase;padding:8px 14px;border-radius:20px;cursor:pointer;white-space:nowrap;flex-shrink:0;">Change Plan ●</button>' +
+                '</div>' +
+            '</div>';
+
+        left.innerHTML = totalHtml + mealHtml;
+    }
+
+    /* ── Render right grid: 6 service cards ── */
+    function renderRight(data) {
+        var right = document.getElementById('moRight');
+        if (!right) return;
+
+        var allOrders = data.orders || data.all_orders || [];
+        var foodOrders = (data.food_orders || data.food || allOrders.filter(function(o) {
+            return String(o.type || o.order_type || '').toLowerCase() === 'food';
+        }));
+        var barOrders = (data.bar_orders || data.bar || allOrders.filter(function(o) {
+            return String(o.type || o.order_type || '').toLowerCase() === 'bar';
+        }));
+
+        var dineItems = data.dine_bookings || data.dining_reservations || data.dining || data.dine || [];
+        var entItems  = data.entertainment_bookings || data.entertainment || [];
+        var activityItems = data.activity_bookings || data.activity_reservations || data.activity || [];
+
+        var sections = [
+            { key: 'food',          items: foodOrders },
+            { key: 'spa',           items: data.spa_bookings || data.spa || [] },
+            { key: 'bar',           items: barOrders },
+            { key: 'entertainment', items: entItems },
+            { key: 'dining',        items: dineItems },
+            { key: 'activity',      items: activityItems }
+        ];
+
+        right.innerHTML = sections.map(function(s) {
+            return sectionCard(s.key, s.items);
+        }).join('');
+    }
+
+    /* ── Main render function ── */
+    function renderMyBookings() {
+        if (!window.ROOM_NO) return;
+        var overlay = document.getElementById('myOrdersOverlay');
+        if (!overlay || !overlay.classList.contains('active')) return;
+
+        fetch('/api/my-orders/' + window.ROOM_NO)
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (!overlay.classList.contains('active')) return;
+                renderLeft(data);
+                renderRight(data);
+            })
+            .catch(function(e) { console.warn('My bookings fetch failed', e); });
+    }
+
+    /* ── Expose globally so other scripts can call it ── */
+    window.renderMyBookings = renderMyBookings;
+
+    /* ── Override loadMyOrders completely ── */
+    function applyPatch() {
+        if (typeof window.loadMyOrders !== 'function') {
+            setTimeout(applyPatch, 50);
+            return;
+        }
+
+        /* Save original so probe can call it once to sniff API field names */
+        window._moOrigLoadMyOrders = window.loadMyOrders;
+
+        /* Replace with our renderer */
+        window.loadMyOrders = function() { renderMyBookings(); };
+
+        /* Run probe once after a short delay to detect meal plan field names */
+        setTimeout(probeMealPlanFromCommonJS, 200);
+
+        /* Cancel common.js intervals and restart with our versions */
+        var highId = setInterval(function(){}, 99999);
+        clearInterval(highId);
+        for (var i = 1; i <= highId; i++) { clearInterval(i); }
+
+        setInterval(window.loadMyOrders,   30000);
+        setInterval(window.loadServices,   30000);
+        setInterval(window.loadActivities, 10000);
+        setInterval(window.loadRoomData,    5000);
+
+        var clockEl = document.getElementById('clockTime');
+        if (clockEl) {
+            var now = new Date();
+            clockEl.textContent = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() { setTimeout(applyPatch, 0); });
+    } else {
+        setTimeout(applyPatch, 0);
+    }
+
+    /* ── Also trigger render when overlay opens ── */
+    document.addEventListener('DOMContentLoaded', function() {
+        var overlay = document.getElementById('myOrdersOverlay');
+        if (!overlay) return;
+        new MutationObserver(function() {
+            if (overlay.classList.contains('active')) {
+                setTimeout(renderMyBookings, 80);
+            }
+        }).observe(overlay, { attributes: true, attributeFilter: ['class'] });
+    });
+
+})();
+</script>
+
 <script>
 /* ── Meal Plan Dialog ─────────────────────────────── */
 (function() {
     var _selectedCode = null;
     var _originalCode = null;
-
-    var PLAN_LABELS = {
-        'AI':  '🍽️ All Inclusive',
-        'AP':  '🍳 Full Board',
-        'MAP': '🥗 Half Board',
-        'CP':  '☕ Breakfast Only',
-        'EP':  '🛏️ Room Only'
-    };
+    var PLAN_LABELS = { 'AI':'🍽️ All Inclusive','AP':'🍳 Full Board','MAP':'🥗 Half Board','CP':'☕ Breakfast Only','EP':'🛏️ Room Only' };
 
     window.openMealPlanDialog = function(currentCode, currentLabel) {
-        _originalCode = currentCode || null;
-        _selectedCode = null;
-
-        var displayLabel = currentLabel || PLAN_LABELS[currentCode] || '—';
+        _originalCode = currentCode || null; _selectedCode = null;
         var cur = document.getElementById('mpdCurrentName');
-        if (cur) cur.textContent = displayLabel;
-
-        document.querySelectorAll('.mpd-option').forEach(function(el) {
-            el.classList.toggle('selected', el.dataset.code === _originalCode);
-        });
-        var confirmBtn = document.getElementById('mpdConfirmBtn');
-        confirmBtn.disabled = true;
-        confirmBtn.textContent = 'Confirm Plan';
-
+        if (cur) cur.textContent = currentLabel || PLAN_LABELS[currentCode] || '—';
+        document.querySelectorAll('.mpd-option').forEach(function(el) { el.classList.toggle('selected', el.dataset.code === _originalCode); });
+        var btn = document.getElementById('mpdConfirmBtn'); btn.disabled = true; btn.textContent = 'Confirm Plan';
         document.getElementById('mealPlanDialog').classList.add('active');
     };
-
-    window.closeMealPlanDialog = function() {
-        document.getElementById('mealPlanDialog').classList.remove('active');
-    };
-
+    window.closeMealPlanDialog = function() { document.getElementById('mealPlanDialog').classList.remove('active'); };
     window.selectMealPlan = function(el) {
         document.querySelectorAll('.mpd-option').forEach(function(o) { o.classList.remove('selected'); });
-        el.classList.add('selected');
-        _selectedCode = el.dataset.code;
+        el.classList.add('selected'); _selectedCode = el.dataset.code;
         document.getElementById('mpdConfirmBtn').disabled = (_selectedCode === _originalCode);
     };
-
     window.confirmMealPlan = function() {
         if (!_selectedCode || _selectedCode === _originalCode) return;
-        var btn = document.getElementById('mpdConfirmBtn');
-        btn.disabled = true;
-        btn.textContent = 'Updating…';
-
-        /* Exact same API call as common.js changeMealPlan */
-        fetch('/api/update-meal-plan', {
-            method:  'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body:    JSON.stringify({ room_no: window.ROOM_NO, meal_plan: _selectedCode })
-        })
+        var btn = document.getElementById('mpdConfirmBtn'); btn.disabled = true; btn.textContent = 'Updating…';
+        fetch('/api/update-meal-plan', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ room_no: window.ROOM_NO, meal_plan: _selectedCode }) })
         .then(function(r) {
             if (r.ok) {
                 closeMealPlanDialog();
                 var toast = document.getElementById('actToast');
-                if (toast) {
-                    toast.textContent = '✓ Meal plan updated!';
-                    toast.classList.add('show');
-                    setTimeout(function() {
-                        toast.classList.remove('show');
-                        toast.textContent = '✓ Reserved! See you at the activity 🎉';
-                    }, 3000);
-                }
+                if (toast) { toast.textContent = '✓ Meal plan updated!'; toast.classList.add('show'); setTimeout(function() { toast.classList.remove('show'); toast.textContent = '✓ Reserved! See you at the activity 🎉'; }, 3000); }
                 if (typeof window.loadMyOrders === 'function') window.loadMyOrders();
-            } else {
-                btn.disabled = false;
-                btn.textContent = 'Confirm Plan';
-            }
-        })
-        .catch(function() {
-            btn.disabled = false;
-            btn.textContent = 'Confirm Plan';
-        });
+            } else { btn.disabled = false; btn.textContent = 'Confirm Plan'; }
+        }).catch(function() { btn.disabled = false; btn.textContent = 'Confirm Plan'; });
     };
-
-    /* ── Intercept the <select onchange="changeMealPlan(this.value)"> that
-          common.js injects into #myOrdersContent.
-          Strategy:
-            1. MutationObserver spots the <select> every time common.js re-renders
-            2. Hide the <select> and insert a styled "Change Plan" button
-            3. Button click reads the currently-selected plan from the <select>
-               and opens our dialog
-          We do NOT need to patch window.changeMealPlan because the <select>
-          is hidden — it can never fire its onchange.                        ── */
 
     function interceptMealPlanSelect() {
         var content = document.getElementById('myOrdersContent');
         if (!content) return;
-
         var sel = content.querySelector('select[onchange*="changeMealPlan"]');
         if (!sel || sel._mpdPatched) return;
         sel._mpdPatched = true;
-
-        /* Derive current plan code: look for the option that is pre-selected
-           (common.js sets `selected` on the matching option in the HTML string) */
         var currentCode = '';
-        for (var i = 0; i < sel.options.length; i++) {
-            if (sel.options[i].value && sel.options[i].defaultSelected) {
-                currentCode = sel.options[i].value;
-                break;
-            }
-        }
-        if (!currentCode) {
-            /* fallback: scan text of the label div above the select */
-            var box = sel.closest('div');
-            if (box) {
-                var labelDiv = box.previousElementSibling;
-                if (labelDiv) {
-                    var txt = labelDiv.textContent || '';
-                    var codes = ['AI','AP','MAP','CP','EP'];
-                    for (var c = 0; c < codes.length; c++) {
-                        if (txt.indexOf(codes[c]) !== -1) { currentCode = codes[c]; break; }
-                    }
-                }
-            }
-        }
-
-        /* Hide native select */
+        for (var i = 0; i < sel.options.length; i++) { if (sel.options[i].value && sel.options[i].defaultSelected) { currentCode = sel.options[i].value; break; } }
         sel.style.display = 'none';
-
-        /* Build trigger button */
         var trigBtn = document.createElement('button');
-        trigBtn.style.cssText = 'background:rgba(192,24,90,.14);border:.5px solid rgba(192,24,90,.45);color:#f080a8;font-family:Jost,sans-serif;font-size:12px;letter-spacing:.18em;text-transform:uppercase;padding:8px 18px;border-radius:20px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:background .25s,box-shadow .25s;';
+        trigBtn.style.cssText = 'background:rgba(255,153,51,.14);border:.5px solid rgba(255,153,51,.45);color:var(--saffron);font-family:Jost,sans-serif;font-size:12px;letter-spacing:.18em;text-transform:uppercase;padding:8px 18px;border-radius:20px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:background .25s,box-shadow .25s;';
         trigBtn.innerHTML = '<span>Change Plan</span> <span style="font-size:10px;opacity:.6;">&#9679;</span>';
-        trigBtn.onmouseenter = function() { this.style.background='rgba(192,24,90,.28)'; this.style.boxShadow='0 0 14px rgba(192,24,90,.25)'; };
-        trigBtn.onmouseleave = function() { this.style.background='rgba(192,24,90,.14)'; this.style.boxShadow='none'; };
+        trigBtn.onmouseenter = function() { this.style.background='rgba(255,153,51,.28)'; this.style.boxShadow='0 0 14px rgba(255,153,51,.25)'; };
+        trigBtn.onmouseleave = function() { this.style.background='rgba(255,153,51,.14)'; this.style.boxShadow='none'; };
         trigBtn.onclick = function(e) {
             e.stopPropagation();
-            /* Re-read current code each time in case the panel re-rendered */
             var freshSel = document.querySelector('#myOrdersContent select[onchange*="changeMealPlan"]');
             var code = currentCode;
-            if (freshSel) {
-                for (var j = 0; j < freshSel.options.length; j++) {
-                    if (freshSel.options[j].defaultSelected && freshSel.options[j].value) {
-                        code = freshSel.options[j].value; break;
-                    }
-                }
-            }
+            if (freshSel) { for (var j = 0; j < freshSel.options.length; j++) { if (freshSel.options[j].defaultSelected && freshSel.options[j].value) { code = freshSel.options[j].value; break; } } }
             openMealPlanDialog(code, PLAN_LABELS[code] || code);
         };
-
         sel.parentNode.insertBefore(trigBtn, sel.nextSibling);
     }
 
-    /* Watch #myOrdersContent — common.js re-renders on every poll cycle */
-    var observer = new MutationObserver(function() {
-        interceptMealPlanSelect();
-    });
+    var observer = new MutationObserver(function() { interceptMealPlanSelect(); });
     document.addEventListener('DOMContentLoaded', function() {
         var content = document.getElementById('myOrdersContent');
         if (content) observer.observe(content, { childList: true, subtree: true });
@@ -1924,69 +2423,154 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 <script>
-// Soft background refresh — reloads data via existing poll functions
-// without navigating away, so open dropdowns / overlays are never interrupted.
 (function startSoftRefresh() {
-    var INTERVAL_MS = 30000; // every 30 s — same cadence as before
-
     function softRefresh() {
         try { if (typeof window.loadRoomData   === 'function') window.loadRoomData();   } catch(e){}
         try { if (typeof window.loadMyOrders   === 'function') window.loadMyOrders();   } catch(e){}
         try { if (typeof window.loadServices   === 'function') window.loadServices();   } catch(e){}
         try { if (typeof window.loadActivities === 'function') window.loadActivities(); } catch(e){}
     }
-
-    setInterval(softRefresh, INTERVAL_MS);
+    setInterval(softRefresh, 30000);
 })();
-/* ── My Bookings scroll arrows (up & down) ── */
+
+/* ── My Bookings scroll arrows ── */
 (function() {
     var panel, btnUp, btnDown;
-
     function init() {
-        panel   = document.getElementById('moPanel');
-        btnUp   = document.getElementById('moScrollUp');
-        btnDown = document.getElementById('moScrollDown');
+        panel = document.getElementById('moPanel'); btnUp = document.getElementById('moScrollUp'); btnDown = document.getElementById('moScrollDown');
         if (!panel || !btnUp || !btnDown) return;
-        panel.addEventListener('scroll', updateArrows, { passive: true });
-        updateArrows();
+        panel.addEventListener('scroll', updateArrows, { passive: true }); updateArrows();
     }
-
     function updateArrows() {
         if (!panel || !btnUp || !btnDown) return;
-        var scrollTop  = panel.scrollTop;
-        var atTop      = scrollTop <= 4;
-        var atBottom   = scrollTop + panel.clientHeight >= panel.scrollHeight - 8;
-        atTop    ? btnUp.classList.add('hidden')    : btnUp.classList.remove('hidden');
-        atBottom ? btnDown.classList.add('hidden')  : btnDown.classList.remove('hidden');
+        var atTop    = panel.scrollTop <= 4;
+        var atBottom = panel.scrollTop + panel.clientHeight >= panel.scrollHeight - 8;
+        atTop    ? btnUp.classList.add('hidden')   : btnUp.classList.remove('hidden');
+        atBottom ? btnDown.classList.add('hidden') : btnDown.classList.remove('hidden');
     }
-
-    window.moScrollStep = function(dir) {
-        if (!panel) return;
-        panel.scrollBy({ top: dir * 220, behavior: 'smooth' });
-    };
-
-    /* Show/hide when overlay opens or closes */
+    window.moScrollStep = function(dir) { if (panel) panel.scrollBy({ top: dir * 220, behavior: 'smooth' }); };
     var overlay = document.getElementById('myOrdersOverlay');
     if (overlay) {
         new MutationObserver(function() {
-            if (overlay.classList.contains('active')) {
-                setTimeout(updateArrows, 120);
-            } else {
-                if (btnUp)   btnUp.classList.add('hidden');
-                if (btnDown) btnDown.classList.add('hidden');
-            }
+            if (overlay.classList.contains('active')) { setTimeout(updateArrows, 120); }
+            else { if (btnUp) btnUp.classList.add('hidden'); if (btnDown) btnDown.classList.add('hidden'); }
         }).observe(overlay, { attributes: true, attributeFilter: ['class'] });
     }
-
-    /* Re-check after dynamic content is injected */
     var content = document.getElementById('myOrdersContent');
-    if (content) {
-        new MutationObserver(function() { setTimeout(updateArrows, 80); })
-            .observe(content, { childList: true, subtree: true });
-    }
-
+    if (content) { new MutationObserver(function() { setTimeout(updateArrows, 80); }).observe(content, { childList: true, subtree: true }); }
     document.addEventListener('DOMContentLoaded', init);
     window.addEventListener('load', init);
+})();
+</script>
+
+<!-- MENU CARD IMAGE OVERLAY -->
+<div id="menuCardOverlay">
+    <div class="mc-topbar">
+        <div class="mc-topbar-left">
+            <button class="overlay-back-btn" onclick="closeMenuCardOverlay()" style="padding:0;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:16px;height:16px;">
+                    <path d="M19 12H5M5 12l7 7M5 12l7-7"/>
+                </svg>
+                Back
+            </button>
+            <div class="mc-title">Food <em>Menu Card</em></div>
+        </div>
+        <button class="overlay-close-btn" onclick="closeMenuCardOverlay()">✕</button>
+    </div>
+    <div class="mc-body" id="mcBody">
+        <div class="mc-loading">Loading menu card…</div>
+    </div>
+</div>
+
+<script>
+(function() {
+    var _fetched     = false;
+    var _overlayOpen = false;
+
+    window.openMenuCardOverlay = function() {
+        _overlayOpen = true;
+        document.getElementById('menuCardOverlay').classList.add('active');
+        fetchMenuCard();
+    };
+
+    window.closeMenuCardOverlay = function() {
+        _overlayOpen = false;
+        document.getElementById('menuCardOverlay').classList.remove('active');
+    };
+
+    document.getElementById('menuCardOverlay').addEventListener('click', function(e) {
+        if (e.target === this) closeMenuCardOverlay();
+    });
+
+    function fetchMenuCard() {
+        var body = document.getElementById('mcBody');
+        body.innerHTML = '<div class="mc-loading">Loading menu card...</div>';
+        fetch('/api/menu-card')
+            .then(function(r) {
+                if (!r.ok) {
+                    body.innerHTML = '<div class="mc-no-image"><div class="mc-no-image-icon">&#128203;</div><div>No menu card uploaded yet.<br>Please contact the front desk.</div></div>';
+                    return null;
+                }
+                return r.json();
+            })
+            .then(function(data) {
+                if (!data) return;
+                _fetched = true;
+                renderMenuCard(data);
+            })
+            .catch(function() {
+                body.innerHTML = '<div class="mc-no-image"><div class="mc-no-image-icon">&#128203;</div><div>Menu card not available.<br>Please contact the front desk.</div></div>';
+            });
+    }
+
+    function renderMenuCard(data) {
+        var body = document.getElementById('mcBody');
+        var images = [];
+        if (Array.isArray(data))       images = data;
+        else if (data && data.url)     images = [data];
+        else if (data && data.images)  images = data.images;
+
+        if (!images || images.length === 0) {
+            body.innerHTML = '<div class="mc-no-image"><div class="mc-no-image-icon">&#128203;</div><div>No menu card uploaded yet.<br>Please contact the front desk.</div></div>';
+            return;
+        }
+        body.innerHTML = images.map(function(img, idx) {
+            var src       = img.url || img.image_url || img.src || img;
+            var label     = img.label || img.title || (images.length > 1 ? 'Page ' + (idx + 1) : 'Vibe Munnar &middot; Menu Card');
+            var cacheBust = src + '?t=' + Date.now();
+            return '<div class="mc-image-wrap">' +
+                '<img src="' + cacheBust + '" alt="Menu Card" style="width:100%;height:auto;display:block;" ' +
+                'onerror="this.style.border=\'2px dashed red\';this.alt=\'Failed to load: ' + src + '\';">' +
+                '<div class="mc-image-label">' + label + '</div>' +
+                '</div>';
+        }).join('');
+    }
+
+    function connectMenuCardSSE() {
+        var es = new EventSource('/api/menu-card/events');
+        es.onmessage = function(e) {
+            var ev;
+            try { ev = JSON.parse(e.data); } catch(err) { return; }
+            if (ev.type === 'ping') return;
+            if (ev.type === 'menu_card_updated') {
+                _fetched = false;
+                if (_overlayOpen) fetchMenuCard();
+            }
+            if (ev.type === 'menu_card_deleted') {
+                _fetched = false;
+                if (_overlayOpen) {
+                    var body = document.getElementById('mcBody');
+                    if (body) body.innerHTML = '<div class="mc-no-image"><div class="mc-no-image-icon">&#128203;</div><div>Menu card has been removed.<br>Please contact the front desk.</div></div>';
+                }
+            }
+        };
+        es.onerror = function() {
+            es.close();
+            setTimeout(connectMenuCardSSE, 5000);
+        };
+    }
+
+    connectMenuCardSSE();
 })();
 </script>
 

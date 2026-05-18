@@ -553,6 +553,9 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px; margin-bottom: 12px;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: visible;
         }
 
         .date-row label {
@@ -561,7 +564,13 @@
             color: var(--muted); display: block; margin-bottom: 4px;
         }
 
-        .date-row input[type="date"] { width: 100%; font-size: 12px; padding: 6px 10px; }
+        .date-row input[type="date"] { 
+            width: 100%; 
+            font-size: 11px; 
+            padding: 5px 6px; 
+            min-width: 0;
+            box-sizing: border-box;
+        }
 
         .theme-card-actions { display: flex; gap: 8px; }
         .theme-card-actions .btn { flex: 1; justify-content: center; }
@@ -1374,53 +1383,64 @@ body.admin-dark #theme-toggle-btn {
     }
 
     function refreshGuestTable() {
-        fetch('/api/guests/current', { cache: 'no-store' })
-            .then(function(r) { return r.json(); })
-            .then(function(guests) {
-                var tbody   = document.getElementById('guests-tbody');
-                var countEl = document.getElementById('guests-count');
-                if (!tbody) return;
+    fetch('/api/guests/current', { cache: 'no-store' })
+        .then(function(r) { 
+            if (!r.ok) throw new Error('Failed');
+            return r.json(); 
+        })
+        .then(function(guests) {
+            var tbody   = document.getElementById('guests-tbody');
+            var countEl = document.getElementById('guests-count');
+            if (!tbody) return;
 
-                // Preserve any messages the admin is currently typing
-                var typedMessages = {};
-                tbody.querySelectorAll('tr').forEach(function(row) {
-                    var roomInput = row.querySelector('input[name="room_no"]');
-                    var msgInput  = row.querySelector('input[name="message"]');
-                    if (roomInput && msgInput && msgInput.value.trim() !== '') {
-                        typedMessages[roomInput.value] = msgInput.value;
-                    }
-                });
-
-                if (countEl) {
-                    countEl.textContent = '🟢 ' + guests.length + ' Currently In';
+            // Preserve any messages the admin is currently typing
+            var typedMessages = {};
+            tbody.querySelectorAll('tr').forEach(function(row) {
+                var roomInput = row.querySelector('input[name="room_no"]');
+                var msgInput  = row.querySelector('input[name="message"]');
+                if (roomInput && msgInput && msgInput.value.trim() !== '') {
+                    typedMessages[roomInput.value] = msgInput.value;
                 }
+            });
 
-                if (guests.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:30px;">No guests currently checked in.</td></tr>';
-                    return;
-                }
+            if (countEl) {
+                countEl.textContent = '🟢 ' + guests.length + ' Currently In';
+            }
 
-                tbody.innerHTML = guests.map(function(g) {
-                    var saved = typedMessages[String(g.room_no)] || '';
-                    return '<tr>' +
-                        '<td><strong>#' + g.room_no + '</strong></td>' +
-                        '<td>' + g.guest_name + '</td>' +
-                        '<td>' + g.check_in + '</td>' +
-                        '<td>' + g.check_out + '</td>' +
-                        '<td><span style="background:rgba(52,152,219,0.1);color:#2176ae;font-size:12px;font-weight:600;padding:3px 10px;border-radius:12px;">' +
-                            g.days_left + ' day' + (g.days_left !== 1 ? 's' : '') +
-                        '</span></td>' +
-                        '<td><form action="/send-message" method="post" class="msg-form">' +
-                            '<input type="hidden" name="room_no" value="' + g.room_no + '">' +
-                            '<input type="text" name="message" placeholder="Type message…" required value="' + saved + '">' +
-                            '<button type="submit" class="btn btn-primary btn-sm">Send</button>' +
-                        '</form></td>' +
-                        '<td><button type="button" onclick="deleteGuest(\'' + g.room_no + '\')" class="btn btn-danger">Delete</button></td>' +
-                    '</tr>';
-                }).join('');
-            })
-            .catch(function() {});
-    }
+            if (guests.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:30px;">No guests currently checked in.</td></tr>';
+                return;
+            }
+
+            // Only update DOM if data actually changed
+            var newHtml = guests.map(function(g) {
+                var saved = typedMessages[String(g.room_no)] || '';
+                return '<tr>' +
+                    '<td><strong>#' + g.room_no + '</strong></td>' +
+                    '<td>' + g.guest_name + '</td>' +
+                    '<td>' + g.check_in + '</td>' +
+                    '<td>' + g.check_out + '</td>' +
+                    '<td><span style="background:rgba(52,152,219,0.1);color:#2176ae;font-size:12px;font-weight:600;padding:3px 10px;border-radius:12px;">' +
+                        g.days_left + ' day' + (g.days_left !== 1 ? 's' : '') +
+                    '</span></td>' +
+                    '<td><form action="/send-message" method="post" class="msg-form">' +
+                        '<input type="hidden" name="room_no" value="' + g.room_no + '">' +
+                        '<input type="text" name="message" placeholder="Type message…" required value="' + saved + '">' +
+                        '<button type="submit" class="btn btn-primary btn-sm">Send</button>' +
+                    '</form></td>' +
+                    '<td><button type="button" onclick="deleteGuest(\'' + g.room_no + '\')" class="btn btn-danger">Delete</button></td>' +
+                '</tr>';
+            }).join('');
+
+            // Only update if content changed to avoid flicker
+            if (tbody.innerHTML !== newHtml) {
+                tbody.innerHTML = newHtml;
+            }
+        })
+        .catch(function(err) {
+            console.error('Guest refresh failed:', err);
+        });
+}
 
     function refreshGroupTable() {
         fetch('/api/groups/current', { cache: 'no-store' })
@@ -1458,7 +1478,6 @@ body.admin-dark #theme-toggle-btn {
                     }).join('');
                     return '<tr>' +
                         '<td><strong>' + g.group_name + '</strong></td>' +
-                        '<td style="font-size:13px;color:var(--muted);">' + g.welcome_message + '</td>' +
                         '<td>' + rooms + '</td>' +
                         '<td>' + g.check_in + '</td>' +
                         '<td>' + g.check_out + '</td>' +
@@ -2473,11 +2492,6 @@ function toggleFpPassword(inputId, btnId) {
             <button type="submit" class="btn btn-success" style="width:100%">✓ Apply</button>
         </div>
     </form>
-    <form action="/discard_theme/{{ theme.id }}" method="post" style="margin-top:8px;">
-        <div class="theme-card-actions">
-            <button type="submit" class="btn btn-danger" style="width:100%">✕ Discard</button>
-        </div>
-    </form>
     {% endif %}
         
     </div> 
@@ -2874,7 +2888,7 @@ function toggleFpPassword(inputId, btnId) {
                     </div>
                     <div style="display:flex;gap:8px;flex-shrink:0;">
                         {% if menu_card_url %}
-                        <a href="{{ menu_card_url }}" target="_blank" class="btn btn-info btn-sm">👁️ View</a>
+                        <a id="menu-card-view-btn" href="/admin/food/menu-card/view" target="_blank" class="btn btn-info btn-sm">👁️ View</a>
                         {% endif %}
                         <button class="btn btn-danger btn-sm" onclick="deleteMenuCard()">🗑️ Delete</button>
                     </div>
@@ -4331,7 +4345,6 @@ function renderAllBookings(data){
         <thead>
             <tr>
                 <th>Group Name</th>
-                <th>Welcome Message</th>
                 <th>Rooms</th>
                 <th>Check In</th>
                 <th>Check Out</th>
@@ -4344,7 +4357,6 @@ function renderAllBookings(data){
             {% for g in active_groups %}
             <tr>
                 <td><strong>{{ g.group_name }}</strong></td>
-                <td style="font-size:13px;color:var(--muted);">{{ g.welcome_message }}</td>
                 <td>
                     {% for room in g.room_numbers_list %}
                     <span style="background:rgba(52,152,219,0.1);color:#2176ae;
@@ -5404,42 +5416,61 @@ document.addEventListener('click', function(e) {
 let _guestDeleteTargetRoom = null;
 
 function deleteGuest(roomNo) {
-    _guestDeleteTargetRoom = roomNo;
+    _guestDeleteTargetRoom = String(roomNo);
     document.getElementById('guest-delete-modal-title').textContent = `Delete guest in Room ${roomNo}?`;
     document.getElementById('guest-delete-modal').style.display = 'flex';
 }
 
 function closeGuestDeleteModal() {
-    _guestDeleteTargetRoom = null;
     document.getElementById('guest-delete-modal').style.display = 'none';
 }
 
 async function confirmGuestDelete() {
     const roomNo = _guestDeleteTargetRoom;
-    if (!roomNo) return;
-    closeGuestDeleteModal();
+    console.log('Deleting room:', roomNo);
+    if (!roomNo) { 
+        console.log('No room selected!');
+        return; 
+    }
+    _guestDeleteTargetRoom = null;
+    document.getElementById('guest-delete-modal').style.display = 'none';
     try {
-        const response = await fetch(`/admin/guests/${roomNo}`, { method: 'DELETE' });
+        const response = await fetch('/admin/guests/' + roomNo, { method: 'DELETE' });
+        console.log('Response status:', response.status);
         if (!response.ok) {
             const errText = await response.text();
-            alert(`Server error ${response.status}: ${errText}`);
+            alert('Server error ' + response.status + ': ' + errText);
             return;
         }
         const result = await response.json();
+        console.log('Result:', result);
         if (result.message === 'Guest deleted successfully') {
-            location.reload();
+            // Remove the row directly without reload
+            const rows = document.querySelectorAll('#guests-tbody tr');
+            rows.forEach(function(row) {
+                const roomCell = row.querySelector('td strong');
+                if (roomCell && roomCell.textContent.replace('#','').trim() === String(roomNo)) {
+                    row.remove();
+                }
+            });
+            // Update count
+            const remaining = document.querySelectorAll('#guests-tbody tr').length;
+            const countEl = document.getElementById('guests-count');
+            if (countEl) countEl.textContent = '🟢 ' + remaining + ' Currently In';
         } else {
-            alert("Could not delete guest: " + (result.message || "Unknown error"));
+            alert('Could not delete guest: ' + (result.message || 'Unknown error'));
         }
     } catch (err) {
-        console.error("Delete failed:", err);
-        alert("Delete request failed: " + err.message);
+        console.error('Delete failed:', err);
+        alert('Delete request failed: ' + err.message);
     }
 }
 
 document.addEventListener('click', function(e) {
     const modal = document.getElementById('guest-delete-modal');
-    if (modal && modal.style.display === 'flex' && e.target === modal) closeGuestDeleteModal();
+    if (modal && modal.style.display === 'flex' && e.target === modal) {
+        closeGuestDeleteModal();
+    }
 });
 
 // ══════════════════════════════════════════
@@ -6967,19 +6998,43 @@ document.getElementById('menu-card-form')?.addEventListener('submit', async func
             toast.style.border     = '1px solid rgba(26,188,156,0.25)';
             toast.textContent      = '✓ Menu card uploaded successfully!';
 
-            const wrap   = document.getElementById('current-menu-card-wrap');
-            const thumb  = document.getElementById('menu-card-thumb');
-            const nameEl = document.getElementById('menu-card-filename');
-            const updEl  = document.getElementById('menu-card-updated');
+            const wrap    = document.getElementById('current-menu-card-wrap');
+            const thumb   = document.getElementById('menu-card-thumb');
+            const nameEl  = document.getElementById('menu-card-filename');
+            const updEl   = document.getElementById('menu-card-updated');
+            const viewBtn = document.getElementById('menu-card-view-btn');
             wrap.style.display  = 'block';
             nameEl.textContent  = data.url.split('/').pop();
             updEl.textContent   = 'Last updated: Just now';
-            if (data.url.match(/\.(jpg|jpeg|png|webp)$/i)) {
-                thumb.innerHTML = `<img src="${data.url}" style="width:100%;height:100%;object-fit:cover;">`;
+            // Always show View button pointing to the viewer page
+            if (viewBtn) {
+                viewBtn.href = '/admin/food/menu-card/view';
+                viewBtn.style.display = '';
+            }
+            const cacheBust = '?t=' + Date.now();
+            if (data.url.match(/\.(jpg|jpeg|png|webp|gif)$/i)) {
+                thumb.innerHTML = `<img src="${data.url + cacheBust}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.textContent='📄'">`;
             } else {
                 thumb.innerHTML = '📄';
             }
+
+            // ── Reset upload zone back to default state ──
+            const zone      = document.getElementById('menu-card-zone');
+            const iconEl    = document.getElementById('menu-card-zone-icon');
+            const textEl    = document.getElementById('menu-card-zone-text');
+            const chosenEl  = document.getElementById('menu-card-filename-chosen');
+            const prevWrap  = document.getElementById('menu-card-preview-wrap');
+            const prevImg   = document.getElementById('menu-card-preview-img');
+            const fileInput = document.getElementById('menu-card-input');
+            zone.classList.remove('has-file');
+            iconEl.textContent   = '📋';
+            textEl.textContent   = 'Choose or Drop Menu Card';
+            chosenEl.textContent = '';
+            prevWrap.style.display = 'none';
+            prevImg.src = '';
+            fileInput.value = '';
             btn.textContent = '⬆️ Upload Menu Card';
+            btn.disabled = true;
         } else {
             throw new Error(data.error || 'Upload failed');
         }
@@ -6995,8 +7050,14 @@ document.getElementById('menu-card-form')?.addEventListener('submit', async func
     setTimeout(() => { toast.style.display = 'none'; }, 4000);
 });
 
-async function deleteMenuCard() {
-    if (!confirm('Remove the current menu card? Guests will no longer be able to view it.')) return;
+function deleteMenuCard() {
+    document.getElementById('menuCardDeleteModal').style.display = 'flex';
+}
+function closeMenuCardDeleteModal() {
+    document.getElementById('menuCardDeleteModal').style.display = 'none';
+}
+async function confirmDeleteMenuCard() {
+    closeMenuCardDeleteModal();
     try {
         const res = await fetch('/admin/food/menu-card/delete', { method: 'POST' });
         if (res.ok) {
@@ -7227,6 +7288,79 @@ document.getElementById('tv-form')?.addEventListener('submit', function(e) {
 </script>
 
 
+
+<!-- ── FOOD MENU CARD DELETE CONFIRM MODAL ── -->
+<div id="menuCardDeleteModal" style="display:none;position:fixed;inset:0;z-index:9999;align-items:center;justify-content:center;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);">
+  <div style="background:var(--surface,#1e1e2e);border:1px solid var(--border,#333);border-radius:16px;padding:32px 28px;max-width:380px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.5);text-align:center;">
+    <div style="width:56px;height:56px;border-radius:50%;background:rgba(231,76,60,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:26px;">🗑️</div>
+    <div style="font-size:17px;font-weight:700;color:var(--text,#fff);margin-bottom:8px;">Remove Menu Card?</div>
+    <div style="font-size:13px;color:var(--muted,#888);margin-bottom:28px;line-height:1.5;">
+      Guests will no longer be able to view the menu card.<br>This action cannot be undone.
+    </div>
+    <div style="display:flex;gap:10px;justify-content:center;">
+      <button onclick="closeMenuCardDeleteModal()"
+        style="flex:1;max-width:140px;padding:10px 0;border-radius:8px;border:1px solid var(--border,#444);background:var(--surface2,#2a2a3e);color:var(--text,#fff);font-size:14px;font-weight:600;cursor:pointer;">
+        Cancel
+      </button>
+      <button onclick="confirmDeleteMenuCard()"
+        style="flex:1;max-width:140px;padding:10px 0;border-radius:8px;border:none;background:#e74c3c;color:#fff;font-size:14px;font-weight:600;cursor:pointer;">
+        Yes, Remove
+      </button>
+    </div>
+  </div>
+</div>
+<!-- ── ACTIVE THEME CONFLICT MODAL ── -->
+<div id="themeConflictModal" style="display:none;position:fixed;inset:0;z-index:9999;
+     align-items:center;justify-content:center;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);">
+  <div style="background:var(--surface,#fff);border:1px solid var(--border);border-radius:18px;
+              padding:36px 32px;max-width:400px;width:90%;box-shadow:0 24px 64px rgba(122,16,64,0.22);
+              text-align:center;animation:fadeIn .22s ease;">
+    <div style="width:60px;height:60px;border-radius:50%;background:rgba(243,156,18,0.12);
+                display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:30px;">
+      ⚠️
+    </div>
+    <div style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:10px;">
+      Theme Already Active
+    </div>
+    <div style="font-size:13.5px;color:var(--muted);line-height:1.65;margin-bottom:26px;">
+      <strong id="conflictActiveThemeName" style="color:var(--accent);"></strong>
+      is currently active.<br>
+      Please discard it first before applying a new theme.
+    </div>
+    <button onclick="document.getElementById('themeConflictModal').style.display='none'"
+      style="padding:11px 36px;border-radius:9px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent-light));
+             color:#fff;font-size:14px;font-weight:700;cursor:pointer;
+             box-shadow:0 4px 14px rgba(164,23,79,0.3);transition:opacity .15s;"
+      onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">
+      Got it
+    </button>
+  </div>
+</div>
+
+<script>
+// ── Theme apply conflict guard ──
+document.querySelectorAll('form[action^="/schedule_theme/"]').forEach(function(form) {
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const action    = form.getAttribute('action');
+        const themeId   = action.split('/').pop();
+        const formData  = new FormData(form);
+        try {
+            const res = await fetch(action, { method: 'POST', body: formData });
+            if (res.status === 409) {
+                const data = await res.json();
+                document.getElementById('conflictActiveThemeName').textContent = data.active_theme_name || 'Another theme';
+                document.getElementById('themeConflictModal').style.display = 'flex';
+                return;
+            }
+            // Success — server did redirect, navigate to /themes
+            window.location.href = '/themes';
+        } catch(err) {
+            form.submit(); // fallback
+        }
+    });
+});
+</script>
 
 </body>
 </html>

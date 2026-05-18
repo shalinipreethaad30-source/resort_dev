@@ -28,23 +28,21 @@ router = APIRouter()
 
 # ─────────────────────────────────────────────────────────────────
 # HELPER — resolve current guest for a room
-#   Primary:  guest whose check_in <= today <= check_out
-#   Fallback: most recent guest by check_in (covers checkout-day
-#             edge cases, off-by-one date issues, late checkouts)
+#   Returns the guest whose check_in <= today <= check_out ONLY.
+#   Returns None if the room is vacant / checked out.
+#
+#   NOTE: The old fallback (most recent guest by check_in) was
+#   intentionally removed — it caused checked-out rooms to return
+#   the previous guest's bills in /api/my-orders.
 # ─────────────────────────────────────────────────────────────────
 
 def _resolve_guest(db, room_no: int):
     today = date.today()
-    guest = db.query(models.Guest).filter(
+    return db.query(models.Guest).filter(
         models.Guest.room_no   == room_no,
         models.Guest.check_in  <= today,
         models.Guest.check_out >= today
     ).first()
-    if not guest:
-        guest = db.query(models.Guest).filter(
-            models.Guest.room_no == room_no
-        ).order_by(models.Guest.check_in.desc()).first()
-    return guest
 
 
 def _guest_name(db, room_no: int) -> str:
@@ -446,29 +444,19 @@ def my_orders(room_no: int):
             ).order_by(models.DineBooking.booked_at.desc()).all()
 
         else:
-            # ── Fallback: no guest record matched (date mismatch etc.)
-            #    Query by room_no only so bookings are never invisible. ──
-            guest_name = "Guest"
-
-            orders = db.query(models.Order).filter(
-                models.Order.room_no == room_no
-            ).order_by(models.Order.ordered_at.desc()).all()
-
-            spa = db.query(models.SpaBooking).filter(
-                models.SpaBooking.room_no == room_no
-            ).order_by(models.SpaBooking.booked_at.desc()).all()
-
-            ent = db.query(models.EntertainmentBooking).filter(
-                models.EntertainmentBooking.room_no == room_no
-            ).order_by(models.EntertainmentBooking.booked_at.desc()).all()
-
-            activities = db.query(models.ActivityBooking).filter(
-                models.ActivityBooking.room_no == room_no
-            ).order_by(models.ActivityBooking.booked_at.desc()).all()
-
-            dine = db.query(models.DineBooking).filter(
-                models.DineBooking.room_no == room_no
-            ).order_by(models.DineBooking.booked_at.desc()).all()
+            # ── No active guest for this room (checked out or invalid room).
+            #    Return empty — never show a previous guest's bills. ──
+            return {
+                "room_no":                room_no,
+                "room_active":            False,
+                "totals":                 {"food": 0, "bar": 0, "spa": 0, "entertainment": 0, "dine": 0, "grand": 0},
+                "orders":                 [],
+                "spa_bookings":           [],
+                "entertainment_bookings": [],
+                "activity_bookings":      [],
+                "dine_bookings":          [],
+                "meal_plan":              None,
+            }
 
         # ── Resolve meal_plan from guest record, then group booking, else None ──
         meal_plan = None
@@ -991,28 +979,19 @@ def group_summary(room_no: int):
                 ).all()
 
             else:
-                # Fallback: guest record missing or date mismatch
-                gname = "Guest"
-
-                orders = db.query(models.Order).filter(
-                    models.Order.room_no == rno,
-                    models.Order.status.in_(BILLABLE)
-                ).all()
-
-                spa_b = db.query(models.SpaBooking).filter(
-                    models.SpaBooking.room_no == rno,
-                    models.SpaBooking.status.in_(BILLABLE)
-                ).all()
-
-                ent_b = db.query(models.EntertainmentBooking).filter(
-                    models.EntertainmentBooking.room_no == rno,
-                    models.EntertainmentBooking.status.in_(BILLABLE)
-                ).all()
-
-                dine_b = db.query(models.DineBooking).filter(
-                    models.DineBooking.room_no == rno,
-                    models.DineBooking.status.in_(BILLABLE)
-                ).all()
+                # No active guest for this room — return zeroes.
+                # Never fall back to unscoped queries; that leaks previous
+                # guests' charges into the group total (the original bug).
+                return {
+                    "room_no":       rno,
+                    "guest_name":    "Guest",
+                    "food":          0,
+                    "bar":           0,
+                    "spa":           0,
+                    "entertainment": 0,
+                    "dine":          0,
+                    "total":         0
+                }
 
             food = sum(o.total for o in orders if o.order_type == "food")
             bar  = sum(o.total for o in orders if o.order_type == "bar")

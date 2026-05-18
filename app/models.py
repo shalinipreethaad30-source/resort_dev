@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Date, Boolean, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Date, Boolean, DateTime, ForeignKey, LargeBinary
 from .database import Base
 from datetime import datetime
 
@@ -267,3 +267,12 @@ class HotelConfig(Base):
     __tablename__ = "hotel_config"
     key   = Column(String, primary_key=True)
     value = Column(String)
+
+class MenuCard(Base):
+    __tablename__ = "menu_card"
+
+    id         = Column(Integer, primary_key=True)
+    filename   = Column(String)
+    mime_type  = Column(String)
+    data       = Column(LargeBinary)   # raw file bytes stored in DB
+    updated_at = Column(String)
